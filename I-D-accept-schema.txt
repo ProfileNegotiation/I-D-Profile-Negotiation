@@ -1,0 +1,616 @@
+
+
+
+
+Internet Engineering Task Force                              L. Svensson
+Internet-Draft                               Deutsche Nationalbibliothek
+Intended status: Standards Track                       February 26, 2016
+Expires: August 29, 2016
+
+
+                      Negotiating Schemas in HTTP
+                    draft-svensson-accept-schema-00
+
+Abstract
+
+   This document defines a new HTTP header that enables User Agents and
+   hosts to negotiate the schema used to describe a specific resource.
+   In this context, a schema is a document describing the syntactical
+   and/or semantical constraints of a group of other documents; examples
+   of schemas include Dublin Core Application Profiles, XML Schemata and
+   RDF Shape Expressions.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at http://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on August 29, 2016.
+
+Copyright Notice
+
+   Copyright (c) 2016 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+
+
+
+
+Svensson                 Expires August 29, 2016                [Page 1]
+
+Internet-Draft         Negotiating Schemas in HTTP         February 2016
+
+
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+     1.1.  Requirements Language . . . . . . . . . . . . . . . . . .   3
+   2.  Terminology and Implementation Options  . . . . . . . . . . .   3
+     2.1.  A Note on Terminology . . . . . . . . . . . . . . . . . .   3
+     2.2.  Other Implementation Options Considered . . . . . . . . .   3
+   3.  Client and Server Behaviour . . . . . . . . . . . . . . . . .   4
+     3.1.  Accept-Schema Header Syntax . . . . . . . . . . . . . . .   5
+     3.2.  Schema Header Syntax  . . . . . . . . . . . . . . . . . .   6
+   4.  Examples  . . . . . . . . . . . . . . . . . . . . . . . . . .   6
+   5.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   8
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   9
+     6.1.  Accept-Schema HTTP Header Registration  . . . . . . . . .   9
+     6.2.  Schema HTTP Header Registration . . . . . . . . . . . . .   9
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .   9
+   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  10
+     8.1.  Normative References  . . . . . . . . . . . . . . . . . .  10
+     8.2.  Informative References  . . . . . . . . . . . . . . . . .  10
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  11
+
+1.  Introduction
+
+   This document defines a new HTTP header that enables User Agents and
+   hosts to negotiate the schema used to describe a specific resource.
+   In the context of Linked Data, but also elsewhere, resources are
+   identified with HTTP URIs.  In many cases, it can be desired to have
+   multiple representations of a resource.  When a User Agent (UA)
+   issues a GET request for a specific URI, the User Agent and the
+   server negotiate which of the available representations best suit the
+   UA's needs and capabilities.  Typically a UA specifies a preference
+   by setting the appropriate http header, e. g.  Accept for media type,
+   Accept-Language for content language or Accept-Charset for character
+   encoding.
+
+   In many cases, there are several ways to describe a resource using a
+   structured format such as XML or one of the RDF serialisations.  In
+   the case of XML documents, for instance, the same content can be
+   encoded using one of several DTDs or XML Schemas, whereas in RDF
+   there is a wide choice of RDF vocabularies (classes and properties)
+   available to describe resources of the same type.  E. g. do all three
+   of foaf, the BBC Core Ontology and the DBPedia ontology contain
+   classes and properties to describe persons.  When a UA initiates a
+   request, e. g. a GET request to retrieve or a PUT request to create
+   or replace a resource, neither the UA nor the server have any
+
+
+
+Svensson                 Expires August 29, 2016                [Page 2]
+
+Internet-Draft         Negotiating Schemas in HTTP         February 2016
+
+
+   possibility to exchange information on how the transmitted resource
+   will be structured.  This document proposes a solution by defining
+   the HTTP headers Accept-Schema and Schema.
+
+1.1.  Requirements Language
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in RFC 2119 [RFC2119].
+
+2.  Terminology and Implementation Options
+
+2.1.  A Note on Terminology
+
+   In the context of this specification, a "schema" is a document that
+   expresses the syntactical and/or semantical constraints of other
+   documents.  Examples of "schema" in this context include, but are not
+   limited to, Dublin Core application profiles -- formally expressed in
+   Description Set Profiles (DSP) [DSP] --, XML Schema documents [XSD]
+   and RDF Shapes expressed in SHACL [SHACL].  How those schemata are
+   used by consuming applications is beyond the scope of this
+   specification, but typical use cases are validation of data received
+   from another system and the automated creation of objects from
+   received data as in Java XMLBeans [XMLBEANS].  The choice of term
+   "schema", instead of e. g.  "profile", was derived from its use in
+   XML Schema and also from the observation that "profile" seems to have
+   a different meaning in HTTP than in e. g.  Dublin Core Application
+   Profile.  That RDF Shapes are often described as XML Schema for RDF
+   (RDF Schema was already taken) adds to the choice of "schema".
+
+2.2.  Other Implementation Options Considered
+
+   A number of options were considered when specifying how schema
+   negotiation could be implemented.  Besides the registration of an
+   appropriate accept header, the options included the use profiles with
+   the http "Accept" or "Link" header fields RFC 6906 [RFC6906].
+
+   1.  According to RFC 6906, profiles are one possibility "to include
+       additional information about the nature of the resource.  This
+       would allow a client understanding this additional information to
+       react in a way specific to that specialization of the resource,
+       where the specialization of the resource, where the
+       specialization can be about constraints, conventions, extensions
+       or any other aspects that do not alter the basic media type
+       semantics."  It is questionable, however, if a "profile" and a
+       "schema" carry the same semantics, since the the profile is about
+       media type semantics and the schema specifies the semantics of
+       the content, irrespective of how it is serialised.
+
+
+
+Svensson                 Expires August 29, 2016                [Page 3]
+
+Internet-Draft         Negotiating Schemas in HTTP         February 2016
+
+
+   2.  Another way to convey profile information is through the http
+       Accept header field as in Figure 1.
+
+                                 Example:
+
+   Accept: application/rdf+xml;
+           profile=<urn:example:profiles:e-commerce-payment>
+
+                                 Figure 1
+
+       If this is possible depends on the media type.  Of the media
+       types commonly used for linked data, only two registrations in
+       the IANA Media Type Registry [IANAMEDIAREG] foresee the use of
+       profiles: application/xhtml+xml [RFC3236] and application/ld+json
+       [JSONLD].  E. g. application/rdf+xml [RFC3870] and text/turtle
+       [TURTLE] do not mention the use of profiles.
+
+   3.  A further possibility is to register "schema" as a relation type
+       for the Link header.  A disadvantage of this solution is that
+       there is no way to specify a weight for the profile which limits
+       the possibilities to perform proper content negotiation.
+
+   For the above reasons, both options were discarded and left the
+   registration of a new http header as the most viable way forward.
+
+3.  Client and Server Behaviour
+
+   The "Accept-Schema" and "Schema" header fields can be sent by both
+   the UA and the server.  The "Accept-Schema" header is used to specify
+   one or more schemas the Agent can accept, whereas the "Schema" header
+   tells the other Agent according to which schema the payload of the
+   message is structured.  So can a UA issuing a request for a resource
+   specify that it prefers persons to be described using foaf, but that
+   the BBC Core ontology is also acceptable, and that it can only accept
+   text/turtle, by setting the "Accept" and "Accept-Schema" header
+   fields appropriately.  When the server answers, it would set the
+   "Content-Type" and "Schema" header fields.  Likewise, a UA sending an
+   XML document to a server would set the the "Content-Type" and the
+   "Schema" header fields.  If the server cannot process the specified
+   schema, it would answer with an http 406 status code and possibly a
+   list of acceptable schemas.
+
+   An "Accept-Schema" and "Schema" header field does not contain the
+   actual schema but instead points to it using a URI.  As long as the
+   URI is only used to denote the schema, the URI does not need to point
+   to an actual document but can be considered opaque.  If the parties
+   involved agree on a schema definition, the schema can be identified
+   with e. g. a URN or an info-URI.  When a protocol-based URI, such as
+
+
+
+Svensson                 Expires August 29, 2016                [Page 4]
+
+Internet-Draft         Negotiating Schemas in HTTP         February 2016
+
+
+   an FTP- or an HTTP-URI is used, however, it is RECOMMENDED that it
+   dereference to a document containing the schema definition.
+
+3.1.  Accept-Schema Header Syntax
+
+   The "Accept-Schema" header field is used to specify one or more
+   content schemas the issuing agent can accept for processing.  Each
+   schema is identified by a URI reference or -- e. g.  in the case of
+   namespace-specific XML schemas (cf.  4.3.2 of XML Schema 1.1-1
+   [XMLSCHEMA]) -- a list of pairs of URI references separated by
+   whitespace similar to the syntax used in the xsi:schemaLocation
+   attribute.  If several schemas are specified, quality values as
+   defined in Section 5.3.1 of RFC 7230 [RFC7230] can be used to assign
+   a relative "weight" to the preference.  Exactly how that weight is
+   used to determine the best representation is beyond the scope of this
+   specification.
+
+   A request without any "Accept-Schema" header field implies that the
+   user agent will accept content conforming to any schema.  If the
+   header field is present in a request and the origin server cannot
+   provide a representation that conforms to the specified schema, it
+   can either honour the header field by sending a 406 (Not Acceptable)
+   response or disregard the header field by treating the response as if
+   it is not subject to content negotiation.  If the the origin server
+   chooses to disregard the header field and the schema the content
+   conforms to is known, the origin server SHOULD send a "Schema" header
+   indicating that schema together with the payload.
+
+   Figure 2 describes the syntax (Augmented Backus-Naur Form) of the
+   header fields, using the grammar defined in RFC 5234 [RFC5234] and
+   the rules defined in Section 3.2 of RFC 7230 [RFC7230].  The
+   definitions of "URI-reference" and "weight" are imported from RFC
+   7230 [RFC7230] and RFC 7231 [RFC7231], respectively.
+
+                        Accept-Schema header syntax
+
+Accept-Schema = "Accept-Schema" ":" (schema-value) *("," schema-value)
+schema-value =  "<" URI-reference ">" [weight] |
+                "<" URI-reference "0x20" URI-reference
+                        *("0x20" URI-reference "0x20" URI-reference) ">"
+                                                [weight]
+
+                                 Figure 2
+
+
+
+
+
+
+
+
+Svensson                 Expires August 29, 2016                [Page 5]
+
+Internet-Draft         Negotiating Schemas in HTTP         February 2016
+
+
+3.2.  Schema Header Syntax
+
+   The "Schema" header field is used to specify a schema the payload in
+   the message conforms to.  The schema is identified by a URI reference
+   or -- e. g.  in the case of namespace-specific XML schemas (cf. 4.3.2
+   of XML Schema 1.1-1 [XMLSCHEMA]) -- a list of pairs of URI references
+   separated by whitespace similar to the syntax used in the
+   xsi:schemaLocation attribute.  If a client uses the "Accept-Schema"
+   header to specify one or more schemas it is willing to accept and a
+   server does not use the "Schema" header to specify which schema the
+   returned content conforms to, the client MAY process the returned
+   content as it deems fit.
+
+   If a client uses the "Schema" header field to indicate the schema the
+   payload conforms to (e. g. in an HTTP POST or PUT request) and the
+   server cannot process content conforming to that schema, the server
+   SHOULD send a 406 (Not acceptable) response together with an "Accept-
+   schema" header field (including q-values) to indicate the schemas it
+   can process.  Reasons for not sending a 406 response in such a case
+   might be that the the processing of the message payload leads to an
+   internal server error.  If in such a case the server does not
+   implement schema negotiation, the server is more likely to return a
+   500 (Internal server error) response instead of 406.
+
+   Figure 3 describes the syntax (Augmented Backus-Naur Form) of the
+   header fields, using the grammar defined in RFC 5234 [RFC5234] and
+   the rules defined in Section 3.2 of RFC 7230 [RFC7230].  The
+   definition of "URI-reference" is imported from RFC 7230 [RFC7230].
+
+                           Schema header syntax
+
+Schema = "Schema" ":"  "<" URI-reference ">" |
+                       "<" URI-reference "0x20" URI-reference
+                       *( "0x20" URI-reference "0x20" URI-reference) ">"
+
+                                 Figure 3
+
+4.  Examples
+
+   The following examples highlight the exchange of schema information
+   between a client and a server.  For clarity, the examples only
+   contain minimal information, i. e.  only the relevant headers are
+   included and message bodies are ignored.
+
+
+
+
+
+
+
+
+Svensson                 Expires August 29, 2016                [Page 6]
+
+Internet-Draft         Negotiating Schemas in HTTP         February 2016
+
+
+   A client requests an XML document conforming to a specific XML
+   schema.  The schema is identified by "urn:example:schema:e-commerce-
+   payment".
+
+   Request:
+   GET /some-resource HTTP/1.1
+   Accept: application/xml
+   Accept-Schema: <urn:example:schema:e-commerce-payment>
+
+   Response:
+   HTTP/1.1 200 OK
+   Content-Type: application/xml
+   Schema: <urn:example:schema:e-commerce-payment>
+
+                                 Figure 4
+
+   A client requests an RDF/XML document conforming to one of two RDF
+   Shape (http://example.com/shapes/shape-1 and
+   http://example.com/shapes/shape-2).  It uses q-values to express a
+   preference for shape-1, the server, however, prefers to deliver in
+   shape-2.
+
+   Request:
+   GET /some-resource HTTP/1.1
+   Accept: application/rdf+xml
+   Accept-Schema: <http://example.com/shapes/shape-1>; q=0.8,
+                  <http://example.com/shapes/shape-2>; q=0.5
+
+   Response:
+   HTTP/1.1 200 OK
+   Content-Type: application/rdf+xml
+   Schema: <http://example.com/shapes/shape-2>
+
+                                 Figure 5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Svensson                 Expires August 29, 2016                [Page 7]
+
+Internet-Draft         Negotiating Schemas in HTTP         February 2016
+
+
+   A client PUTs a turtle document conforming to the RDF Shape
+   http://example.com/shapes/shape-1.  The server answers that it can
+   only process documents conforming to http://example.com/shapes/shape-
+   2.
+
+   Request:
+   PUT /some-resource HTTP/1.1
+   Schema: <http://example.com/shapes/shape-1>
+
+   Response:
+   HTTP/1.1 406 Not acceptable
+   Content-Type: application/xhtml+xml
+   Accept-Schema: <http://example.com/shapes/shape-2>
+
+                                 Figure 6
+
+   A client requests an XML document where the elements in namespace
+   urn:example:namespaces:ns1 must conform to XML schema
+   http://example.com/schema/schema-1 and the elements in namespace
+   urn:example:namespaces:ns2 must conform to XML schema
+   http://example.com/schema/schema-2.  The server answers that it can
+   supply the document as requested.
+
+   Request:
+   GET /some-resource HTTP/1.1
+   Accept-Schema:  <urn:example:namespaces:ns1
+                                   http://example.com/schema/schema-1
+                                   urn:example:namespaces:ns2
+                                   http://example.com/schema/schema-2>
+
+   Response:
+   HTTP/1.1 200 OK
+   Content-Type: application/xml
+   Schema: <urn:example:namespaces:ns1
+                   http://example.com/schema/schema-1
+                   urn:example:namespaces:ns2
+                   http://example.com/schema/schema-2>
+
+                                 Figure 7
+
+5.  Acknowledgements
+
+   This is the place to have YOUR NAME prominently displayed!
+
+
+
+
+
+
+
+
+Svensson                 Expires August 29, 2016                [Page 8]
+
+Internet-Draft         Negotiating Schemas in HTTP         February 2016
+
+
+6.  IANA Considerations
+
+   This specification defines two header field for the Hypertext
+   Transfer Protocol (HTTP) that have been registered with the Internet
+   Assigned Numbers Authority (IANA) following the "Registration
+   Procedures for Message Header Fields" RFC 3864 [RFC3864].  [TO BE
+   REMOVED: This registration should take place at the following
+   location: http://www.iana.org/assignments/message-headers/message-
+   headers.xhtml]
+
+6.1.  Accept-Schema HTTP Header Registration
+
+   The Accept-Schema header should be added to the permanent registry of
+   message header fields (see RFC 3864 [RFC3864]), taking into account
+   the guidelines given by HTTP/1.1 RFC 7231 [RFC7231]".
+
+   Header Field Name: Accept-Schema
+
+   Applicable Protocol: Hypertext Transfer Protocol (HTTP)
+
+   Status: Standard
+
+   Author/Change controller: IETF
+
+   Specification document(s): RFC XXXX
+
+6.2.  Schema HTTP Header Registration
+
+   The Schema header should be added to the permanent registry of
+   message header fields (see RFC 3864 [RFC3864]), taking into account
+   the guidelines given by HTTP/1.1 RFC 7231 [RFC7231]".
+
+   Header Field Name: Schema
+
+   Applicable Protocol: Hypertext Transfer Protocol (HTTP)
+
+   Status: Standard
+
+   Author/Change controller: IETF
+
+   Specification document(s): RFC XXXX
+
+7.  Security Considerations
+
+   The Accept-Schema and Schema headers may expose information that a
+   User Agent or an origin server would prefer to not publish.  In such
+   a case, a server can simply stop exposing the header, in which case
+   HTTP interactions would be back to the level of standard HTTP (i.e.,
+
+
+
+Svensson                 Expires August 29, 2016                [Page 9]
+
+Internet-Draft         Negotiating Schemas in HTTP         February 2016
+
+
+   with no indication what kind of media types a resource accepts in
+   POST requests).
+
+8.  References
+
+8.1.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <http://www.rfc-editor.org/info/rfc2119>.
+
+   [RFC5234]  Crocker, D., Ed. and P. Overell, "Augmented BNF for Syntax
+              Specifications: ABNF", STD 68, RFC 5234,
+              DOI 10.17487/RFC5234, January 2008,
+              <http://www.rfc-editor.org/info/rfc5234>.
+
+   [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
+              Protocol (HTTP/1.1): Message Syntax and Routing",
+              RFC 7230, DOI 10.17487/RFC7230, June 2014,
+              <http://www.rfc-editor.org/info/rfc7230>.
+
+   [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
+              Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
+              DOI 10.17487/RFC7231, June 2014,
+              <http://www.rfc-editor.org/info/rfc7231>.
+
+8.2.  Informative References
+
+   [DSP]      Nilsson, M., "Description Set Profiles: A constraint
+              language for Dublin Core Application Profiles", 2008,
+              <http://dublincore.org/documents/dc-dsp/>.
+
+   [IANAMEDIAREG]
+              IANA, "Media Types", 2015,
+              <http://www.iana.org/assignments/media-types/>.
+
+   [JSONLD]   Sporny, M., Kellogg, G., and M. Lanthaler, "JSON-LD 1.0: A
+              JSON-based Serialization for Linked Data", 2015,
+              <http://www.w3.org/TR/json-ld/>.
+
+   [RFC3236]  Baker, M. and P. Stark, "The 'application/xhtml+xml' Media
+              Type", RFC 3236, DOI 10.17487/RFC3236, January 2002,
+              <http://www.rfc-editor.org/info/rfc3236>.
+
+
+
+
+
+
+
+Svensson                 Expires August 29, 2016               [Page 10]
+
+Internet-Draft         Negotiating Schemas in HTTP         February 2016
+
+
+   [RFC3864]  Klyne, G., Nottingham, M., and J. Mogul, "Registration
+              Procedures for Message Header Fields", BCP 90, RFC 3864,
+              DOI 10.17487/RFC3864, September 2004,
+              <http://www.rfc-editor.org/info/rfc3864>.
+
+   [RFC3870]  Swartz, A., "application/rdf+xml Media Type Registration",
+              RFC 3870, DOI 10.17487/RFC3870, September 2004,
+              <http://www.rfc-editor.org/info/rfc3870>.
+
+   [RFC6906]  Wilde, E., "The 'profile' Link Relation Type", RFC 6906,
+              DOI 10.17487/RFC6906, March 2013,
+              <http://www.rfc-editor.org/info/rfc6906>.
+
+   [SHACL]    Knublauch, H. and A. Ryman, "Shapes Constraint Language
+              (SHACL): W3C First Public Working Draft 08 October 2015",
+              2014, <http://www.w3.org/TR/shacl/>.
+
+   [TURTLE]   Prud'hommeaux, E. and G. Carothers, "RDF 1.1 Turtle",
+              2014, <http://www.w3.org/TR/turtle/>.
+
+   [XMLBEANS]
+              Apache Software Foundation, "XMLBeans", 2014,
+              <https://xmlbeans.apache.org/>.
+
+   [XMLSCHEMA]
+              Gao, S., Sperberg-McQueen, C., and H. Thompson, "W3C XML
+              Schema Definition Language (XSD) 1.1 Part 1: Structures",
+              2012, <https://www.w3.org/TR/xmlschema11-1/>.
+
+   [XSD]      Thompson, H., Beech, D., Maloney, M., and N. Mendelsohn,
+              "XML Schema Part 1: Structures Second Edition", 2004,
+              <http://www.w3.org/TR/xmlschema-1/>.
+
+Author's Address
+
+   Lars G. Svensson
+   Deutsche Nationalbibliothek
+   Adickesallee 1
+   Frankfurt  60322
+   Germany
+
+   Phone: +49 69 1525 1752
+   Email: l.svensson@dnb.de
+
+
+
+
+
+
+
+
+Svensson                 Expires August 29, 2016               [Page 11]

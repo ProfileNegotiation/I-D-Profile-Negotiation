@@ -1,0 +1,556 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!-- This template is for creating an Internet Draft using xml2rfc,
+    which is available here: http://xml.resource.org. -->
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!-- One method to get references from the online citation libraries.
+    There has to be one entity for each item to be referenced. 
+    An alternate method (rfc include) is described in the references. -->
+
+<!ENTITY RFC2119 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml">
+<!ENTITY RFC2629 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2629.xml">
+<!ENTITY RFC3236 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.3236.xml">
+<!ENTITY RFC3864 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.3864.xml">
+<!ENTITY RFC3870 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.3870.xml">
+<!ENTITY RFC5234 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5234.xml">
+<!ENTITY RFC6906 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6906.xml">
+<!ENTITY RFC7230 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7230.xml">
+<!ENTITY RFC7231 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7231.xml">
+
+]>
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<!-- used by XSLT processors -->
+<!-- For a complete list and description of processing instructions (PIs), 
+    please see http://xml.resource.org/authoring/README.html. -->
+<!-- Below are generally applicable Processing Instructions (PIs) that most I-Ds might want to use.
+    (Here they are set differently than their defaults in xml2rfc v1.32) -->
+<?rfc strict="yes" ?>
+<!-- give errors regarding ID-nits and DTD validation -->
+<!-- control the table of contents (ToC) -->
+<?rfc toc="yes"?>
+<!-- generate a ToC -->
+<?rfc tocdepth="4"?>
+<!-- the number of levels of subsections in ToC. default: 3 -->
+<!-- control references -->
+<?rfc symrefs="yes"?>
+<!-- use symbolic references tags, i.e, [RFC2119] instead of [1] -->
+<?rfc sortrefs="yes" ?>
+<!-- sort the reference entries alphabetically -->
+<!-- control vertical white space 
+    (using these PIs as follows is recommended by the RFC Editor) -->
+<?rfc compact="yes" ?>
+<!-- do not start each main section on a new page -->
+<?rfc subcompact="no" ?>
+<!-- keep one blank line between list items -->
+<!-- end of list of popular I-D processing instructions -->
+<rfc category="std" docName="draft-svensson-accept-schema-00" ipr="trust200902">
+	<!-- ***** FRONT MATTER ***** -->
+
+	<front>
+		<!-- The abbreviated title is used in the page header - it is only necessary if the 
+        full title is longer than 39 characters -->
+
+		<title>Negotiating Schemas in HTTP</title>
+
+		<author fullname="Lars G. Svensson" initials="L.G.S."
+				surname="Svensson">
+			<organization>Deutsche Nationalbibliothek</organization>
+
+			<address>
+				<postal>
+					<street>Adickesallee 1</street>
+
+					<code>60322</code>
+
+					<city>Frankfurt</city>
+
+					<region/>
+
+
+
+					<country>Germany</country>
+				</postal>
+
+				<phone>+49 69 1525 1752</phone>
+
+				<email>l.svensson@dnb.de</email>
+
+			</address>
+		</author>
+
+		<date year="2016" />
+
+		<!-- Meta-data Declarations -->
+
+		<area>General</area>
+
+		<workgroup>Internet Engineering Task Force</workgroup>
+
+		<!-- WG name at the upperleft corner of the doc,
+        IETF is fine for individual submissions.  
+	 If this element is not present, the default is "Network Working Group",
+        which is used by the RFC Editor as a nod to the history of the IETF. -->
+
+		<keyword>HTTP, Header, Content Negotiation</keyword>
+
+		<abstract>
+			<t>This document defines a new HTTP header that enables User Agents
+				and hosts to negotiate the schema used to describe a specific resource.
+				In this context, a schema is a document describing the syntactical
+				and/or semantical constraints of a group of other documents; examples
+				of schemas include Dublin Core Application Profiles, XML Schemata and 
+				RDF Shape Expressions.</t>
+		</abstract>
+	</front>
+
+	<middle>
+		<section title="Introduction">
+			<t>This document defines a new HTTP header that enables User Agents and
+				hosts to negotiate the schema used to describe a specific resource. In
+				the context of Linked Data, but also elsewhere, resources are identified
+				with HTTP URIs. In many cases, it can be desired to have multiple representations of a
+				resource. When a User Agent (UA) issues a GET request for a
+				specific URI, the User Agent and the server negotiate which of the
+				available representations best suit the UA's needs and capabilities. 
+				Typically a UA specifies a preference by setting the appropriate http
+				header, e. g. Accept for media type, Accept-Language for content language
+				or Accept-Charset for character encoding.</t>
+			<t>In many cases, there are several ways to describe a resource using a
+				structured format such as XML or one of the RDF serialisations. In the 
+				case of XML documents, for instance, the same content can be encoded
+				using one of several DTDs or XML Schemas, whereas in RDF there is a wide
+				choice of RDF vocabularies (classes and properties) available to describe
+				resources of the same type. E. g. do all three of foaf, the BBC Core Ontology and
+				the DBPedia ontology contain classes and properties to describe persons.
+				When a UA initiates a request, e. g. a GET request to retrieve
+				or a PUT request to create or replace a resource, neither the UA nor the
+				server have any possibility to exchange information on how the transmitted
+				resource will be structured. This document proposes a solution by
+				defining the HTTP headers Accept-Schema and Schema.</t>
+
+			<section title="Requirements Language">
+				<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+					"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+					document are to be interpreted as described in <xref
+							target="RFC2119">RFC 2119</xref>.</t>
+			</section>
+		</section>
+		<section title="Terminology and Implementation Options">
+			<section title="A Note on Terminology">
+				<t>In the context of this specification, a "schema" is a document 
+					that expresses the syntactical and/or semantical constraints of
+					other documents. Examples of "schema" in this context include, but are not
+					limited to, Dublin Core application profiles -- formally expressed in 
+					<xref target="DSP">Description Set Profiles (DSP)</xref> --, <xref
+							target="XSD">XML Schema documents</xref> and RDF
+						Shapes expressed in <xref target="SHACL">SHACL</xref>. How those schemata are used by consuming applications is
+					beyond the scope of this specification, but typical use cases are
+					validation of data received from another system and the automated creation
+					of objects from received data as in <xref target="XMLBEANS">Java
+						XMLBeans</xref>. The choice of term "schema", instead of e. g. 
+					"profile", was derived from its use in XML Schema and also from the
+					observation that "profile" seems to have a different meaning
+					in HTTP than in e. g. Dublin Core Application Profile. That RDF Shapes 
+					are often described as XML Schema for RDF (RDF Schema was already taken)
+					adds to the choice of "schema".</t>
+			</section>
+			<section anchor="options_considered" title="Other Implementation Options Considered">
+				<t>
+					A number of options were considered when specifying how schema negotiation 
+					could be implemented. Besides the registration of an appropriate accept header,
+					the options included the use profiles with the http "Accept" or "Link" header fields 
+					<xref target="RFC6906">RFC 6906</xref>.
+				</t>
+
+				<t>
+					<list style="numbers">
+						<t>According to RFC 6906, profiles are one possibility 
+								"to include additional information about the nature of the resource.
+								This would allow a client understanding this additional information 
+								to react in a way specific to that specialization of the resource, 
+								where the specialization of the resource, where the specialization 
+								can be about constraints, conventions, extensions or any other 
+								aspects that do not alter the basic media type semantics." It is 
+								questionable, however, if a "profile" and a "schema" carry the same
+								semantics, since the the profile is about media type semantics and 
+								the schema specifies the semantics of the content, irrespective of
+								how it is serialised.</t>
+
+						<t>Another way to convey profile information is through the 
+								http Accept header field as in <xref target="accept_with_profile"/>.
+							<figure align="center" anchor="accept_with_profile">
+								<preamble>Example:</preamble>
+								<artwork align="left">
+Accept: application/rdf+xml;
+        profile=&lt;urn:example:profiles:e-commerce-payment&gt;
+								</artwork>
+							</figure>
+								If this is possible depends on the media 
+								type. Of the media types commonly used for linked data, 
+								only two registrations in the <xref target="IANAMEDIAREG">IANA Media Type Registry</xref>
+								foresee the use of profiles: <xref target="RFC3236">application/xhtml+xml</xref>
+								and <xref target="JSONLD">application/ld+json</xref>.
+								E. g. <xref target="RFC3870">application/rdf+xml</xref> and 
+							<xref target="TURTLE">text/turtle</xref> do not
+								mention the use of profiles.</t>
+								
+						<t>A further possibility is to register "schema" as a relation type for the Link
+								header. A 
+								disadvantage of this solution is that there is no way to specify
+								a weight for the profile which limits the possibilities to perform 
+								proper content negotiation.</t>
+					</list>
+				</t>
+				<t>For the above reasons, both options were discarded and left the
+					registration of a new http header as the most viable way forward.</t>
+			</section>
+		</section>
+		<section title="Client and Server Behaviour">
+			<t>The "Accept-Schema" and "Schema" header fields can be sent by both
+				the UA and the server. The "Accept-Schema" header is used to specify
+				one or more schemas the Agent can accept, whereas the "Schema" header tells
+				the other Agent according to which schema the payload of the message is
+				structured. So can a UA issuing a request for a resource specify that
+				it prefers persons to be described using foaf, but that the BBC Core ontology 
+				is also acceptable, and that it can only accept text/turtle, by setting the "Accept" and "Accept-Schema"
+				header fields appropriately. When the server answers, it would set the 
+				"Content-Type" and "Schema" header fields. Likewise, a UA sending an XML document to a server would set
+				the the "Content-Type" and the "Schema" header fields. If the server cannot process the specified schema,
+				it would answer with an http 406 status code and possibly a list of acceptable schemas.</t>
+			<t>An "Accept-Schema" and "Schema" header field does not contain
+				the actual schema but instead points to it using a URI. As long as the URI 
+				is only used to denote the schema, the URI does not need to point to an
+				actual document but can be considered opaque. If the parties involved 
+				agree on a schema definition, the schema can be identified with e. g. a URN 
+				or an info-URI. When a protocol-based URI, such as an FTP- or an HTTP-URI
+				is used, however, it is RECOMMENDED that it dereference to a document containing
+				the schema definition. 
+			</t>
+			<section title="Accept-Schema Header Syntax">
+				<t>The "Accept-Schema" header field is used to specify one or more
+					content schemas the issuing agent can accept for processing.
+					Each schema is identified by a URI reference or -- e. g.
+					in the case of namespace-specific XML schemas (cf. 
+					<xref target="XMLSCHEMA">4.3.2 of XML Schema 1.1-1</xref>) -- a list of pairs of
+					URI references separated by whitespace similar to the syntax used in the xsi:schemaLocation attribute.
+					If several schemas are specified, quality values as defined in <xref target="RFC7230">Section 5.3.1 of
+					RFC 7230</xref> can be used to assign a relative "weight" to the preference.
+					Exactly how that weight is used to determine the best representation
+					is beyond the scope of this specification.</t>
+				<t>A request without any "Accept-Schema" header field implies that the user agent
+					will accept content conforming to any schema. If the header field is
+					present in a request and the origin server cannot provide a representation
+					that conforms to the specified schema, it can either honour the header field by sending a 406 (Not
+					Acceptable) response or disregard the header field by treating the
+					response as if it is not subject to content negotiation. If the the origin server 
+					chooses to disregard the header field and the schema the content conforms to is known,
+					the origin server SHOULD send a "Schema" header indicating that schema
+					together with the payload.</t>
+				<t><xref target="abnf_accept_schema"/> describes the syntax (Augmented Backus-Naur Form) of the
+					header fields, using the grammar defined in <xref target="RFC5234">RFC 5234</xref> and the rules
+					defined in <xref target="RFC7230">Section 3.2 of RFC 7230</xref>.
+					The definitions of "URI-reference" and "weight" are imported from
+					<xref target="RFC7230">RFC 7230</xref> and <xref target="RFC7231">RFC 7231</xref>,
+					respectively.</t>
+
+				<figure align="center" anchor="abnf_accept_schema">
+				<preamble>Accept-Schema header syntax</preamble>
+					<artwork align="left" type="abnf">
+Accept-Schema = "Accept-Schema" ":" (schema-value) *("," schema-value)
+schema-value =  "&lt;" URI-reference "&gt;" [weight] |
+                "&lt;" URI-reference "0x20" URI-reference
+                        *("0x20" URI-reference "0x20" URI-reference) "&gt;"
+						[weight]
+					</artwork>
+				</figure>
+			</section>
+			<section title="Schema Header Syntax">
+				<t>The "Schema" header field is used to specify a schema the payload in the
+					message conforms to. The schema is identified by a URI reference or -- e. g.
+					in the case of namespace-specific XML schemas (cf. <xref target="XMLSCHEMA">4.3.2 
+					of XML Schema 1.1-1</xref>) -- a list of pairs of URI references separated by whitespace similar to the syntax used in the xsi:schemaLocation attribute. If 
+					a client uses the "Accept-Schema" header to specify one or more
+					schemas it is willing to accept and a server does not use the "Schema" 
+					header to specify which schema the returned content conforms to, 
+					the client MAY process the returned content as it deems fit.</t>
+				<t>If a client uses the "Schema" header field to indicate the schema the
+					payload conforms to (e. g. in an HTTP POST or PUT request) and the server cannot process content conforming to that schema, the
+					server SHOULD send a 406 (Not acceptable) response together with an "Accept-schema"
+					header field (including q-values) to indicate the schemas it 
+					can process. Reasons for not sending a 406 response in such a case might be that
+					the the processing of the message payload leads to an internal server error. If in
+					such a case the server does not implement schema negotiation, the server is
+					more likely to return a 500 (Internal server error) response instead of 406.</t>
+				<t><xref target="abnf_schema"/> describes the syntax (Augmented Backus-Naur Form) of the
+					header fields, using the grammar defined in <xref target="RFC5234">RFC 5234</xref> and the rules
+					defined in <xref target="RFC7230">Section 3.2 of RFC 7230</xref>.
+					The definition of "URI-reference" is imported from
+					<xref target="RFC7230">RFC 7230</xref>.</t>
+				<figure align="center" anchor="abnf_schema">
+				<preamble>Schema header syntax</preamble>
+					<artwork align="left" type="abnf">
+Schema = "Schema" ":"  "&lt;" URI-reference "&gt;" |
+                       "&lt;" URI-reference "0x20" URI-reference 
+                       *( "0x20" URI-reference "0x20" URI-reference) "&gt;"
+					</artwork>
+				</figure>
+			</section>
+
+		</section>
+		<section title="Examples">
+			<t>The following examples highlight the exchange of schema information between a client and a server. For clarity, the examples only contain minimal information, i. e.
+			only the relevant headers are included and message bodies are ignored.
+				<figure align="left" anchor="example_1">
+					<preamble>A client requests an XML document conforming to a specific XML schema. The schema is identified by "urn:example:schema:e-commerce-payment".</preamble>
+					<artwork align="left">
+Request:
+GET /some-resource HTTP/1.1
+Accept: application/xml
+Accept-Schema: &lt;urn:example:schema:e-commerce-payment&gt;
+
+Response:
+HTTP/1.1 200 OK
+Content-Type: application/xml
+Schema: &lt;urn:example:schema:e-commerce-payment&gt;
+					</artwork>
+				</figure>
+				<figure align="left" anchor="example_2">
+					<preamble>A client requests an RDF/XML document conforming to one of two RDF Shape (http://example.com/shapes/shape-1 and http://example.com/shapes/shape-2). It uses q-values to express a preference for shape-1, the server, however, prefers to deliver in shape-2.</preamble>
+					<artwork align="left">
+Request:
+GET /some-resource HTTP/1.1
+Accept: application/rdf+xml
+Accept-Schema: &lt;http://example.com/shapes/shape-1&gt;; q=0.8,
+               &lt;http://example.com/shapes/shape-2&gt;; q=0.5
+
+Response:
+HTTP/1.1 200 OK
+Content-Type: application/rdf+xml
+Schema: &lt;http://example.com/shapes/shape-2&gt;
+					</artwork>
+				</figure>
+				<figure align="left" anchor="example_3">
+					<preamble>A client PUTs a turtle document conforming to the RDF Shape http://example.com/shapes/shape-1. The server answers that it can only process documents conforming to http://example.com/shapes/shape-2.</preamble>
+					<artwork align="left">
+Request:
+PUT /some-resource HTTP/1.1
+Schema: &lt;http://example.com/shapes/shape-1&gt;
+
+Response:
+HTTP/1.1 406 Not acceptable
+Content-Type: application/xhtml+xml
+Accept-Schema: &lt;http://example.com/shapes/shape-2&gt;
+					</artwork>
+				</figure>
+				<figure align="left" anchor="example_4">
+					<preamble>A client requests an XML document where the elements in namespace urn:example:namespaces:ns1 must conform to XML schema http://example.com/schema/schema-1 and the elements in namespace urn:example:namespaces:ns2 must conform to XML schema http://example.com/schema/schema-2. The server answers that it can supply the document as requested.</preamble>
+					<artwork align="left">
+Request:
+GET /some-resource HTTP/1.1
+Accept-Schema: 	&lt;urn:example:namespaces:ns1
+				http://example.com/schema/schema-1
+				urn:example:namespaces:ns2
+				http://example.com/schema/schema-2&gt;
+
+Response:
+HTTP/1.1 200 OK
+Content-Type: application/xml
+Schema: &lt;urn:example:namespaces:ns1
+		http://example.com/schema/schema-1
+		urn:example:namespaces:ns2
+		http://example.com/schema/schema-2&gt;
+					</artwork>
+				</figure>
+			</t>
+
+		</section>
+
+
+		<section anchor="Acknowledgements" title="Acknowledgements">
+			<t>This is the place to have YOUR NAME prominently displayed!</t>
+
+		</section>
+
+		<!-- Possibly a 'Contributors' section ... -->
+
+		<section anchor="IANA" title="IANA Considerations">
+			<t>This specification defines two header field for the Hypertext
+				Transfer Protocol (HTTP) that have been registered with the Internet
+				Assigned Numbers Authority (IANA) following the "Registration
+				Procedures for Message Header Fields" <xref target="RFC3864">RFC 3864</xref>.
+				[TO BE REMOVED: This
+				registration should take place at the following location:
+				http://www.iana.org/assignments/message-headers/message-headers.xhtml]</t>
+			<section title="Accept-Schema HTTP Header Registration" anchor="iana-accept-schema">
+				<t>The Accept-Schema header should be added to the permanent
+					registry of message header fields (see <xref target="RFC3864">RFC 3864</xref>), taking into
+					account the guidelines given by HTTP/1.1 <xref target="RFC7231">RFC 7231</xref>".</t>
+
+				<t>Header Field Name: Accept-Schema</t>
+
+				<t>Applicable Protocol: Hypertext Transfer Protocol (HTTP)</t>
+
+				<t>Status: Standard</t>
+
+				<t>Author/Change controller: IETF</t>
+
+				<t>Specification document(s): RFC XXXX</t>
+
+			</section>
+			<section title="Schema HTTP Header Registration" anchor="iana-schema">
+				<t>The Schema header should be added to the permanent
+					registry of message header fields (see <xref target="RFC3864">RFC 3864</xref>), taking into
+					account the guidelines given by HTTP/1.1 <xref target="RFC7231">RFC 7231</xref>".</t>
+
+				<t>Header Field Name: Schema</t>
+
+				<t>Applicable Protocol: Hypertext Transfer Protocol (HTTP)</t>
+
+				<t>Status: Standard</t>
+
+				<t>Author/Change controller: IETF</t>
+
+				<t>Specification document(s): RFC XXXX</t>
+			</section>
+		</section>
+		<section anchor="Security" title="Security Considerations">
+			<t>The Accept-Schema and Schema headers may expose information that a
+				User Agent or an origin server would
+				prefer to not publish.  In such a case, a server can simply stop
+				exposing the header, in which case HTTP interactions would be back to
+				the level of standard HTTP (i.e., with no indication what kind of
+				media types a resource accepts in POST requests).</t>
+		</section>
+	</middle>
+
+	<back>
+		<references title="Normative References">
+			&RFC2119;
+			&RFC5234;
+			&RFC7230;
+			&RFC7231;
+		</references>
+
+		<references title="Informative References">
+			&RFC3236;
+			&RFC3870;
+			&RFC3864;
+			&RFC6906;
+			<reference anchor="DSP" target="http://dublincore.org/documents/dc-dsp/">
+				<front>
+					<title>Description Set Profiles: A constraint language for Dublin Core Application Profiles</title>
+
+					<author initials="M." surname="Nilsson">
+						<organization>KTH</organization>
+					</author>
+
+					<date year="2008" />
+				</front>
+			</reference>
+			<reference anchor="IANAMEDIAREG"
+					target="http://www.iana.org/assignments/media-types/">
+				<front>
+					<title>Media Types</title>
+
+					<author>
+						<organization>IANA</organization>
+					</author>
+
+					<date year="2015" />
+				</front>
+			</reference>
+			<reference anchor="JSONLD"
+					target="http://www.w3.org/TR/json-ld/">
+				<front>
+					<title>JSON-LD 1.0: A JSON-based Serialization for Linked Data</title>
+
+					<author initials="M." surname="Sporny">
+						<organization>Digital Bazaar</organization>
+					</author>
+					<author initials="G." surname="Kellogg">
+						<organization>Kellogg Associates</organization>
+					</author>
+					<author initials="M." surname="Lanthaler">
+						<organization>Graz University of Technology</organization>
+					</author>
+
+					<date year="2015" />
+				</front>
+			</reference>
+			<reference anchor="SHACL" target="http://www.w3.org/TR/shacl/">
+				<front>
+					<title>Shapes Constraint Language (SHACL): W3C First Public Working Draft 08 October 2015</title>
+
+					<author initials="H." surname="Knublauch">
+						<organization>TopQuadrant, Inc.</organization>
+					</author>
+					<author initials="A." surname="Ryman">
+						<organization/>
+					</author>
+
+					<date year="2014" />
+				</front>
+			</reference>
+			<reference anchor="TURTLE" target="http://www.w3.org/TR/turtle/">
+				<front>
+					<title>RDF 1.1 Turtle</title>
+
+					<author initials="E." surname="Prud'hommeaux">
+						<organization>W3C</organization>
+					</author>
+					<author initials="G." surname="Carothers">
+						<organization>Lex Machina, Inc.</organization>
+					</author>
+
+					<date year="2014" />
+				</front>
+			</reference>
+			<reference anchor="XSD" target="http://www.w3.org/TR/xmlschema-1/">
+				<front>
+					<title>XML Schema Part 1: Structures Second Edition</title>
+
+					<author initials="H. S." surname="Thompson">
+						<organization>University of Edinburgh</organization>
+					</author>
+					<author initials="D." surname="Beech">
+						<organization>Oracle Corporation</organization>
+					</author>
+					<author initials="M." surname="Maloney">
+						<organization>Commerce One</organization>
+					</author>
+					<author initials="N." surname="Mendelsohn">
+						<organization>Lotus Development Corporation</organization>
+					</author>
+
+					<date year="2004" />
+				</front>
+			</reference>
+			<reference anchor="XMLBEANS" target="https://xmlbeans.apache.org/">
+				<front>
+					<title>XMLBeans</title>
+
+					<author>
+						<organization>Apache Software Foundation</organization>
+					</author>
+
+					<date year="2014" />
+				</front>
+			</reference>
+			<reference anchor="XMLSCHEMA" target="https://www.w3.org/TR/xmlschema11-1/">
+				<front>
+					<title>W3C XML Schema Definition Language (XSD) 1.1 Part 1: Structures</title>
+					<author initials="S." surname="Gao">
+						<organization>IBM</organization>
+					</author>
+					<author initials="C. M." surname="Sperberg-McQueen">
+						<organization>Black Mesa Technologies LLC</organization>
+					</author>
+					<author initials="H. S." surname="Thompson">
+						<organization>University of Edinburgh</organization>
+					</author>
+					<date year="2012"/>
+				</front>
+			</reference>
+		</references>
+	</back>
+</rfc>
+
