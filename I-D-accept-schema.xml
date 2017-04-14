@@ -95,7 +95,7 @@
 		<keyword>HTTP, Header, Content Negotiation</keyword>
 
 		<abstract>
-			<t>This document defines a two new HTTP headers that enables User Agents
+			<t>This document defines two new HTTP headers that enable User Agents
 				and hosts to negotiate the profile used to describe a specific resource.
 				In this context, a profile is a document describing the syntactical
 				and/or semantical constraints of a group of other documents; examples
