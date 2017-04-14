@@ -96,10 +96,12 @@
 
 		<abstract>
 			<t>This document defines two new HTTP headers that enable User Agents
-				and hosts to negotiate the profile used to describe a specific resource.
+        and hosts to express and negotiate the profile
+        used to represent a specific resource.
 				In this context, a profile is a document describing the syntactical
-				and/or semantical constraints of a group of other documents; examples
-				of profiles include Dublin Core Application Profiles, XML Schemata and 
+        and/or semantical constraints of a group of documents
+        on a more constraining level than what a MIME type provides.
+        Examples of profiles include Dublin Core Application Profiles, XML Schemata and 
 				RDF Shape Expressions. Further, it defines and registers the profile
 				parameter for the HTTP Link header and suggests a best practice for
 				the use of the new headers together with the Link header to perform content
