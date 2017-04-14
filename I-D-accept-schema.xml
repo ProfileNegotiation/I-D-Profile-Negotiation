@@ -96,7 +96,7 @@
 
 		<abstract>
 			<t>This document defines two new HTTP headers that enable User Agents
-				and hosts to express and negotiate the profile
+				and hosts to indicate and negotiate the profile
 				used to represent a specific resource.
 				In this context, a profile is a document describing the syntactical
 				and/or semantical constraints of a group of documents
@@ -112,26 +112,26 @@
 	<middle>
 		<section title="Introduction">
 			<t>This document defines two new HTTP headers that enable User Agents (UAs) and
-				hosts to negotiate the profile used to describe a specific resource. In
-				the context of Linked Data, but also elsewhere, resources are identified
-				with HTTP URIs. In many cases, it can be desired to have multiple representations of a
-				resource. When a User Agent (UA) issues a GET request for a
-				specific URI, the User Agent and the server negotiate which of the
+				hosts to indicate and negotiate the profile used to represent a specific resource.
+				On the Web, resources are identified with HTTP(S) URIs.
+				In many cases, it can be desired to have multiple representations of a
+				resource to accomodate different UAs or use cases.
+				When a UA issues a GET request for a
+				specific URI, the UA and the server negotiate which of the
 				available representations best suit the UA's needs and capabilities. 
-				Typically a UA specifies a preference by setting the appropriate http
-				header, e. g. Accept for media type, Accept-Language for content language
+				Typically a UA specifies preferences by setting appropriate HTTP
+				headers, e. g. Accept for media type, Accept-Language for content language
 				or Accept-Charset for character encoding.</t>
-			<t>In many cases, there are several ways to describe a resource using a
-				structured format such as XML or one of the RDF serialisations. In the 
-				case of XML documents, for instance, the same content can be encoded
+			<t>In many cases, there are several ways to describe a resource
+				within the scope of the media type.
+				In the case of XML documents, for instance, the same content can be encoded
 				using one of several DTDs or XML Schemas, whereas in RDF there is a wide
 				choice of RDF vocabularies (classes and properties) available to describe
-				resources of the same type. E. g. do all three of foaf, the BBC Core Ontology and
-				the DBPedia ontology contain classes and properties to describe persons.
-				When a UA initiates a request, e. g. a GET request to retrieve
+				resources of the same type.
+				When a UA initiates a request, e.g., a GET request to retrieve
 				or a PUT request to create or replace a resource, neither the UA nor the
 				server have any possibility to exchange information on how the transmitted
-				resource will be structured. This document proposes a solution by
+				resource will be structured precisely. This document proposes a solution by
 				defining the HTTP headers Accept-Profile and Profile.</t>
 
 			<section title="Requirements Language">
