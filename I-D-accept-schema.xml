@@ -98,9 +98,9 @@
 			<t>This document defines two new HTTP headers that enable User Agents
 				and hosts to indicate and negotiate the profile
 				used to represent a specific resource.
-				In this context, a profile is a document describing the syntactical
-				and/or semantical constraints of a group of documents
-				on a more constraining level than what a MIME type provides.
+				In this context, a profile is a document describing the structural
+				and/or semantic constraints of a group of documents
+				in addition to the syntactical interpretation provided by a MIME type.
 				Examples of profiles include Dublin Core Application Profiles, XML Schemata and 
 				RDF Shape Expressions. Further, it defines and registers the profile
 				parameter for the HTTP Link header and suggests a best practice for
@@ -144,7 +144,7 @@
 		<section title="Terminology and Implementation Options">
 			<section title="A Note on Terminology">
 				<t>In the context of this proposal, a "profile" is a document that expresses
-					the syntactical and/or semantic constraints of other documents. Examples
+					the structural and/or semantic constraints of other documents. Examples
 					of "profile" in this context include, but are not limited to, Dublin Core 
 					application profiles - formally expressed in 
 					<xref target="DSP">Description Set Profiles (DSP)</xref>
