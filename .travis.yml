@@ -5,6 +5,7 @@ install:
   - pip install xml2rfc
 script:
   - xml2rfc I-D-accept-schema.xml
+  - xml2rfc I-D-accept-schema.xml --html
 after_success:
   - ./.travis_build_pages
 cache:
