@@ -56,26 +56,32 @@
 		<author fullname="Lars G. Svensson" initials="L.G.S."
 				surname="Svensson">
 			<organization>Deutsche Nationalbibliothek</organization>
-
 			<address>
 				<postal>
 					<street>Adickesallee 1</street>
-
 					<code>60322</code>
-
 					<city>Frankfurt</city>
-
 					<region/>
-
-
-
 					<country>Germany</country>
 				</postal>
-
 				<phone>+49 69 1525 1752</phone>
-
 				<email>l.svensson@dnb.de</email>
+			</address>
+		</author>
 
+		<author fullname="Ruben Verborgh" initials="R.V."
+				surname="Verborgh">
+			<organization>Ghent University &#8211; imec</organization>
+			<address>
+				<postal>
+					<street>Sint-Pietersnieuwstraat 41</street>
+					<code>9000</code>
+					<city>Ghent</city>
+					<region/>
+					<country>Belgium</country>
+				</postal>
+				<phone>+32 9 331 49 10</phone>
+				<email>ruben.verborgh@ugent.be</email>
 			</address>
 		</author>
 
