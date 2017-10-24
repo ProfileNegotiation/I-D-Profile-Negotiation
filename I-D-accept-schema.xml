@@ -234,8 +234,8 @@ Link: 	rel="self";
 								<preamble>Example:</preamble>
 								<artwork align="left">
 GET /some/resource HTTP/1.1
-Accept: text/turtle;q=0.9;profile=&lt;urn:example:profile-1&gt;,
-		text/turtle;q=0.7;profile=&lt;urn:example:profile-2&gt;
+Accept: text/turtle;q=0.9;profile="urn:example:profile-1",
+		text/turtle;q=0.7;profile="urn:example:profile-2";
 
 HTTP/1.1 200 OK
 Content-Type: text/turtle;profile=&lt;urn:example:profile-2&gt;
