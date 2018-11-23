@@ -309,7 +309,7 @@ Preference-Applied: profile=&lt;urn:example:schema&gt;
 			<section title="Accept-Profile Header Syntax">
 				<t>The "Accept-Profile" header field is used to specify one or more
 					content profiles the issuing agent can accept for processing.
-					Each profile is identified by a URI reference inside angle brackets ("<>").
+					Each profile is identified by a URI reference inside angle brackets ("&lt;&gt;").
 					URI references MUST be absolute URIs.
 					If several profiles are specified,
 					quality values as defined in <xref target="RFC7230">Section 5.3.1 of RFC 7230</xref>
