@@ -305,7 +305,9 @@ Content-Location: /some/resource.as.jsonld
 					whose targets identify respectively the current representation
 					and other existing representations.
 					The Link header can thereby serve as a mechanism
-					for discovering what profiles the sender supports.
+					for discovering supported representations and profiles.
+					The profile relation type defined in <xref target="RFC6906">RFC 6906</xref>
+					can be used to relate a representation to a profile to which it conforms.
 				</t>
 				<t>
 					The self relation type overlaps with the functionality
@@ -313,6 +315,11 @@ Content-Location: /some/resource.as.jsonld
 					and they will likely use the same identifier.
 					The alternate relation essentially provides Content-Location functionality
 					for other available representations.
+					Finally, the profile relation type
+					mimics the profile parameter in the Content-Type field,
+					except that conformance of a representation to multiple profiles
+					could be expressed through multiple profile links,
+					whereas Content-Type only accepts one profile parameter.
 				</t>
 			</section>
 		</section>

@@ -85,14 +85,14 @@ Table of Contents
      4.1.  Mechanisms  . . . . . . . . . . . . . . . . . . . . . . .   8
      4.2.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .   8
    5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  10
-     5.1.  Accept-Profile HTTP Header Registration . . . . . . . . .  10
+     5.1.  Accept-Profile HTTP Header Registration . . . . . . . . .  11
      5.2.  Profile HTTP Header Registration  . . . . . . . . . . . .  11
    6.  Security Considerations . . . . . . . . . . . . . . . . . . .  11
-   7.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  11
-   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  11
-     8.1.  Normative References  . . . . . . . . . . . . . . . . . .  11
+   7.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  12
+   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  12
+     8.1.  Normative References  . . . . . . . . . . . . . . . . . .  12
      8.2.  Informative References  . . . . . . . . . . . . . . . . .  12
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  13
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  14
 
 1.  Introduction
 
@@ -282,13 +282,19 @@ Svensson & Verborgh       Expires May 27, 2019                  [Page 5]
 Internet-Draft        Negotiating Profiles in HTTP         November 2017
 
 
-   serve as a mechanism for discovering what profiles the sender
-   supports.
+   serve as a mechanism for discovering supported representations and
+   profiles.  The profile relation type defined in RFC 6906 [RFC6906]
+   can be used to relate a representation to a profile to which it
+   conforms.
 
    The self relation type overlaps with the functionality provided by
    the Content-Location field, and they will likely use the same
    identifier.  The alternate relation essentially provides Content-
-   Location functionality for other available representations.
+   Location functionality for other available representations.  Finally,
+   the profile relation type mimics the profile parameter in the
+   Content-Type field, except that conformance of a representation to
+   multiple profiles could be expressed through multiple profile links,
+   whereas Content-Type only accepts one profile parameter.
 
 3.  New http Headers
 
@@ -324,12 +330,6 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
    profile is identified by a URI reference or -- e. g.  in the case of
    namespace-specific XML schemas (cf.  4.3.2 of XML Schema 1.1-1
    [XMLSCHEMA]) -- a list of pairs of URI references separated by
-   whitespace similar to the syntax used in the xsi:schemaLocation
-   attribute.  If several profiles are specified, quality values as
-   defined in Section 5.3.1 of RFC 7230 [RFC7230] can be used to assign
-   a relative "weight" to the preference.  Exactly how that weight is
-   used to determine the best representation is beyond the scope of this
-   specification.
 
 
 
@@ -337,6 +337,13 @@ Svensson & Verborgh       Expires May 27, 2019                  [Page 6]
 
 Internet-Draft        Negotiating Profiles in HTTP         November 2017
 
+
+   whitespace similar to the syntax used in the xsi:schemaLocation
+   attribute.  If several profiles are specified, quality values as
+   defined in Section 5.3.1 of RFC 7230 [RFC7230] can be used to assign
+   a relative "weight" to the preference.  Exactly how that weight is
+   used to determine the best representation is beyond the scope of this
+   specification.
 
    A request without any "Accept-Profile" header field implies that the
    user agent will accept content conforming to any profile.  If the
@@ -378,14 +385,7 @@ profile-value =  "<" URI-reference ">" [weight] |
    which profile the returned content conforms to, the client MAY
    process the returned content as it deems fit.
 
-   If a client uses the "Profile" header field to indicate the profile
-   the payload conforms to (e. g. in an HTTP POST or PUT request) and
-   the server cannot process content conforming to that profile, the
-   server SHOULD send a 406 (Not acceptable) response together with an
-   "Accept-Profile" header field (including q-values) to indicate the
-   profiles it can process.  Reasons for not sending a 406 response in
-   such a case might be that the the processing of the message payload
-   leads to an internal server error.  If in such a case the server does
+
 
 
 
@@ -394,6 +394,14 @@ Svensson & Verborgh       Expires May 27, 2019                  [Page 7]
 Internet-Draft        Negotiating Profiles in HTTP         November 2017
 
 
+   If a client uses the "Profile" header field to indicate the profile
+   the payload conforms to (e. g. in an HTTP POST or PUT request) and
+   the server cannot process content conforming to that profile, the
+   server SHOULD send a 406 (Not acceptable) response together with an
+   "Accept-Profile" header field (including q-values) to indicate the
+   profiles it can process.  Reasons for not sending a 406 response in
+   such a case might be that the the processing of the message payload
+   leads to an internal server error.  If in such a case the server does
    not implement profile negotiation, the server is more likely to
    return a 500 (Internal server error) response instead of 406.
 
@@ -421,6 +429,27 @@ Profile = "Profile" ":"  "<" URI-reference ">" |
    contain minimal information, i. e.  only the relevant headers are
    included and message bodies are ignored.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Svensson & Verborgh       Expires May 27, 2019                  [Page 8]
+
+Internet-Draft        Negotiating Profiles in HTTP         November 2017
+
+
    A client requests an XML document conforming to a specific XML
    schema.  The XML schema is identified by "urn:example:schema:e-
    commerce-payment".
@@ -442,13 +471,6 @@ Profile = "Profile" ":"  "<" URI-reference ">" |
                    profile="<urn:example:schema:e-commerce-accounting>"
 
                                  Figure 3
-
-
-
-Svensson & Verborgh       Expires May 27, 2019                  [Page 8]
-
-Internet-Draft        Negotiating Profiles in HTTP         November 2017
-
 
    A client requests an RDF/XML document conforming to one of two RDF
    Shapes (http://example.com/shapes/shape-1 and
@@ -475,6 +497,15 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
 
                                  Figure 4
 
+
+
+
+
+Svensson & Verborgh       Expires May 27, 2019                  [Page 9]
+
+Internet-Draft        Negotiating Profiles in HTTP         November 2017
+
+
    A client PUTs a turtle document conforming to the RDF Shape
    http://example.com/shapes/shape-1.  The server answers that it can
    only process documents conforming to http://example.com/shapes/shape-
@@ -490,21 +521,6 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
    Accept-Profile: <http://example.com/shapes/shape-2>
 
                                  Figure 5
-
-
-
-
-
-
-
-
-
-
-
-Svensson & Verborgh       Expires May 27, 2019                  [Page 9]
-
-Internet-Draft        Negotiating Profiles in HTTP         November 2017
-
 
    A client requests an XML document where the elements in namespace
    urn:example:namespaces:ns1 must conform to XML schema
@@ -538,6 +554,14 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
    Procedures for Message Header Fields" RFC 3864 [RFC3864].  [TO BE
    REMOVED: This registration should take place at the following
    location: http://www.iana.org/assignments/message-headers/message-
+
+
+
+Svensson & Verborgh       Expires May 27, 2019                 [Page 10]
+
+Internet-Draft        Negotiating Profiles in HTTP         November 2017
+
+
    headers.xhtml] Further, it defines a parameter for the "Link" header.
    There is no registry for link-param except for the values listed in
    RFC 8288 [RFC8288] so the parameter "profile" will be seen as a link-
@@ -554,13 +578,6 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
    Applicable Protocol: Hypertext Transfer Protocol (HTTP)
 
    Status: Standard
-
-
-
-Svensson & Verborgh       Expires May 27, 2019                 [Page 10]
-
-Internet-Draft        Negotiating Profiles in HTTP         November 2017
-
 
    Author/Change controller: IETF
 
@@ -591,6 +608,16 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
    HTTP (i.e., with no indication what profiles the UA or the server
    prefer and/or can handle).
 
+
+
+
+
+
+Svensson & Verborgh       Expires May 27, 2019                 [Page 11]
+
+Internet-Draft        Negotiating Profiles in HTTP         November 2017
+
+
 7.  Acknowledgements
 
    This is the place to have YOUR NAME prominently displayed!
@@ -608,15 +635,6 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
               Specifications: ABNF", STD 68, RFC 5234,
               DOI 10.17487/RFC5234, January 2008,
               <https://www.rfc-editor.org/info/rfc5234>.
-
-
-
-
-
-Svensson & Verborgh       Expires May 27, 2019                 [Page 11]
-
-Internet-Draft        Negotiating Profiles in HTTP         November 2017
-
 
    [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Message Syntax and Routing",
@@ -646,6 +664,16 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
               JSON-based Serialization for Linked Data", 2015,
               <http://www.w3.org/TR/json-ld/>.
 
+
+
+
+
+
+Svensson & Verborgh       Expires May 27, 2019                 [Page 12]
+
+Internet-Draft        Negotiating Profiles in HTTP         November 2017
+
+
    [rachelandheery]
               Heery, R. and M. Patel, "Application Profiles: Mixing and
               Matching Metadata Schemas", 2000,
@@ -663,16 +691,6 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
    [RFC3870]  Swartz, A., "application/rdf+xml Media Type Registration",
               RFC 3870, DOI 10.17487/RFC3870, September 2004,
               <https://www.rfc-editor.org/info/rfc3870>.
-
-
-
-
-
-
-Svensson & Verborgh       Expires May 27, 2019                 [Page 12]
-
-Internet-Draft        Negotiating Profiles in HTTP         November 2017
-
 
    [RFC6839]  Hansen, T. and A. Melnikov, "Additional Media Type
               Structured Syntax Suffixes", RFC 6839,
@@ -702,6 +720,16 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
               Apache Software Foundation, "XMLBeans", 2014,
               <https://xmlbeans.apache.org/>.
 
+
+
+
+
+
+Svensson & Verborgh       Expires May 27, 2019                 [Page 13]
+
+Internet-Draft        Negotiating Profiles in HTTP         November 2017
+
+
    [XMLSCHEMA]
               Gao, S., Sperberg-McQueen, C., and H. Thompson, "W3C XML
               Schema Definition Language (XSD) 1.1 Part 1: Structures",
@@ -723,13 +751,6 @@ Authors' Addresses
    Email: l.svensson@dnb.de
 
 
-
-
-Svensson & Verborgh       Expires May 27, 2019                 [Page 13]
-
-Internet-Draft        Negotiating Profiles in HTTP         November 2017
-
-
    Ruben Verborgh
    Ghent University - imec
    Sint-Pietersnieuwstraat 41
@@ -738,27 +759,6 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
 
    Phone: +32 9 331 49 10
    Email: ruben.verborgh@ugent.be
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
