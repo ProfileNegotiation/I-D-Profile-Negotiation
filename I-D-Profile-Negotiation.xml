@@ -202,7 +202,7 @@ Link: &lt;http://example.com/profile-1&gt;; rel="profile"
 					<t>Another way to use the Link" header directly, without using the "profile" relation.
 					It is unclear if this usage
 					can be applied in an http request, where the value of the link's context IRI is undefined 
-					unless the uaser agent uses the "anchor" parameter to specify that, and even when the user agent
+					unless the user agent uses the "anchor" parameter to specify that, and even when the user agent
 					explicitly sets an anchor it is not specified if the relation between the anchor IRI and the
 					related resource remains the same when a server redirects a user agent to another resource using e. g.
 					the HTTP 301 or 303 status codes. This could be solved by letting the UA request a
