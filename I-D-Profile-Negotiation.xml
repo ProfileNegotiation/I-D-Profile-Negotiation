@@ -106,12 +106,12 @@
 				used to represent a specific resource.
 				In this context, a profile is a document describing the structural
 				and/or semantic constraints of a group of documents
-				in addition to the syntactical interpretation provided by a MIME type.
+				in addition to the syntactical interpretation provided by a media type.
 				Examples of profiles include Dublin Core Application Profiles, XML Schemata and 
 				RDF Shape Expressions. Further, it defines and registers the profile
 				parameter for the HTTP Link header and suggests a best practice for
 				the use of the new headers together with the Link header to perform content
-				negotiation and point clients to alternate representations.</t>
+				negotiation and point user agents to alternate representations.</t>
 		</abstract>
 	</front>
 
@@ -139,7 +139,7 @@
 					or a PUT request to create or replace a resource, neither the UA nor the
 					server have any possibility to exchange information on how the transmitted
 					resource will be structured precisely. This document proposes a solution by
-					defining the HTTP headers Accept-Profile and Profile.</t>
+					defining the HTTP headers Accept-Profile and Content-Profile.</t>
 			</section>
 			<section title="Terminology">
 				<t>In the context of this proposal, a "profile" is a document that expresses
@@ -183,7 +183,7 @@
 					associate a resource with a document describing "additional semantics that can be used to process a
 					resource representation, such as constraints, conventions,
 					extensions, or any other aspects that do not alter the basic media
-					type semantics." This header can be used for a client to specify what profile it would
+					type semantics." This header can be used for a user agent to specify what profile it would
 					the requested resource to conform to. This option offers no possibility to use q-values
 					and thus does not allow the UA and the server to properly negotiate which profile to use.
 					<figure align="center" anchor="rfc6906-example">
@@ -202,9 +202,9 @@ Link: &lt;http://example.com/profile-1&gt;; rel="profile"
 					<t>Another way to use the Link" header directly, without using the "profile" relation.
 					It is unclear if this usage
 					can be applied in an http request, where the value of the link's context IRI is undefined 
-					unless the client uses the "anchor" parameter to specify that, and even when the client 
+					unless the uaser agent uses the "anchor" parameter to specify that, and even when the user agent
 					explicitly sets an anchor it is not specified if the relation between the anchor IRI and the
-					related resource remains the same when a server redirects a client to another resource using e. g.
+					related resource remains the same when a server redirects a user agent to another resource using e. g.
 					the HTTP 301 or 303 status codes. This could be solved by letting the UA request a
 					preferred profile by using the "Link" header together with the "profile" relation as described above and
 					having the server specify which profile the returned resource conforms to and also
@@ -256,15 +256,15 @@ Content-Type: text/turtle;profile=&lt;urn:example:profile-2&gt;
 						headers as specified in <xref target="RFC7240">RFC 7240</xref>. This approach
 						has two disadvantages. The first is - as with the "Link" header, that there
 						is no possibility to work with q-values. The second one is that the only
-						way for a server to state that it ignored the preference stated by the client
-						is to omit sending a "Preference-Applied" header. For the client - however -
+						way for a server to state that it ignored the preference stated by the user agent
+						is to omit sending a "Preference-Applied" header. For the user agent - however -
 						it is not clear if the "Preference-Applied" header is absent because the server
 						did not honour the preference, or if it is because the server did not understand
 						the "Prefer" header in the first place. This could be solved by making it mandatory
 						to send a "Link: rel=profile" header when answering to a request with a
-						"Prefer: profile=''" header in it. This solution requires that a client evaluates
+						"Prefer: profile=''" header in it. This solution requires that a user agent evaluates
 						two different headers in order to find a response to its request for a specific profile,
-						which would make client implementation more complicated.
+						which would make user agent implementation more complicated.
 						<figure align="center" anchor="rfc7240-example">
 							<preamble>Example:</preamble>
 							<artwork align="left">
@@ -282,94 +282,110 @@ Preference-Applied: profile=&lt;urn:example:schema&gt;
 			</t>
 		</section>
 		<section title="New http Headers">
-			<t>The "Accept-Profile" and "Profile" header fields can be sent by both
+			<t>The "Accept-Profile" and "Content-Profile" header fields can be sent by both
 				the UA and the server. The "Accept-Profile" header is used to specify
-				one or more profiles the Agent can accept, whereas the "Profile" header tells
-				the other Agent according to which profile the payload of the message is
-				structured. So can a UA issuing a request for a resource specify that
+				one or more profiles the Agent can accept,
+				whereas the "Content-Profile" header tells the other Agent 
+				which profile or profiles the payload of the message conforms to.
+				So can a UA issuing a request for a resource specify that
 				it prefers persons to be described using foaf, but that the BBC Core ontology 
 				is also acceptable, and that it can only accept text/turtle, by setting the "Accept" and "Accept-Profile"
-				header fields appropriately. When the server answers, it would set the 
-				"Content-Type" and "Profile" header fields. Likewise, a UA sending an XML document to a server would set
-				the the "Content-Type" and the "Profile" header fields. If the server cannot process the specified profile,
+				header fields appropriately.
+				When the server answers, it would set the "Content-Type" and "Content-Profile" header fields.
+				Likewise, a UA sending an XML document to a server
+				would set	the the "Content-Type" and the "Content-Profile" header fields.
+				If the server cannot process the specified profile,
 				it would answer with an http 406 status code and possibly a list of acceptable profiles.</t>
-			<t>An "Accept-Profile" and "Profile" header field do not contain
-				the actual profile but instead points to it using a URI. As long as the URI 
-				is only used to denote the profile, the URI does not need to point to an
-				actual document but can be considered opaque. If the parties involved 
-				agree on a profile definition, the profile can be identified with e. g. a URN 
-				or an info-URI. When a protocol-based URI, such as an FTP- or an HTTP-URI
-				is used, however, it is RECOMMENDED that it dereference to a document containing
-				the profile definition. 
+			<t>The "Accept-Profile" and "Content-Profile" header field
+				do not contain the actual profile but instead points to it using a URI.
+				As long as the URI 	is only used to denote the profile,
+				it does not need to point to an	actual document but can be considered opaque.
+				If the parties involved agree on a profile definition,
+				the profile can be identified with e. g. a URN or an info-URI.
+				When a protocol-based URI is used, such as an FTP- or an HTTP-URI	is used, however,
+				it is RECOMMENDED that it dereference to a document
+				containing the profile definition. 
 			</t>
 			<section title="Accept-Profile Header Syntax">
 				<t>The "Accept-Profile" header field is used to specify one or more
 					content profiles the issuing agent can accept for processing.
-					Each profile is identified by a URI reference or -- e. g.
-					in the case of namespace-specific XML schemas (cf. 
-					<xref target="XMLSCHEMA">4.3.2 of XML Schema 1.1-1</xref>) -- a list of pairs of
-					URI references separated by whitespace similar to the syntax used in the xsi:schemaLocation attribute.
-					If several profiles are specified, quality values as defined in <xref target="RFC7230">Section 5.3.1 of
-					RFC 7230</xref> can be used to assign a relative "weight" to the preference.
+					Each profile is identified by a URI reference inside angle brackets ("<>").
+					URI references MUST be absolute URIs.
+					If several profiles are specified,
+					quality values as defined in <xref target="RFC7230">Section 5.3.1 of RFC 7230</xref>
+					can be used to assign a relative "weight" to the preference.
 					Exactly how that weight is used to determine the best representation
 					is beyond the scope of this specification.</t>
 				<t>A request without any "Accept-Profile" header field implies that the user agent
-					will accept content conforming to any profile. If the header field is
-					present in a request and the origin server cannot provide a representation
-					that conforms to the specified profile, it can either honour the header field by sending a 406 (Not
-					Acceptable) response or disregard the header field by treating the
-					response as if it is not subject to content negotiation. If the the origin server 
-					chooses to disregard the header field and the profile the content conforms to is known,
-					the origin server SHOULD send a "Profile" header indicating that profile
-					together with the payload.</t>
-				<t><xref target="abnf_accept_schema"/> describes the syntax (Augmented Backus-Naur Form) of the
-					header fields, using the grammar defined in <xref target="RFC5234">RFC 5234</xref> and the rules
+					will accept content conforming to any profile.
+					If the header field is present in a request
+					and the origin server cannot provide a representation
+					that conforms to the specified profile,
+					it can either honour the header field by sending a 406 (Not	Acceptable) response
+					or disregard the header field by treating the	response as if it is not subject to content negotiation.
+					If the the origin server chooses to disregard the header field 
+					and the profile the content conforms to is known,
+					the origin server SHOULD send an "AcceptProfile" header
+					indicating that profile	together with the payload.</t>
+				<t>An agent that wants to indicate that several profiles are acceptable,
+					can either submit one Accept-Profile field for every profile that is acceptable
+					(possibly specifying q-values for each profile URI)
+					or it can decide to combine all profile-URIs into a comma-separated list
+					and send that list in a single Accept-Profile field.
+					A recipient MUST treat a list of profile URIs in a single Accept-Profile field
+					and multiple Accept-Profile fields as equivalent as specified in
+					<xref target="RFC7230">Section 3.2.2 of RFC 7230</xref>.</t>
+				<t><xref target="abnf_accept_profile"/> describes the syntax (Augmented Backus-Naur Form)
+					of the Accept-Profile header fields,
+					using the grammar defined in <xref target="RFC5234">RFC 5234</xref> and the rules
 					defined in <xref target="RFC7230">Section 3.2 of RFC 7230</xref>.
 					The definitions of "URI-reference" and "weight" are imported from
 					<xref target="RFC7230">RFC 7230</xref> and <xref target="RFC7231">RFC 7231</xref>,
 					respectively.</t>
 
-				<figure align="center" anchor="abnf_accept_schema">
+				<figure align="center" anchor="abnf_accept_profile">
 				<preamble>Accept-Profile header syntax</preamble>
 					<artwork align="left" type="abnf">
 Accept-Profile = "Accept-Profile" ":" (profile-value) *("," profile-value)
-profile-value =  "&lt;" URI-reference "&gt;" [weight] |
-                "&lt;" URI-reference "0x20" URI-reference
-                        *("0x20" URI-reference "0x20" URI-reference) "&gt;"
-						[weight]
+profile-value =  "&lt;" URI-reference "&gt;" [weight] 
 					</artwork>
 				</figure>
 			</section>
 			<section title="Content-Profile Header Syntax">
 				<t>The "Content-Profile" header field is used to specify a profile the payload in the
-					message conforms to. The profile is identified by a URI reference or -- e. g.
-					in the case of namespace-specific XML schemas (cf. <xref target="XMLSCHEMA">4.3.2 
-					of XML Schema 1.1-1</xref>) -- a list of pairs of URI references separated by
-					whitespace similar to the syntax used in the xsi:schemaLocation attribute. If 
-					a client uses the "Accept-Profile" header to specify one or more
-					profiles it is willing to accept and a server does not use the "Profile" 
-					header to specify which profile the returned content conforms to, 
-					the client MAY process the returned content as it deems fit.</t>
-				<t>If a client uses the "Profile" header field to indicate the profile the
-					payload conforms to (e. g. in an HTTP POST or PUT request) and the
-					server cannot process content conforming to that profile, the
-					server SHOULD send a 406 (Not acceptable) response together with an "Accept-Profile"
-					header field (including q-values) to indicate the profiles it 
-					can process. Reasons for not sending a 406 response in such a case might be that
-					the the processing of the message payload leads to an internal server error. If in
-					such a case the server does not implement profile negotiation, the server is
-					more likely to return a 500 (Internal server error) response instead of 406.</t>
-				<t><xref target="abnf_schema"/> describes the syntax (Augmented Backus-Naur Form) of the
+					message conforms to.
+					The profile is identified by a URI reference that MUST be an absolute URI.
+					If a user agent uses the "Accept-Profile" header
+					to specify one or more profiles it is willing to accept
+					and a server does not use the "Content-Profile"	header to
+					specify which profile the returned content conforms to, 
+					the user agent MAY process the returned content as it deems fit.</t>
+				<t>The Content-Profile field MAY contain a comma-separated list of profile-URIs.
+					In that case the recipient SHOULD interpret this as if the payload of the message
+				  conforms to all of the profiles identified by the supplied profile URIs.
+				  Instead of sending a comma-separated list of profile URIs in the Content-Profile header field,
+					and agent MAY choose to send each profile URI in its own Content-Profile header field.
+					Receivers MUST treat those two variants as equal.</t>
+				<t>If a user agent uses the "Content-Profile" header field
+					to indicate the profile the	payload conforms to
+					(e. g. in an HTTP POST or PUT request)
+					and the	server cannot process content conforming to that profile,
+					the	server SHOULD send a 406 (Not acceptable) response
+					together with an "Accept-Profile"	header field (including q-values)
+					to indicate the profiles it can process.
+					Reasons for not sending a 406 response in such a case might be
+					that the the processing of the message payload leads to an internal server error.
+					If in	such a case the server does not implement profile negotiation,
+					the server is	more likely to return a 500 (Internal server error) response instead of 406.</t>
+				<t><xref target="abnf_content_profile"/> describes the syntax (Augmented Backus-Naur Form) of the
 					header fields, using the grammar defined in <xref target="RFC5234">RFC 5234</xref> and the rules
 					defined in <xref target="RFC7230">Section 3.2 of RFC 7230</xref>.
 					The definition of "URI-reference" is imported from
 					<xref target="RFC7230">RFC 7230</xref>.</t>
-				<figure align="center" anchor="abnf_schema">
+				<figure align="center" anchor="abnf_content_profile">
 				<preamble>Profile header syntax</preamble>
 					<artwork align="left" type="abnf">
-Profile = "Profile" ":"  "&lt;" URI-reference "&gt;" |
-                       "&lt;" URI-reference "0x20" URI-reference 
-                       *( "0x20" URI-reference "0x20" URI-reference) "&gt;"
+Content-Profile = "Content-Profile" ":"  "&lt;" URI-reference "&gt;" *("," "&lt;" URI-reference "&gt;")
 					</artwork>
 				</figure>
 			</section>
@@ -378,11 +394,11 @@ Profile = "Profile" ":"  "&lt;" URI-reference "&gt;" |
 			<section title="Mechanisms">
 			</section>
 			<section title="Examples">
-				<t>The following examples highlight the exchange of profile information between a client
+				<t>The following examples highlight the exchange of profile information between a user agent
 				and a server. For clarity, the examples only contain minimal information, i. e.
 				only the relevant headers are included and message bodies are ignored.
 					<figure align="left" anchor="example_1">
-						<preamble>A client requests an XML document conforming to a specific XML schema.
+						<preamble>A user agent requests an XML document conforming to a specific XML schema.
 						The XML schema is identified by "urn:example:schema:e-commerce-payment".</preamble>
 						<artwork align="left">
 Request:
@@ -403,7 +419,7 @@ Link: 	rel="self";
 						</artwork>
 					</figure>
 					<figure align="left" anchor="example_2">
-						<preamble>A client requests an RDF/XML document conforming to one of
+						<preamble>A user agent requests an RDF/XML document conforming to one of
 						two RDF Shapes (http://example.com/shapes/shape-1 and http://example.com/shapes/shape-2).
 						It uses q-values to express a preference for shape-1, the server, however,
 						prefers to deliver in shape-2.</preamble>
@@ -427,7 +443,7 @@ Link:	rel="self";
 						</artwork>
 					</figure>
 					<figure align="left" anchor="example_3">
-						<preamble>A client PUTs a turtle document conforming to the RDF Shape
+						<preamble>A user agent PUTs a turtle document conforming to the RDF Shape
 						http://example.com/shapes/shape-1. The server answers that it can only process
 						documents conforming to http://example.com/shapes/shape-2.</preamble>
 						<artwork align="left">
@@ -442,7 +458,7 @@ Accept-Profile: &lt;http://example.com/shapes/shape-2&gt;
 						</artwork>
 					</figure>
 					<figure align="left" anchor="example_4">
-						<preamble>A client requests an XML document where the elements in
+						<preamble>A user agent requests an XML document where the elements in
 						namespace urn:example:namespaces:ns1 must conform to XML schema http://example.com/schema/schema-1
 						and the elements in namespace urn:example:namespaces:ns2 must conform to XML schema
 						http://example.com/schema/schema-2. The server answers that it can supply the document as requested.</preamble>
@@ -478,7 +494,7 @@ Profile: &lt;urn:example:namespaces:ns1
 				Further, it defines a parameter for the "Link" header. There is no registry
 				for link-param except for the values listed in <xref target="RFC5988">[RFC5988]</xref>
 				so the parameter "profile" will be seen as a link-extension.</t>
-			<section title="Accept-Profile HTTP Header Registration" anchor="iana-accept-profile">
+			<section title="Accept-Profile HTTP Header Registration" anchor="iana_accept_profile">
 				<t>The Accept-Profile header should be added to the permanent
 					registry of message header fields (see <xref target="RFC3864">RFC 3864</xref>), taking into
 					account the guidelines given by HTTP/1.1 <xref target="RFC7231">RFC 7231</xref>".</t>
@@ -487,23 +503,23 @@ Profile: &lt;urn:example:namespaces:ns1
 
 				<t>Applicable Protocol: Hypertext Transfer Protocol (HTTP)</t>
 
-				<t>Status: Standard</t>
+				<t>Status: Informational</t>
 
 				<t>Author/Change controller: IETF</t>
 
 				<t>Specification document(s): RFC XXXX</t>
 
 			</section>
-			<section title="Profile HTTP Header Registration" anchor="iana-profile">
-				<t>The Profile header should be added to the permanent
+			<section title="Content-Profile HTTP Header Registration" anchor="iana_content_profile">
+				<t>The Content-Profile header should be added to the permanent
 					registry of message header fields (see <xref target="RFC3864">RFC 3864</xref>), taking into
 					account the guidelines given by HTTP/1.1 <xref target="RFC7231">RFC 7231</xref>".</t>
 
-				<t>Header Field Name: Profile</t>
+				<t>Header Field Name: Content-Profile</t>
 
 				<t>Applicable Protocol: Hypertext Transfer Protocol (HTTP)</t>
 
-				<t>Status: Standard</t>
+				<t>Status: Informational</t>
 
 				<t>Author/Change controller: IETF</t>
 
