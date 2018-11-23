@@ -243,6 +243,22 @@
 			</section>
 
 			<section title="Accept">
+				<t>
+					The Accept header defined in <xref target="RFC7231">RFC 7231</xref>
+					is the counterpart of the Content-Type header.
+					Whereas Content-Type indicates the option the sender has chosen
+					for representing the message body,
+					Accept communicates the receipient's representation preferences beforehand.
+				</t>
+				<t>
+					The value of an Accept header field is a comma-separated list of MIME types,
+					each of which can optionally have parameters.
+					The q parameter is a number between 0.0 and 1.0
+					indicating the degree of preference for that MIME type.
+					Analogously to the Content-Type field,
+					the profile parameter defined in <xref target="RFC6906">RFC 6906</xref>
+					can be used to indicate a preference for a media-type-specific profile.
+				</t>
 			</section>
 
 			<section title="Link">
