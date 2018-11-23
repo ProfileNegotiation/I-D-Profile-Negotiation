@@ -261,10 +261,35 @@
 				</t>
 			</section>
 
-			<section title="Link">
+			<section title="Content-Location">
+				<t>
+					The Content-Location header (<xref target="RFC7231">RFC 7231</xref>)
+					can be used to provide an identifier
+					for the specific representation of a resource
+					that is enclosed in the message body.
+					For example, when a user agent issues the following request
+					for /some/resource:
+					<figure>
+						<artwork align="left">
+GET /some/resource HTTP/1.1
+Accept: application/ld+json; profile="https://www.w3.org/ns/activitystreams"
+						</artwork>
+					</figure>
+					The server might reply with:
+					<figure>
+						<artwork align="left">
+HTTP/1.1 200 OK
+Content-Type: application/ld+json; profile="https://www.w3.org/ns/activitystreams"
+Content-Location: /some/resource.as.jsonld
+						</artwork>
+					</figure>
+					This then indicates that this specific representation
+					is available directly, without content negotiation,
+					from /some/resource.as.jsonld.
+				</t>
 			</section>
 
-			<section title="Content-Location">
+			<section title="Link">
 			</section>
 		</section>
 
