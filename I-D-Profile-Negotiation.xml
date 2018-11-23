@@ -294,6 +294,26 @@ Content-Location: /some/resource.as.jsonld
 			</section>
 
 			<section title="Link">
+				<t>
+					The Link header (<xref target="RFC8288">RFC 8288</xref>)
+					allows the sender of a message to model additional relationships
+					from the represented resource to others.
+					Such relations are expressed as a link to a target
+					with a relation type and, optionally, target attributes.
+					Of particular interest for content negotiation
+					are the self and alternate relation types,
+					whose targets identify respectively the current representation
+					and other existing representations.
+					The Link header can thereby serve as a mechanism
+					for discovering what profiles the sender supports.
+				</t>
+				<t>
+					The self relation type overlaps with the functionality
+					provided by the Content-Location field,
+					and they will likely use the same identifier.
+					The alternate relation essentially provides Content-Location functionality
+					for other available representations.
+				</t>
 			</section>
 		</section>
 
