@@ -170,6 +170,76 @@
 
 		<section title="Related HTTP Headers">
 			<section title="Content-Type">
+				<t>
+					<xref target="RFC7231">RFC 7231</xref> defines the Content-Type HTTP header
+					for indicating the media type of a representation.
+					This header allows receipients to determine appropriate processing
+					for a received message body, such as the parser they need to use.
+					A Content-Type field value contains a MIME type,
+					such as text/html or application/json,
+					and can optionally have parameters,
+					such as charset.
+				</t>
+				<t>
+					In many current interactions,
+					senders of HTTP messages underspecify the MIME type of their messages.
+					They opt for common, generic media types
+					such as text/xml or application/json,
+					whereas the contents of their messages
+					actually implicitly conform to stricter assumptions.
+					These assumptions are communicated out of band
+					and then silently (if at all) implemented by recipients.
+					Because those assunptions are not specified explicitly,
+					clients cannot discover them at runtime
+					to adjust their processing accordingly.
+					Minting new media types is possible,
+					but this loses the formal relationship
+					with the generic media type,
+					which would need to be specified out of band.
+				</t>
+				<t>
+					The profile parameter, defined in <xref target="RFC6906">RFC 6906</xref>,
+					can be used in the Content-Type field in addition to a MIME type
+					to indicate a media-type-specific profile the representation conforms to.
+					Such profile parameters are often defined
+					within the specification of document formats.
+					For instance, <xref target="ActivityStreams2">Activity Streams 2.0</xref>
+					defines the equivalent media types
+					<figure>
+						<artwork>
+							application/activity+json
+						</artwork>
+					</figure>
+					and
+					<figure>
+						<artwork>
+							application/ld+json; profile="https://www.w3.org/ns/activitystreams"
+						</artwork>
+					</figure>
+					On the one hand,
+					this example shows the usage of the profile parameter
+					to increase the specificity of an existing media type.
+					On the other hand,
+					it reveals the limitations of MIME types:
+					application/activity+json by itself
+					does not inform clients without prior knowledge of this media type
+					that the message body is a JSON document and a JSON-LD document,
+					i.e., also necessarily conforms to the application/json
+					and application/ld+json MIME types.
+					Clients without built-in support for application/activity+json
+					will not be informed about their possible ability
+					to parse a message body as JSON or JSON-LD,
+					and clients that do have support
+					will likely need to involve JSON and JSON-LD parsers regardless.
+				</t>
+				<t>
+					The need to mint specific media types for profiles
+					becomes a combinatorial issue when
+					profiles can apply to multiple media types,
+					or when representations can conform to multiple profiles.
+					This document introduces a solution by considering profiles
+					as an additional, independent dimension in content negotiation.
+				</t>
 			</section>
 
 			<section title="Accept">
@@ -449,6 +519,21 @@ Profile: &lt;urn:example:namespaces:ns1
 					</author>
 
 					<date year="2008" />
+				</front>
+			</reference>
+			<reference anchor="ActivityStreams2"
+					target="https://www.w3.org/TR/activitystreams-core/">
+				<front>
+					<title>Activity Streams 2.0</title>
+
+					<author initials="J. M." surname="Snell">
+						<organization>IBM</organization>
+					</author>
+					<author initials="E." surname="Prodromou">
+						<organization>Fuzzy.ai</organization>
+					</author>
+
+					<date year="2017" />
 				</front>
 			</reference>
 			<reference anchor="IANAMEDIAREG"
