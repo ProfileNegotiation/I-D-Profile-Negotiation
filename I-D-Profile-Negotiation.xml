@@ -377,7 +377,7 @@ Profile = "Profile" ":"  "&lt;" URI-reference "&gt;" |
 		<section title="Content Negotiation">
 			<section title="Mechanisms">
 			</section>
-			<section title="Examples>
+			<section title="Examples">
 				<t>The following examples highlight the exchange of profile information between a client
 				and a server. For clarity, the examples only contain minimal information, i. e.
 				only the relevant headers are included and message bodies are ignored.
