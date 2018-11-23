@@ -1,0 +1,671 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!-- This template is for creating an Internet Draft using xml2rfc,
+		which is available here: http://xml.resource.org. -->
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!-- One method to get references from the online citation libraries.
+		There has to be one entity for each item to be referenced. 
+		An alternate method (rfc include) is described in the references. -->
+
+<!ENTITY RFC2119 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml">
+<!ENTITY RFC2629 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2629.xml">
+<!ENTITY RFC3236 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.3236.xml">
+<!ENTITY RFC3864 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.3864.xml">
+<!ENTITY RFC3870 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.3870.xml">
+<!ENTITY RFC5234 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5234.xml">
+<!ENTITY RFC5988 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5988.xml">
+<!ENTITY RFC6906 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6906.xml">
+<!ENTITY RFC7230 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7230.xml">
+<!ENTITY RFC7231 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7231.xml">
+<!ENTITY RFC7240 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7240.xml">
+
+]>
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<!-- used by XSLT processors -->
+<!-- For a complete list and description of processing instructions (PIs), 
+		please see http://xml.resource.org/authoring/README.html. -->
+<!-- Below are generally applicable Processing Instructions (PIs) that most I-Ds might want to use.
+		(Here they are set differently than their defaults in xml2rfc v1.32) -->
+<?rfc strict="yes" ?>
+<!-- give errors regarding ID-nits and DTD validation -->
+<!-- control the table of contents (ToC) -->
+<?rfc toc="yes"?>
+<!-- generate a ToC -->
+<?rfc tocdepth="4"?>
+<!-- the number of levels of subsections in ToC. default: 3 -->
+<!-- control references -->
+<?rfc symrefs="yes"?>
+<!-- use symbolic references tags, i.e, [RFC2119] instead of [1] -->
+<?rfc sortrefs="yes" ?>
+<!-- sort the reference entries alphabetically -->
+<!-- control vertical white space 
+		(using these PIs as follows is recommended by the RFC Editor) -->
+<?rfc compact="yes" ?>
+<!-- do not start each main section on a new page -->
+<?rfc subcompact="no" ?>
+<!-- keep one blank line between list items -->
+<!-- end of list of popular I-D processing instructions -->
+<rfc category="std" docName="draft-svensson-accept-profile-00" ipr="trust200902">
+	<!-- ***** FRONT MATTER ***** -->
+
+	<front>
+		<!-- The abbreviated title is used in the page header - it is only necessary if the 
+				full title is longer than 39 characters -->
+
+		<title>Negotiating Profiles in HTTP</title>
+
+		<author fullname="Lars G. Svensson" initials="L.G.S."
+				surname="Svensson">
+			<organization>Deutsche Nationalbibliothek</organization>
+			<address>
+				<postal>
+					<street>Adickesallee 1</street>
+					<code>60322</code>
+					<city>Frankfurt</city>
+					<region/>
+					<country>Germany</country>
+				</postal>
+				<phone>+49 69 1525 1752</phone>
+				<email>l.svensson@dnb.de</email>
+			</address>
+		</author>
+
+		<author fullname="Ruben Verborgh" initials="R.V."
+				surname="Verborgh">
+			<organization>Ghent University &#8211; imec</organization>
+			<address>
+				<postal>
+					<street>Sint-Pietersnieuwstraat 41</street>
+					<code>9000</code>
+					<city>Ghent</city>
+					<region/>
+					<country>Belgium</country>
+				</postal>
+				<phone>+32 9 331 49 10</phone>
+				<email>ruben.verborgh@ugent.be</email>
+			</address>
+		</author>
+
+		<date year="2017" />
+
+		<!-- Meta-data Declarations -->
+
+		<area>General</area>
+
+		<workgroup>Internet Engineering Task Force</workgroup>
+
+		<!-- WG name at the upperleft corner of the doc,
+				IETF is fine for individual submissions.	
+	 If this element is not present, the default is "Network Working Group",
+				which is used by the RFC Editor as a nod to the history of the IETF. -->
+
+		<keyword>HTTP, Header, Content Negotiation</keyword>
+
+		<abstract>
+			<t>This document defines two new HTTP headers that enable User Agents
+				and hosts to indicate and negotiate the profile
+				used to represent a specific resource.
+				In this context, a profile is a document describing the structural
+				and/or semantic constraints of a group of documents
+				in addition to the syntactical interpretation provided by a MIME type.
+				Examples of profiles include Dublin Core Application Profiles, XML Schemata and 
+				RDF Shape Expressions. Further, it defines and registers the profile
+				parameter for the HTTP Link header and suggests a best practice for
+				the use of the new headers together with the Link header to perform content
+				negotiation and point clients to alternate representations.</t>
+		</abstract>
+	</front>
+
+	<middle>
+		<section title="Introduction">
+			<t>This document defines two new HTTP headers that enable User Agents (UAs) and
+				hosts to indicate and negotiate the profile used to represent a specific resource.
+				On the Web, resources are identified with HTTP(S) URIs.
+				In many cases, it can be desired to have multiple representations of a
+				resource to accomodate different UAs or use cases.
+				When a UA issues a GET request for a
+				specific URI, the UA and the server negotiate which of the
+				available representations best suit the UA's needs and capabilities. 
+				Typically a UA specifies preferences by setting appropriate HTTP
+				headers, e. g. Accept for media type, Accept-Language for content language
+				or Accept-Charset for character encoding.</t>
+			<section title="Motivation">
+				<t>In many cases, there are several ways to describe a resource
+					within the scope of the media type.
+					In the case of XML documents, for instance, the same content can be encoded
+					using one of several DTDs or XML Schemas, whereas in RDF there is a wide
+					choice of RDF vocabularies (classes and properties) available to describe
+					resources of the same type.
+					When a UA initiates a request, e.g., a GET request to retrieve
+					or a PUT request to create or replace a resource, neither the UA nor the
+					server have any possibility to exchange information on how the transmitted
+					resource will be structured precisely. This document proposes a solution by
+					defining the HTTP headers Accept-Profile and Profile.</t>
+			</section>
+			<section title="Terminology">
+				<t>In the context of this proposal, a "profile" is a document that expresses
+					the structural and/or semantic constraints of other documents. Examples
+					of "profile" in this context include, but are not limited to, Dublin Core 
+					application profiles - formally expressed in 
+					<xref target="DSP">Description Set Profiles (DSP)</xref>
+					-, <xref target="XSD">XML Schema documents</xref> and RDF Shapes expressed in 
+					<xref target="SHACL">SHACL</xref>. How those profiles are used by consuming applications is beyond the
+					scope of this proposal, but typical use cases are validation of data
+					received from another system and the automated creation of objects from
+					received data as in <xref target="XMLBEANS">Java XMLBeans</xref>. The
+					choice of the term "profile"was derived from the term "Application Profile"
+					which the Dublin Core community defines as "schemas which consist of data
+					elements drawn from one or more namespaces, combined together by implementors,
+					and optimised for a particular local application" <xref target="rachelandheery">[Rachel &amp; Heery]</xref>.
+				</t>
+			</section>
+			<section title="High-level overview of solution">
+			</section>
+			<section title="Notational Conventions">
+				<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+					"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+					document are to be interpreted as described in <xref
+							target="RFC2119">RFC 2119</xref>.</t>
+			</section>
+		</section>
+		<section title="Related http Headers">
+			<t>
+				A number of options were considered when specifying how schema negotiation 
+				could be implemented. Below is a record of those options listing the consequences
+				of using them:
+			</t>
+
+			<t>
+				<list style="numbers">
+					<t>The HTTP "Link" header <xref target="RFC5988">[RFC 5988]</xref> offers various
+					possibilities to relate a resource to other resources, e. g. to alternate representations
+					having different media types or content in another language. One of the specified relationtypes
+					is "profile" <xref target="RFC6906">[RFC 6906]</xref>, that offers the possibility to 
+					associate a resource with a document describing "additional semantics that can be used to process a
+					resource representation, such as constraints, conventions,
+					extensions, or any other aspects that do not alter the basic media
+					type semantics." This header can be used for a client to specify what profile it would
+					the requested resource to conform to. This option offers no possibility to use q-values
+					and thus does not allow the UA and the server to properly negotiate which profile to use.
+					<figure align="center" anchor="rfc6906-example">
+						<preamble>Example:</preamble>
+						<artwork align="left">
+HEAD /some/other/resource HTTP/1.1
+Accept: text/turtle;q=0.9,application/rdf+xml;q=0.5
+Link: &lt;http://example.com/profile-1&gt;; rel="profile"
+
+HTTP/1.1 200 OK
+Content-type: text/turtle
+Link: &lt;http://example.com/profile-1&gt;; rel="profile"
+						</artwork>
+					</figure>
+					</t>
+					<t>Another way to use the Link" header directly, without using the "profile" relation.
+					It is unclear if this usage
+					can be applied in an http request, where the value of the link's context IRI is undefined 
+					unless the client uses the "anchor" parameter to specify that, and even when the client 
+					explicitly sets an anchor it is not specified if the relation between the anchor IRI and the
+					related resource remains the same when a server redirects a client to another resource using e. g.
+					the HTTP 301 or 303 status codes. This could be solved by letting the UA request a
+					preferred profile by using the "Link" header together with the "profile" relation as described above and
+					having the server specify which profile the returned resource conforms to and also
+					link to alternate representations of the same resource. Currently, there is no target attribute 
+					linking to a resource's profile. In order to enable this, this document registers the "profile"
+					attribute to be used with the "Link" header.
+					<figure align="center" anchor="rfc5988-example">
+						<preamble>Example:</preamble>
+						<artwork align="left">
+GET some/resource HTTP/1.1
+Accept: application/xml
+Link: &lt;urn:example:schema-1&gt;; rel="profile"
+
+HTTP/1.1 200 OK
+Content-Type: application/xml
+Link: 	rel="self";
+		type="application/xml"
+		profile="&lt;urn:example:schema-1&gt;",
+		rel="alternate";
+		type="application/xml";
+		profile="&lt;urn:example:schema-2&gt;
+						</artwork>
+					</figure>
+					</t>
+
+					<t>A further way to convey profile information is through the 
+							http Accept and Content-Type header field as specified in <xref target="RFC7231">RFC 7231</xref>.
+						<figure align="center" anchor="accept_with_profile">
+							<preamble>Example:</preamble>
+							<artwork align="left">
+GET /some/resource HTTP/1.1
+Accept: text/turtle;q=0.9;profile="urn:example:profile-1",
+		text/turtle;q=0.7;profile="urn:example:profile-2";
+
+HTTP/1.1 200 OK
+Content-Type: text/turtle;profile=&lt;urn:example:profile-2&gt;
+							</artwork>
+						</figure>
+							If this is possible depends on the media 
+							type. Of the media types commonly used for linked data, 
+							only two registrations in the <xref target="IANAMEDIAREG">IANA Media Type Registry</xref>
+							foresee the use of profiles: <xref target="RFC3236">application/xhtml+xml</xref>
+							and <xref target="JSONLD">application/ld+json</xref>.
+							E. g. neither <xref target="RFC3870">application/rdf+xml</xref> nor 
+						<xref target="TURTLE">text/turtle</xref> do not
+							mention the use of profiles.
+					</t>
+					<t>A fourth option would be to use the http "Prefer" and "Preference-Applied"
+						headers as specified in <xref target="RFC7240">RFC 7240</xref>. This approach
+						has two disadvantages. The first is - as with the "Link" header, that there
+						is no possibility to work with q-values. The second one is that the only
+						way for a server to state that it ignored the preference stated by the client
+						is to omit sending a "Preference-Applied" header. For the client - however -
+						it is not clear if the "Preference-Applied" header is absent because the server
+						did not honour the preference, or if it is because the server did not understand
+						the "Prefer" header in the first place. This could be solved by making it mandatory
+						to send a "Link: rel=profile" header when answering to a request with a
+						"Prefer: profile=''" header in it. This solution requires that a client evaluates
+						two different headers in order to find a response to its request for a specific profile,
+						which would make client implementation more complicated.
+						<figure align="center" anchor="rfc7240-example">
+							<preamble>Example:</preamble>
+							<artwork align="left">
+GET /some/resource HTTP/1.1
+Accept: text/turtle
+Prefer: profile=&lt;urn:example:schema&gt;
+
+HTTP/1.1 200 OK
+Content-Type: text/turtle
+Preference-Applied: profile=&lt;urn:example:schema&gt;
+							</artwork>
+						</figure>
+					</t>
+				</list>
+			</t>
+		</section>
+		<section title="New http Headers">
+			<t>The "Accept-Profile" and "Profile" header fields can be sent by both
+				the UA and the server. The "Accept-Profile" header is used to specify
+				one or more profiles the Agent can accept, whereas the "Profile" header tells
+				the other Agent according to which profile the payload of the message is
+				structured. So can a UA issuing a request for a resource specify that
+				it prefers persons to be described using foaf, but that the BBC Core ontology 
+				is also acceptable, and that it can only accept text/turtle, by setting the "Accept" and "Accept-Profile"
+				header fields appropriately. When the server answers, it would set the 
+				"Content-Type" and "Profile" header fields. Likewise, a UA sending an XML document to a server would set
+				the the "Content-Type" and the "Profile" header fields. If the server cannot process the specified profile,
+				it would answer with an http 406 status code and possibly a list of acceptable profiles.</t>
+			<t>An "Accept-Profile" and "Profile" header field do not contain
+				the actual profile but instead points to it using a URI. As long as the URI 
+				is only used to denote the profile, the URI does not need to point to an
+				actual document but can be considered opaque. If the parties involved 
+				agree on a profile definition, the profile can be identified with e. g. a URN 
+				or an info-URI. When a protocol-based URI, such as an FTP- or an HTTP-URI
+				is used, however, it is RECOMMENDED that it dereference to a document containing
+				the profile definition. 
+			</t>
+			<section title="Accept-Profile Header Syntax">
+				<t>The "Accept-Profile" header field is used to specify one or more
+					content profiles the issuing agent can accept for processing.
+					Each profile is identified by a URI reference or -- e. g.
+					in the case of namespace-specific XML schemas (cf. 
+					<xref target="XMLSCHEMA">4.3.2 of XML Schema 1.1-1</xref>) -- a list of pairs of
+					URI references separated by whitespace similar to the syntax used in the xsi:schemaLocation attribute.
+					If several profiles are specified, quality values as defined in <xref target="RFC7230">Section 5.3.1 of
+					RFC 7230</xref> can be used to assign a relative "weight" to the preference.
+					Exactly how that weight is used to determine the best representation
+					is beyond the scope of this specification.</t>
+				<t>A request without any "Accept-Profile" header field implies that the user agent
+					will accept content conforming to any profile. If the header field is
+					present in a request and the origin server cannot provide a representation
+					that conforms to the specified profile, it can either honour the header field by sending a 406 (Not
+					Acceptable) response or disregard the header field by treating the
+					response as if it is not subject to content negotiation. If the the origin server 
+					chooses to disregard the header field and the profile the content conforms to is known,
+					the origin server SHOULD send a "Profile" header indicating that profile
+					together with the payload.</t>
+				<t><xref target="abnf_accept_schema"/> describes the syntax (Augmented Backus-Naur Form) of the
+					header fields, using the grammar defined in <xref target="RFC5234">RFC 5234</xref> and the rules
+					defined in <xref target="RFC7230">Section 3.2 of RFC 7230</xref>.
+					The definitions of "URI-reference" and "weight" are imported from
+					<xref target="RFC7230">RFC 7230</xref> and <xref target="RFC7231">RFC 7231</xref>,
+					respectively.</t>
+
+				<figure align="center" anchor="abnf_accept_schema">
+				<preamble>Accept-Profile header syntax</preamble>
+					<artwork align="left" type="abnf">
+Accept-Profile = "Accept-Profile" ":" (profile-value) *("," profile-value)
+profile-value =  "&lt;" URI-reference "&gt;" [weight] |
+                "&lt;" URI-reference "0x20" URI-reference
+                        *("0x20" URI-reference "0x20" URI-reference) "&gt;"
+						[weight]
+					</artwork>
+				</figure>
+			</section>
+			<section title="Content-Profile Header Syntax">
+				<t>The "Content-Profile" header field is used to specify a profile the payload in the
+					message conforms to. The profile is identified by a URI reference or -- e. g.
+					in the case of namespace-specific XML schemas (cf. <xref target="XMLSCHEMA">4.3.2 
+					of XML Schema 1.1-1</xref>) -- a list of pairs of URI references separated by
+					whitespace similar to the syntax used in the xsi:schemaLocation attribute. If 
+					a client uses the "Accept-Profile" header to specify one or more
+					profiles it is willing to accept and a server does not use the "Profile" 
+					header to specify which profile the returned content conforms to, 
+					the client MAY process the returned content as it deems fit.</t>
+				<t>If a client uses the "Profile" header field to indicate the profile the
+					payload conforms to (e. g. in an HTTP POST or PUT request) and the
+					server cannot process content conforming to that profile, the
+					server SHOULD send a 406 (Not acceptable) response together with an "Accept-Profile"
+					header field (including q-values) to indicate the profiles it 
+					can process. Reasons for not sending a 406 response in such a case might be that
+					the the processing of the message payload leads to an internal server error. If in
+					such a case the server does not implement profile negotiation, the server is
+					more likely to return a 500 (Internal server error) response instead of 406.</t>
+				<t><xref target="abnf_schema"/> describes the syntax (Augmented Backus-Naur Form) of the
+					header fields, using the grammar defined in <xref target="RFC5234">RFC 5234</xref> and the rules
+					defined in <xref target="RFC7230">Section 3.2 of RFC 7230</xref>.
+					The definition of "URI-reference" is imported from
+					<xref target="RFC7230">RFC 7230</xref>.</t>
+				<figure align="center" anchor="abnf_schema">
+				<preamble>Profile header syntax</preamble>
+					<artwork align="left" type="abnf">
+Profile = "Profile" ":"  "&lt;" URI-reference "&gt;" |
+                       "&lt;" URI-reference "0x20" URI-reference 
+                       *( "0x20" URI-reference "0x20" URI-reference) "&gt;"
+					</artwork>
+				</figure>
+			</section>
+		</section>
+		<section title="Content Negotiation">
+			<section title="Mechanisms">
+			</section>
+			<section title="Examples">
+				<t>The following examples highlight the exchange of profile information between a client
+				and a server. For clarity, the examples only contain minimal information, i. e.
+				only the relevant headers are included and message bodies are ignored.
+					<figure align="left" anchor="example_1">
+						<preamble>A client requests an XML document conforming to a specific XML schema.
+						The XML schema is identified by "urn:example:schema:e-commerce-payment".</preamble>
+						<artwork align="left">
+Request:
+GET /some-resource HTTP/1.1
+Accept: application/xml
+Accept-Profile: &lt;urn:example:schema:e-commerce-payment&gt;
+
+Response:
+HTTP/1.1 200 OK
+Content-Type: application/xml
+Profile: &lt;urn:example:schema:e-commerce-payment&gt;
+Link: 	rel="self";
+		type="application/xml";
+		profile="&lt;urn:example:schema:e-commerce-payment&gt;",
+		rel="alternate";
+		type="application/xml";
+		profile="&lt;urn:example:schema:e-commerce-accounting&gt;"
+						</artwork>
+					</figure>
+					<figure align="left" anchor="example_2">
+						<preamble>A client requests an RDF/XML document conforming to one of
+						two RDF Shapes (http://example.com/shapes/shape-1 and http://example.com/shapes/shape-2).
+						It uses q-values to express a preference for shape-1, the server, however,
+						prefers to deliver in shape-2.</preamble>
+					<artwork align="left">
+Request:
+GET /some-resource HTTP/1.1
+Accept: application/rdf+xml
+Accept-Profile: &lt;http://example.com/shapes/shape-1&gt;; q=0.8,
+               &lt;http://example.com/shapes/shape-2&gt;; q=0.5
+
+Response:
+HTTP/1.1 200 OK
+Content-Type: application/rdf+xml
+Profile: &lt;http://example.com/shapes/shape-2&gt;
+Link:	rel="self";
+		type="application/rdf+xml";
+		profile="&lt;http://example.com/shapes/shape-2&gt;",
+		rel="alternate";
+		type="application/rdf+xml";
+		profile="&lt;http://example.com/shapes/shape-3&gt;"
+						</artwork>
+					</figure>
+					<figure align="left" anchor="example_3">
+						<preamble>A client PUTs a turtle document conforming to the RDF Shape
+						http://example.com/shapes/shape-1. The server answers that it can only process
+						documents conforming to http://example.com/shapes/shape-2.</preamble>
+						<artwork align="left">
+Request:
+PUT /some-resource HTTP/1.1
+Profile: &lt;http://example.com/shapes/shape-1&gt;
+
+Response:
+HTTP/1.1 406 Not acceptable
+Content-Type: application/xhtml+xml
+Accept-Profile: &lt;http://example.com/shapes/shape-2&gt;
+						</artwork>
+					</figure>
+					<figure align="left" anchor="example_4">
+						<preamble>A client requests an XML document where the elements in
+						namespace urn:example:namespaces:ns1 must conform to XML schema http://example.com/schema/schema-1
+						and the elements in namespace urn:example:namespaces:ns2 must conform to XML schema
+						http://example.com/schema/schema-2. The server answers that it can supply the document as requested.</preamble>
+						<artwork align="left">
+Request:
+GET /some-resource HTTP/1.1
+Accept-Profile: 	&lt;urn:example:namespaces:ns1
+				http://example.com/schema/schema-1
+				urn:example:namespaces:ns2
+				http://example.com/schema/schema-2&gt;
+
+Response:
+HTTP/1.1 200 OK
+Content-Type: application/xml
+Profile: &lt;urn:example:namespaces:ns1
+		http://example.com/schema/schema-1
+		urn:example:namespaces:ns2
+		http://example.com/schema/schema-2&gt;
+						</artwork>
+					</figure>
+				</t>
+			</section>
+		</section>
+
+		<section anchor="IANA" title="IANA Considerations">
+			<t>This specification defines two header field for the Hypertext
+				Transfer Protocol (HTTP) that have been registered with the Internet
+				Assigned Numbers Authority (IANA) following the "Registration
+				Procedures for Message Header Fields" <xref target="RFC3864">RFC 3864</xref>.
+				[TO BE REMOVED: This
+				registration should take place at the following location:
+				http://www.iana.org/assignments/message-headers/message-headers.xhtml]
+				Further, it defines a parameter for the "Link" header. There is no registry
+				for link-param except for the values listed in <xref target="RFC5988">[RFC5988]</xref>
+				so the parameter "profile" will be seen as a link-extension.</t>
+			<section title="Accept-Profile HTTP Header Registration" anchor="iana-accept-profile">
+				<t>The Accept-Profile header should be added to the permanent
+					registry of message header fields (see <xref target="RFC3864">RFC 3864</xref>), taking into
+					account the guidelines given by HTTP/1.1 <xref target="RFC7231">RFC 7231</xref>".</t>
+
+				<t>Header Field Name: Accept-Profile</t>
+
+				<t>Applicable Protocol: Hypertext Transfer Protocol (HTTP)</t>
+
+				<t>Status: Standard</t>
+
+				<t>Author/Change controller: IETF</t>
+
+				<t>Specification document(s): RFC XXXX</t>
+
+			</section>
+			<section title="Profile HTTP Header Registration" anchor="iana-profile">
+				<t>The Profile header should be added to the permanent
+					registry of message header fields (see <xref target="RFC3864">RFC 3864</xref>), taking into
+					account the guidelines given by HTTP/1.1 <xref target="RFC7231">RFC 7231</xref>".</t>
+
+				<t>Header Field Name: Profile</t>
+
+				<t>Applicable Protocol: Hypertext Transfer Protocol (HTTP)</t>
+
+				<t>Status: Standard</t>
+
+				<t>Author/Change controller: IETF</t>
+
+				<t>Specification document(s): RFC XXXX</t>
+			</section>
+		</section>
+		<section anchor="Security" title="Security Considerations">
+			<t>The Accept-Profile and Content-Profile headers may expose information
+				that a User Agent or an origin server would prefer to not publish.
+				In such a case, a server can simply stop exposing the header,
+				in which case HTTP interactions would be back to the level of standard HTTP
+				(i.e., with no indication what profiles
+				the	UA or the server prefer and/or can handle).</t>
+		</section>
+		<section anchor="Acknowledgements" title="Acknowledgements">
+			<t>This is the place to have YOUR NAME prominently displayed!</t>
+		</section>
+		<!-- Possibly a 'Contributors' section ... -->
+	</middle>
+
+	<back>
+		<references title="Normative References">
+			&RFC2119;
+			&RFC5234;
+			&RFC7230;
+			&RFC7231;
+		</references>
+
+		<references title="Informative References">
+			&RFC3236;
+			&RFC3870;
+			&RFC3864;
+			&RFC5988;
+			&RFC6906;
+			&RFC7240;
+			<reference anchor="DSP" target="http://dublincore.org/documents/dc-dsp/">
+				<front>
+					<title>Description Set Profiles: A constraint language for Dublin Core Application Profiles</title>
+
+					<author initials="M." surname="Nilsson">
+						<organization>KTH</organization>
+					</author>
+
+					<date year="2008" />
+				</front>
+			</reference>
+			<reference anchor="IANAMEDIAREG"
+					target="http://www.iana.org/assignments/media-types/">
+				<front>
+					<title>Media Types</title>
+
+					<author>
+						<organization>IANA</organization>
+					</author>
+
+					<date year="2015" />
+				</front>
+			</reference>
+			<reference anchor="JSONLD"
+					target="http://www.w3.org/TR/json-ld/">
+				<front>
+					<title>JSON-LD 1.0: A JSON-based Serialization for Linked Data</title>
+
+					<author initials="M." surname="Sporny">
+						<organization>Digital Bazaar</organization>
+					</author>
+					<author initials="G." surname="Kellogg">
+						<organization>Kellogg Associates</organization>
+					</author>
+					<author initials="M." surname="Lanthaler">
+						<organization>Graz University of Technology</organization>
+					</author>
+
+					<date year="2015" />
+				</front>
+			</reference>
+			<reference anchor="rachelandheery" target="http://www.ariadne.ac.uk/issue25/app-profiles">
+				<front>
+					<title>Application Profiles: Mixing and Matching Metadata Schemas</title>
+					<author initials="R." surname="Heery">
+						<organization>UK Office for Library and Information networking (UKOLN), University of Bath</organization>
+					</author>
+					<author initials="M." surname="Patel">
+						<organization>UK Office for Library and Information networking (UKOLN), University of Bath</organization>
+					</author>
+					<date year="2000"/>
+				</front>
+			</reference>
+			<reference anchor="SHACL" target="http://www.w3.org/TR/shacl/">
+				<front>
+					<title>Shapes Constraint Language (SHACL): W3C First Public Working Draft 08 October 2015</title>
+
+					<author initials="H." surname="Knublauch">
+						<organization>TopQuadrant, Inc.</organization>
+					</author>
+					<author initials="A." surname="Ryman">
+						<organization/>
+					</author>
+
+					<date year="2014" />
+				</front>
+			</reference>
+			<reference anchor="TURTLE" target="http://www.w3.org/TR/turtle/">
+				<front>
+					<title>RDF 1.1 Turtle</title>
+
+					<author initials="E." surname="Prud'hommeaux">
+						<organization>W3C</organization>
+					</author>
+					<author initials="G." surname="Carothers">
+						<organization>Lex Machina, Inc.</organization>
+					</author>
+
+					<date year="2014" />
+				</front>
+			</reference>
+			<reference anchor="XSD" target="http://www.w3.org/TR/xmlschema-1/">
+				<front>
+					<title>XML Schema Part 1: Structures Second Edition</title>
+
+					<author initials="H. S." surname="Thompson">
+						<organization>University of Edinburgh</organization>
+					</author>
+					<author initials="D." surname="Beech">
+						<organization>Oracle Corporation</organization>
+					</author>
+					<author initials="M." surname="Maloney">
+						<organization>Commerce One</organization>
+					</author>
+					<author initials="N." surname="Mendelsohn">
+						<organization>Lotus Development Corporation</organization>
+					</author>
+
+					<date year="2004" />
+				</front>
+			</reference>
+			<reference anchor="XMLBEANS" target="https://xmlbeans.apache.org/">
+				<front>
+					<title>XMLBeans</title>
+
+					<author>
+						<organization>Apache Software Foundation</organization>
+					</author>
+
+					<date year="2014" />
+				</front>
+			</reference>
+			<reference anchor="XMLSCHEMA" target="https://www.w3.org/TR/xmlschema11-1/">
+				<front>
+					<title>W3C XML Schema Definition Language (XSD) 1.1 Part 1: Structures</title>
+					<author initials="S." surname="Gao">
+						<organization>IBM</organization>
+					</author>
+					<author initials="C. M." surname="Sperberg-McQueen">
+						<organization>Black Mesa Technologies LLC</organization>
+					</author>
+					<author initials="H. S." surname="Thompson">
+						<organization>University of Edinburgh</organization>
+					</author>
+					<date year="2012"/>
+				</front>
+			</reference>
+		</references>
+	</back>
+</rfc>
