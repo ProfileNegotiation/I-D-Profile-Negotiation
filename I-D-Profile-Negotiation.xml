@@ -259,7 +259,7 @@ Content-Type: text/turtle;profile=&lt;urn:example:profile-2&gt;
 						way for a server to state that it ignored the preference stated by the user agent
 						is to omit sending a "Preference-Applied" header. For the user agent - however -
 						it is not clear if the "Preference-Applied" header is absent because the server
-						did not honour the preference, or if it is because the server did not understand
+						did not honor the preference, or if it is because the server did not understand
 						the "Prefer" header in the first place. This could be solved by making it mandatory
 						to send a "Link: rel=profile" header when answering to a request with a
 						"Prefer: profile=''" header in it. This solution requires that a user agent evaluates
@@ -321,7 +321,7 @@ Preference-Applied: profile=&lt;urn:example:schema&gt;
 					If the header field is present in a request
 					and the origin server cannot provide a representation
 					that conforms to the specified profile,
-					it can either honour the header field by sending a 406 (Not	Acceptable) response
+					it can either honor the header field by sending a 406 (Not	Acceptable) response
 					or disregard the header field by treating the	response as if it is not subject to content negotiation.
 					If the the origin server chooses to disregard the header field 
 					and the profile the content conforms to is known,
