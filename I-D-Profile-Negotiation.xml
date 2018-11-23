@@ -293,10 +293,10 @@ Preference-Applied: profile=&lt;urn:example:schema&gt;
 				header fields appropriately.
 				When the server answers, it would set the "Content-Type" and "Content-Profile" header fields.
 				Likewise, a UA sending an XML document to a server
-				would set	the the "Content-Type" and the "Content-Profile" header fields.
+				would set	the "Content-Type" and the "Content-Profile" header fields.
 				If the server cannot process the specified profile,
 				it would answer with an http 406 status code and possibly a list of acceptable profiles.</t>
-			<t>The "Accept-Profile" and "Content-Profile" header field
+			<t>The "Accept-Profile" and "Content-Profile" header fields
 				do not contain the actual profile but instead points to it using a URI.
 				As long as the URI 	is only used to denote the profile,
 				it does not need to point to an	actual document but can be considered opaque.
