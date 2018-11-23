@@ -73,22 +73,26 @@ Table of Contents
      1.2.  Terminology . . . . . . . . . . . . . . . . . . . . . . .   3
      1.3.  High-level overview of solution . . . . . . . . . . . . .   3
      1.4.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
-   2.  Related http Headers  . . . . . . . . . . . . . . . . . . . .   3
+   2.  Related HTTP Headers  . . . . . . . . . . . . . . . . . . . .   3
+     2.1.  Content-Type  . . . . . . . . . . . . . . . . . . . . . .   4
+     2.2.  Accept  . . . . . . . . . . . . . . . . . . . . . . . . .   5
+     2.3.  Content-Location  . . . . . . . . . . . . . . . . . . . .   5
+     2.4.  Link  . . . . . . . . . . . . . . . . . . . . . . . . . .   5
    3.  New http Headers  . . . . . . . . . . . . . . . . . . . . . .   6
-     3.1.  Accept-Profile Header Syntax  . . . . . . . . . . . . . .   7
+     3.1.  Accept-Profile Header Syntax  . . . . . . . . . . . . . .   6
      3.2.  Content-Profile Header Syntax . . . . . . . . . . . . . .   7
    4.  Content Negotiation . . . . . . . . . . . . . . . . . . . . .   8
      4.1.  Mechanisms  . . . . . . . . . . . . . . . . . . . . . . .   8
      4.2.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .   8
    5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  10
-     5.1.  Accept-Profile HTTP Header Registration . . . . . . . . .  11
+     5.1.  Accept-Profile HTTP Header Registration . . . . . . . . .  10
      5.2.  Profile HTTP Header Registration  . . . . . . . . . . . .  11
    6.  Security Considerations . . . . . . . . . . . . . . . . . . .  11
-   7.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  12
-   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  12
-     8.1.  Normative References  . . . . . . . . . . . . . . . . . .  12
+   7.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  11
+   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  11
+     8.1.  Normative References  . . . . . . . . . . . . . . . . . .  11
      8.2.  Informative References  . . . . . . . . . . . . . . . . .  12
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  14
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  13
 
 1.  Introduction
 
@@ -101,10 +105,6 @@ Table of Contents
    the server negotiate which of the available representations best suit
    the UA's needs and capabilities.  Typically a UA specifies
    preferences by setting appropriate HTTP headers, e. g.  Accept for
-   media type, Accept-Language for content language or Accept-Charset
-   for character encoding.
-
-
 
 
 
@@ -113,6 +113,9 @@ Svensson & Verborgh       Expires May 27, 2019                  [Page 2]
 
 Internet-Draft        Negotiating Profiles in HTTP         November 2017
 
+
+   media type, Accept-Language for content language or Accept-Charset
+   for character encoding.
 
 1.1.  Motivation
 
@@ -154,14 +157,11 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
    document are to be interpreted as described in RFC 2119 [RFC2119].
 
-2.  Related http Headers
+2.  Related HTTP Headers
 
-   A number of options were considered when specifying how schema
-   negotiation could be implemented.  Below is a record of those options
-   listing the consequences of using them:
 
-   1.  The HTTP "Link" header [RFC 5988] [RFC5988] offers various
-       possibilities to relate a resource to other resources, e. g. to
+
+
 
 
 
@@ -170,54 +170,54 @@ Svensson & Verborgh       Expires May 27, 2019                  [Page 3]
 Internet-Draft        Negotiating Profiles in HTTP         November 2017
 
 
-       alternate representations having different media types or content
-       in another language.  One of the specified relationtypes is
-       "profile" [RFC 6906] [RFC6906], that offers the possibility to
-       associate a resource with a document describing "additional
-       semantics that can be used to process a resource representation,
-       such as constraints, conventions, extensions, or any other
-       aspects that do not alter the basic media type semantics."  This
-       header can be used for a client to specify what profile it would
-       the requested resource to conform to.  This option offers no
-       possibility to use q-values and thus does not allow the UA and
-       the server to properly negotiate which profile to use.
+2.1.  Content-Type
 
-                                 Example:
+   RFC 7231 [RFC7231] defines the Content-Type HTTP header for
+   indicating the media type of a representation.  This header allows
+   receipients to determine appropriate processing for a received
+   message body, such as the parser they need to use.  A Content-Type
+   field value contains a MIME type, such as text/html or application/
+   json, and can optionally have parameters, such as charset.
 
-   HEAD /some/other/resource HTTP/1.1
-   Accept: text/turtle;q=0.9,application/rdf+xml;q=0.5
-   Link: <http://example.com/profile-1>; rel="profile"
+   In many current interactions, senders of HTTP messages underspecify
+   the MIME type of their messages.  They opt for common, generic media
+   types such as text/xml or application/json, whereas the contents of
+   their messages actually implicitly conform to stricter assumptions.
+   These assumptions are communicated out of band and then silently (if
+   at all) implemented by recipients.  Because those assunptions are not
+   specified explicitly, clients cannot discover them at runtime to
+   adjust their processing accordingly.  Minting new media types is
+   possible, but this loses the formal relationship with the generic
+   media type, which would need to be specified out of band.
 
-   HTTP/1.1 200 OK
-   Content-type: text/turtle
-   Link: <http://example.com/profile-1>; rel="profile"
+   The profile parameter, defined in RFC 6906 [RFC6906], can be used in
+   the Content-Type field in addition to a MIME type to indicate a
+   media-type-specific profile the representation conforms to.  Such
+   profile parameters are often defined within the specification of
+   document formats.  For instance, Activity Streams 2.0
+   [ActivityStreams2] defines the equivalent media types
 
-                                 Figure 1
+                                                        application/activity+json
 
-   2.  Another way to use the Link" header directly, without using the
-       "profile" relation.  It is unclear if this usage can be applied
-       in an http request, where the value of the link's context IRI is
-       undefined unless the client uses the "anchor" parameter to
-       specify that, and even when the client explicitly sets an anchor
-       it is not specified if the relation between the anchor IRI and
-       the related resource remains the same when a server redirects a
-       client to another resource using e. g.  the HTTP 301 or 303
-       status codes.  This could be solved by letting the UA request a
-       preferred profile by using the "Link" header together with the
-       "profile" relation as described above and having the server
-       specify which profile the returned resource conforms to and also
-       link to alternate representations of the same resource.
-       Currently, there is no target attribute linking to a resource's
-       profile.  In order to enable this, this document registers the
-       "profile" attribute to be used with the "Link" header.
+   and
 
+                                                        application/ld+json; profile="https://www.w3.org/ns/activitystreams"
 
-
-
-
-
-
-
+   On the one hand, this example shows the usage of the profile
+   parameter to increase the specificity of an existing media type.  On
+   the other hand, it reveals the limitations of MIME types:
+   application/activity+json by itself does not inform clients without
+   prior knowledge of this media type that the message body is a JSON
+   document and a JSON-LD document, i.e., also necessarily conforms to
+   the application/json and application/ld+json MIME types.  Clients
+   without built-in support for application/activity+json only have the
+   +json suffix [RFC6839] as a non-binding suggestion that the content
+   conforms to application/json, and such an indicator does not exist
+   for JSON-LD and most other media types.  As such, those clients are
+   not informed about their possible ability to parse a message body as
+   JSON or JSON-LD.  Clients that do have support for application/
+   activity+json will likely need to involve JSON and JSON-LD parsers
+   regardless.
 
 
 
@@ -226,54 +226,54 @@ Svensson & Verborgh       Expires May 27, 2019                  [Page 4]
 Internet-Draft        Negotiating Profiles in HTTP         November 2017
 
 
-                                 Example:
+   The need to mint specific media types for profiles becomes a
+   combinatorial issue when profiles can apply to multiple media types,
+   or when representations can conform to multiple profiles.  This
+   document introduces a solution by considering profiles as an
+   additional, independent dimension in content negotiation.
 
-   GET some/resource HTTP/1.1
-   Accept: application/xml
-   Link: <urn:example:schema-1>; rel="profile"
+2.2.  Accept
 
-   HTTP/1.1 200 OK
-   Content-Type: application/xml
-   Link:   rel="self";
-                   type="application/xml"
-                   profile="<urn:example:schema-1>",
-                   rel="alternate";
-                   type="application/xml";
-                   profile="<urn:example:schema-2>
+   The Accept header defined in RFC 7231 [RFC7231] is the counterpart of
+   the Content-Type header.  Whereas Content-Type indicates the option
+   the sender has chosen for representing the message body, Accept
+   communicates the receipient's representation preferences beforehand.
 
-                                 Figure 2
+   The value of an Accept header field is a comma-separated list of MIME
+   types, each of which can optionally have parameters.  The q parameter
+   is a number between 0.0 and 1.0 indicating the degree of preference
+   for that MIME type.  Analogously to the Content-Type field, the
+   profile parameter defined in RFC 6906 [RFC6906] can be used to
+   indicate a preference for a media-type-specific profile.
 
-   3.  A further way to convey profile information is through the http
-       Accept and Content-Type header field as specified in RFC 7231
-       [RFC7231].
+2.3.  Content-Location
 
-                                 Example:
+   The Content-Location header (RFC 7231 [RFC7231]) can be used to
+   provide an identifier for the specific representation of a resource
+   that is enclosed in the message body.  For example, when a user agent
+   issues the following request for /some/resource:
 
-   GET /some/resource HTTP/1.1
-   Accept: text/turtle;q=0.9;profile="urn:example:profile-1",
-                   text/turtle;q=0.7;profile="urn:example:profile-2";
+GET /some/resource HTTP/1.1
+Accept: application/ld+json; profile="https://www.w3.org/ns/activitystreams"
 
-   HTTP/1.1 200 OK
-   Content-Type: text/turtle;profile=<urn:example:profile-2>
+   The server might reply with:
 
-                                 Figure 3
+HTTP/1.1 200 OK
+Content-Type: application/ld+json; profile="https://www.w3.org/ns/activitystreams"
+Content-Location: /some/resource.as.jsonld
 
-       If this is possible depends on the media type.  Of the media
-       types commonly used for linked data, only two registrations in
-       the IANA Media Type Registry [IANAMEDIAREG] foresee the use of
-       profiles: application/xhtml+xml [RFC3236] and application/ld+json
-       [JSONLD].  E. g. neither application/rdf+xml [RFC3870] nor text/
-       turtle [TURTLE] do not mention the use of profiles.
+   This then indicates that this specific representation is available
+   directly, without content negotiation, from /some/resource.as.jsonld.
 
-   4.  A fourth option would be to use the http "Prefer" and
-       "Preference-Applied" headers as specified in RFC 7240 [RFC7240].
-       This approach has two disadvantages.  The first is - as with the
-       "Link" header, that there is no possibility to work with
-       q-values.  The second one is that the only way for a server to
-       state that it ignored the preference stated by the client is to
-       omit sending a "Preference-Applied" header.  For the client -
-       however - it is not clear if the "Preference-Applied" header is
-       absent because the server did not honour the preference, or if it
+2.4.  Link
+
+   The Link header (RFC 8288 [RFC8288]) allows the sender of a message
+   to model additional relationships from the represented resource to
+   others.  Such relations are expressed as a link to a target with a
+   relation type and, optionally, target attributes.  Of particular
+   interest for content negotiation are the self and alternate relation
+   types, whose targets identify respectively the current representation
+   and other existing representations.  The Link header can thereby
 
 
 
@@ -282,25 +282,13 @@ Svensson & Verborgh       Expires May 27, 2019                  [Page 5]
 Internet-Draft        Negotiating Profiles in HTTP         November 2017
 
 
-       is because the server did not understand the "Prefer" header in
-       the first place.  This could be solved by making it mandatory to
-       send a "Link: rel=profile" header when answering to a request
-       with a "Prefer: profile=''" header in it.  This solution requires
-       that a client evaluates two different headers in order to find a
-       response to its request for a specific profile, which would make
-       client implementation more complicated.
+   serve as a mechanism for discovering what profiles the sender
+   supports.
 
-                                 Example:
-
-   GET /some/resource HTTP/1.1
-   Accept: text/turtle
-   Prefer: profile=<urn:example:schema>
-
-   HTTP/1.1 200 OK
-   Content-Type: text/turtle
-   Preference-Applied: profile=<urn:example:schema>
-
-                                 Figure 4
+   The self relation type overlaps with the functionality provided by
+   the Content-Location field, and they will likely use the same
+   identifier.  The alternate relation essentially provides Content-
+   Location functionality for other available representations.
 
 3.  New http Headers
 
@@ -329,15 +317,6 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
    RECOMMENDED that it dereference to a document containing the profile
    definition.
 
-
-
-
-
-Svensson & Verborgh       Expires May 27, 2019                  [Page 6]
-
-Internet-Draft        Negotiating Profiles in HTTP         November 2017
-
-
 3.1.  Accept-Profile Header Syntax
 
    The "Accept-Profile" header field is used to specify one or more
@@ -352,6 +331,13 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
    used to determine the best representation is beyond the scope of this
    specification.
 
+
+
+Svensson & Verborgh       Expires May 27, 2019                  [Page 6]
+
+Internet-Draft        Negotiating Profiles in HTTP         November 2017
+
+
    A request without any "Accept-Profile" header field implies that the
    user agent will accept content conforming to any profile.  If the
    header field is present in a request and the origin server cannot
@@ -363,7 +349,7 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
    conforms to is known, the origin server SHOULD send a "Profile"
    header indicating that profile together with the payload.
 
-   Figure 5 describes the syntax (Augmented Backus-Naur Form) of the
+   Figure 1 describes the syntax (Augmented Backus-Naur Form) of the
    header fields, using the grammar defined in RFC 5234 [RFC5234] and
    the rules defined in Section 3.2 of RFC 7230 [RFC7230].  The
    definitions of "URI-reference" and "weight" are imported from RFC
@@ -377,7 +363,7 @@ profile-value =  "<" URI-reference ">" [weight] |
                         *("0x20" URI-reference "0x20" URI-reference) ">"
                                                 [weight]
 
-                                 Figure 5
+                                 Figure 1
 
 3.2.  Content-Profile Header Syntax
 
@@ -386,14 +372,6 @@ profile-value =  "<" URI-reference ">" [weight] |
    URI reference or -- e. g.  in the case of namespace-specific XML
    schemas (cf. 4.3.2 of XML Schema 1.1-1 [XMLSCHEMA]) -- a list of
    pairs of URI references separated by whitespace similar to the syntax
-
-
-
-Svensson & Verborgh       Expires May 27, 2019                  [Page 7]
-
-Internet-Draft        Negotiating Profiles in HTTP         November 2017
-
-
    used in the xsi:schemaLocation attribute.  If a client uses the
    "Accept-Profile" header to specify one or more profiles it is willing
    to accept and a server does not use the "Profile" header to specify
@@ -408,10 +386,18 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
    profiles it can process.  Reasons for not sending a 406 response in
    such a case might be that the the processing of the message payload
    leads to an internal server error.  If in such a case the server does
+
+
+
+Svensson & Verborgh       Expires May 27, 2019                  [Page 7]
+
+Internet-Draft        Negotiating Profiles in HTTP         November 2017
+
+
    not implement profile negotiation, the server is more likely to
    return a 500 (Internal server error) response instead of 406.
 
-   Figure 6 describes the syntax (Augmented Backus-Naur Form) of the
+   Figure 2 describes the syntax (Augmented Backus-Naur Form) of the
    header fields, using the grammar defined in RFC 5234 [RFC5234] and
    the rules defined in Section 3.2 of RFC 7230 [RFC7230].  The
    definition of "URI-reference" is imported from RFC 7230 [RFC7230].
@@ -422,7 +408,7 @@ Profile = "Profile" ":"  "<" URI-reference ">" |
                        "<" URI-reference "0x20" URI-reference
                        *( "0x20" URI-reference "0x20" URI-reference) ">"
 
-                                 Figure 6
+                                 Figure 2
 
 4.  Content Negotiation
 
@@ -434,21 +420,6 @@ Profile = "Profile" ":"  "<" URI-reference ">" |
    between a client and a server.  For clarity, the examples only
    contain minimal information, i. e.  only the relevant headers are
    included and message bodies are ignored.
-
-
-
-
-
-
-
-
-
-
-
-Svensson & Verborgh       Expires May 27, 2019                  [Page 8]
-
-Internet-Draft        Negotiating Profiles in HTTP         November 2017
-
 
    A client requests an XML document conforming to a specific XML
    schema.  The XML schema is identified by "urn:example:schema:e-
@@ -470,7 +441,14 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
                    type="application/xml";
                    profile="<urn:example:schema:e-commerce-accounting>"
 
-                                 Figure 7
+                                 Figure 3
+
+
+
+Svensson & Verborgh       Expires May 27, 2019                  [Page 8]
+
+Internet-Draft        Negotiating Profiles in HTTP         November 2017
+
 
    A client requests an RDF/XML document conforming to one of two RDF
    Shapes (http://example.com/shapes/shape-1 and
@@ -495,16 +473,7 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
                    type="application/rdf+xml";
                    profile="<http://example.com/shapes/shape-3>"
 
-                                 Figure 8
-
-
-
-
-
-Svensson & Verborgh       Expires May 27, 2019                  [Page 9]
-
-Internet-Draft        Negotiating Profiles in HTTP         November 2017
-
+                                 Figure 4
 
    A client PUTs a turtle document conforming to the RDF Shape
    http://example.com/shapes/shape-1.  The server answers that it can
@@ -520,7 +489,22 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
    Content-Type: application/xhtml+xml
    Accept-Profile: <http://example.com/shapes/shape-2>
 
-                                 Figure 9
+                                 Figure 5
+
+
+
+
+
+
+
+
+
+
+
+Svensson & Verborgh       Expires May 27, 2019                  [Page 9]
+
+Internet-Draft        Negotiating Profiles in HTTP         November 2017
+
 
    A client requests an XML document where the elements in namespace
    urn:example:namespaces:ns1 must conform to XML schema
@@ -544,7 +528,7 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
                    urn:example:namespaces:ns2
                    http://example.com/schema/schema-2>
 
-                                 Figure 10
+                                 Figure 6
 
 5.  IANA Considerations
 
@@ -554,18 +538,10 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
    Procedures for Message Header Fields" RFC 3864 [RFC3864].  [TO BE
    REMOVED: This registration should take place at the following
    location: http://www.iana.org/assignments/message-headers/message-
-
-
-
-Svensson & Verborgh       Expires May 27, 2019                 [Page 10]
-
-Internet-Draft        Negotiating Profiles in HTTP         November 2017
-
-
    headers.xhtml] Further, it defines a parameter for the "Link" header.
    There is no registry for link-param except for the values listed in
-   [RFC5988] [RFC5988] so the parameter "profile" will be seen as a
-   link-extension.
+   RFC 8288 [RFC8288] so the parameter "profile" will be seen as a link-
+   extension.
 
 5.1.  Accept-Profile HTTP Header Registration
 
@@ -578,6 +554,13 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
    Applicable Protocol: Hypertext Transfer Protocol (HTTP)
 
    Status: Standard
+
+
+
+Svensson & Verborgh       Expires May 27, 2019                 [Page 10]
+
+Internet-Draft        Negotiating Profiles in HTTP         November 2017
+
 
    Author/Change controller: IETF
 
@@ -608,16 +591,6 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
    HTTP (i.e., with no indication what profiles the UA or the server
    prefer and/or can handle).
 
-
-
-
-
-
-Svensson & Verborgh       Expires May 27, 2019                 [Page 11]
-
-Internet-Draft        Negotiating Profiles in HTTP         November 2017
-
-
 7.  Acknowledgements
 
    This is the place to have YOUR NAME prominently displayed!
@@ -636,6 +609,15 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
               DOI 10.17487/RFC5234, January 2008,
               <https://www.rfc-editor.org/info/rfc5234>.
 
+
+
+
+
+Svensson & Verborgh       Expires May 27, 2019                 [Page 11]
+
+Internet-Draft        Negotiating Profiles in HTTP         November 2017
+
+
    [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Message Syntax and Routing",
               RFC 7230, DOI 10.17487/RFC7230, June 2014,
@@ -647,6 +629,10 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
               <https://www.rfc-editor.org/info/rfc7231>.
 
 8.2.  Informative References
+
+   [ActivityStreams2]
+              Snell, J. and E. Prodromou, "Activity Streams 2.0", 2017,
+              <https://www.w3.org/TR/activitystreams-core/>.
 
    [DSP]      Nilsson, M., "Description Set Profiles: A constraint
               language for Dublin Core Application Profiles", 2008,
@@ -665,15 +651,6 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
               Matching Metadata Schemas", 2000,
               <http://www.ariadne.ac.uk/issue25/app-profiles>.
 
-
-
-
-
-Svensson & Verborgh       Expires May 27, 2019                 [Page 12]
-
-Internet-Draft        Negotiating Profiles in HTTP         November 2017
-
-
    [RFC3236]  Baker, M. and P. Stark, "The 'application/xhtml+xml' Media
               Type", RFC 3236, DOI 10.17487/RFC3236, January 2002,
               <https://www.rfc-editor.org/info/rfc3236>.
@@ -687,9 +664,20 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
               RFC 3870, DOI 10.17487/RFC3870, September 2004,
               <https://www.rfc-editor.org/info/rfc3870>.
 
-   [RFC5988]  Nottingham, M., "Web Linking", RFC 5988,
-              DOI 10.17487/RFC5988, October 2010,
-              <https://www.rfc-editor.org/info/rfc5988>.
+
+
+
+
+
+Svensson & Verborgh       Expires May 27, 2019                 [Page 12]
+
+Internet-Draft        Negotiating Profiles in HTTP         November 2017
+
+
+   [RFC6839]  Hansen, T. and A. Melnikov, "Additional Media Type
+              Structured Syntax Suffixes", RFC 6839,
+              DOI 10.17487/RFC6839, January 2013,
+              <https://www.rfc-editor.org/info/rfc6839>.
 
    [RFC6906]  Wilde, E., "The 'profile' Link Relation Type", RFC 6906,
               DOI 10.17487/RFC6906, March 2013,
@@ -698,6 +686,10 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
    [RFC7240]  Snell, J., "Prefer Header for HTTP", RFC 7240,
               DOI 10.17487/RFC7240, June 2014,
               <https://www.rfc-editor.org/info/rfc7240>.
+
+   [RFC8288]  Nottingham, M., "Web Linking", RFC 8288,
+              DOI 10.17487/RFC8288, October 2017,
+              <https://www.rfc-editor.org/info/rfc8288>.
 
    [SHACL]    Knublauch, H. and A. Ryman, "Shapes Constraint Language
               (SHACL): W3C First Public Working Draft 08 October 2015",
@@ -719,17 +711,6 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
               "XML Schema Part 1: Structures Second Edition", 2004,
               <http://www.w3.org/TR/xmlschema-1/>.
 
-
-
-
-
-
-
-Svensson & Verborgh       Expires May 27, 2019                 [Page 13]
-
-Internet-Draft        Negotiating Profiles in HTTP         November 2017
-
-
 Authors' Addresses
 
    Lars G. Svensson
@@ -742,6 +723,13 @@ Authors' Addresses
    Email: l.svensson@dnb.de
 
 
+
+
+Svensson & Verborgh       Expires May 27, 2019                 [Page 13]
+
+Internet-Draft        Negotiating Profiles in HTTP         November 2017
+
+
    Ruben Verborgh
    Ghent University - imec
    Sint-Pietersnieuwstraat 41
@@ -750,6 +738,18 @@ Authors' Addresses
 
    Phone: +32 9 331 49 10
    Email: ruben.verborgh@ugent.be
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
