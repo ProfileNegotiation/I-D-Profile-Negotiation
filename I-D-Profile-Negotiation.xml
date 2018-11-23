@@ -372,11 +372,7 @@ profile-value =  "&lt;" URI-reference "&gt;" [weight]
 					and the	server cannot process content conforming to that profile,
 					the	server SHOULD send a 406 (Not acceptable) response
 					together with an "Accept-Profile"	header field (including q-values)
-					to indicate the profiles it can process.
-					Reasons for not sending a 406 response in such a case might be
-					that the the processing of the message payload leads to an internal server error.
-					If in	such a case the server does not implement profile negotiation,
-					the server is	more likely to return a 500 (Internal server error) response instead of 406.</t>
+					to indicate which profiles it can process.</t>
 				<t><xref target="abnf_content_profile"/> describes the syntax (Augmented Backus-Naur Form) of the
 					header fields, using the grammar defined in <xref target="RFC5234">RFC 5234</xref> and the rules
 					defined in <xref target="RFC7230">Section 3.2 of RFC 7230</xref>.
