@@ -204,7 +204,7 @@
 					to indicate a media-type-specific profile the representation conforms to.
 					Such profile parameters are often defined
 					within the specification of document formats.
-					For instance, <xref target="ActivityStreams2">Activity Streams 2.0</xref>
+					For instance, <xref target="AS2">Activity Streams 2.0</xref>
 					defines the equivalent media types
 					<figure>
 						<artwork>
@@ -608,7 +608,7 @@ Profile: &lt;urn:example:namespaces:ns1
 					<date year="2008" />
 				</front>
 			</reference>
-			<reference anchor="ActivityStreams2"
+			<reference anchor="AS2"
 					target="https://www.w3.org/TR/activitystreams-core/">
 				<front>
 					<title>Activity Streams 2.0</title>
