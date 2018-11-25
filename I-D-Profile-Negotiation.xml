@@ -172,8 +172,8 @@
 		<section title="Related HTTP Headers">
 			<section title="Content-Type">
 				<t>
-					<xref target="RFC7231">RFC 7231</xref> defines the Content-Type HTTP header
-					for indicating the media type of a representation.
+					The <xref target="RFC7231">Content-Type HTTP header</xref>
+					is used to indicate the media type of a representation.
 					This header allows receipients to determine appropriate processing
 					for a received message body, such as the parser they need to use.
 					A Content-Type field value contains a MIME type,
@@ -199,21 +199,17 @@
 					which would need to be specified out of band.
 				</t>
 				<t>
-					The profile parameter, defined in <xref target="RFC6906">RFC 6906</xref>,
+					The <xref target="RFC6906">profile parameter</xref>
 					can be used in the Content-Type field in addition to a MIME type
 					to indicate a media-type-specific profile the representation conforms to.
 					Such profile parameters are often defined
 					within the specification of document formats.
 					For instance, <xref target="AS2">Activity Streams 2.0</xref>
-					defines the equivalent media types
+					defines the following equivalent media types:
 					<figure>
 						<artwork>
 application/activity+json
-						</artwork>
-					</figure>
-					and
-					<figure>
-						<artwork>
+
 application/ld+json; profile="https://www.w3.org/ns/activitystreams"
 						</artwork>
 					</figure>
@@ -248,7 +244,7 @@ application/ld+json; profile="https://www.w3.org/ns/activitystreams"
 
 			<section title="Accept">
 				<t>
-					The Accept header defined in <xref target="RFC7231">RFC 7231</xref>
+					The <xref target="RFC7231">Accept header</xref>
 					is the counterpart of the Content-Type header.
 					Whereas Content-Type indicates the option the sender has chosen
 					for representing the message body,
@@ -260,14 +256,14 @@ application/ld+json; profile="https://www.w3.org/ns/activitystreams"
 					The q parameter is a number between 0.0 and 1.0
 					indicating the degree of preference for that MIME type.
 					Analogously to the Content-Type field,
-					the profile parameter defined in <xref target="RFC6906">RFC 6906</xref>
+					the <xref target="RFC6906">profile parameter</xref>
 					can be used to indicate a preference for a media-type-specific profile.
 				</t>
 			</section>
 
 			<section title="Content-Location">
 				<t>
-					The Content-Location header (<xref target="RFC7231">RFC 7231</xref>)
+					The <xref target="RFC7231">Content-Location header</xref>
 					can be used to provide an identifier
 					for the specific representation of a resource
 					that is enclosed in the message body.
@@ -297,7 +293,7 @@ Content-Location: /some/resource.as.jsonld
 
 			<section title="Link">
 				<t>
-					The Link header (<xref target="RFC8288">RFC 8288</xref>)
+					The <xref target="RFC8288">Link header</xref>
 					allows the sender of a message to model additional relationships
 					from the represented resource to others.
 					Such relations are expressed as a link to a target
@@ -308,7 +304,7 @@ Content-Location: /some/resource.as.jsonld
 					and other existing representations.
 					The Link header can thereby serve as a mechanism
 					for discovering supported representations and profiles.
-					The profile relation type defined in <xref target="RFC6906">RFC 6906</xref>
+					The <xref target="RFC6906">profile relation type</xref>
 					can be used to relate a representation to a profile to which it conforms.
 				</t>
 				<t>
