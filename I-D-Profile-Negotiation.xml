@@ -12,7 +12,8 @@
 <!ENTITY RFC3864 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.3864.xml">
 <!ENTITY RFC3870 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.3870.xml">
 <!ENTITY RFC5234 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5234.xml">
-<!ENTITY RFC5988 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5988.xml">
+<!ENTITY RFC8288 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8288.xml">
+<!ENTITY RFC6839 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6839.xml">
 <!ENTITY RFC6906 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6906.xml">
 <!ENTITY RFC7230 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7230.xml">
 <!ENTITY RFC7231 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7231.xml">
@@ -167,120 +168,162 @@
 							target="RFC2119">RFC 2119</xref>.</t>
 			</section>
 		</section>
-		<section title="Related http Headers">
-			<t>
-				A number of options were considered when specifying how schema negotiation 
-				could be implemented. Below is a record of those options listing the consequences
-				of using them:
-			</t>
 
-			<t>
-				<list style="numbers">
-					<t>The HTTP "Link" header <xref target="RFC5988">[RFC 5988]</xref> offers various
-					possibilities to relate a resource to other resources, e. g. to alternate representations
-					having different media types or content in another language. One of the specified relationtypes
-					is "profile" <xref target="RFC6906">[RFC 6906]</xref>, that offers the possibility to 
-					associate a resource with a document describing "additional semantics that can be used to process a
-					resource representation, such as constraints, conventions,
-					extensions, or any other aspects that do not alter the basic media
-					type semantics." This header can be used for a user agent to specify what profile it would
-					the requested resource to conform to. This option offers no possibility to use q-values
-					and thus does not allow the UA and the server to properly negotiate which profile to use.
-					<figure align="center" anchor="rfc6906-example">
-						<preamble>Example:</preamble>
-						<artwork align="left">
-HEAD /some/other/resource HTTP/1.1
-Accept: text/turtle;q=0.9,application/rdf+xml;q=0.5
-Link: &lt;http://example.com/profile-1&gt;; rel="profile"
-
-HTTP/1.1 200 OK
-Content-type: text/turtle
-Link: &lt;http://example.com/profile-1&gt;; rel="profile"
+		<section title="Related HTTP Headers">
+			<section title="Content-Type">
+				<t>
+					<xref target="RFC7231">RFC 7231</xref> defines the Content-Type HTTP header
+					for indicating the media type of a representation.
+					This header allows receipients to determine appropriate processing
+					for a received message body, such as the parser they need to use.
+					A Content-Type field value contains a MIME type,
+					such as text/html or application/json,
+					and can optionally have parameters,
+					such as charset.
+				</t>
+				<t>
+					In many current interactions,
+					senders of HTTP messages underspecify the MIME type of their messages.
+					They opt for common, generic media types
+					such as text/xml or application/json,
+					whereas the contents of their messages
+					actually implicitly conform to stricter assumptions.
+					These assumptions are communicated out of band
+					and then silently (if at all) implemented by recipients.
+					Because those assunptions are not specified explicitly,
+					clients cannot discover them at runtime
+					to adjust their processing accordingly.
+					Minting new media types is possible,
+					but this loses the formal relationship
+					with the generic media type,
+					which would need to be specified out of band.
+				</t>
+				<t>
+					The profile parameter, defined in <xref target="RFC6906">RFC 6906</xref>,
+					can be used in the Content-Type field in addition to a MIME type
+					to indicate a media-type-specific profile the representation conforms to.
+					Such profile parameters are often defined
+					within the specification of document formats.
+					For instance, <xref target="ActivityStreams2">Activity Streams 2.0</xref>
+					defines the equivalent media types
+					<figure>
+						<artwork>
+							application/activity+json
 						</artwork>
 					</figure>
-					</t>
-					<t>Another way to use the Link" header directly, without using the "profile" relation.
-					It is unclear if this usage
-					can be applied in an http request, where the value of the link's context IRI is undefined 
-					unless the user agent uses the "anchor" parameter to specify that, and even when the user agent
-					explicitly sets an anchor it is not specified if the relation between the anchor IRI and the
-					related resource remains the same when a server redirects a user agent to another resource using e. g.
-					the HTTP 301 or 303 status codes. This could be solved by letting the UA request a
-					preferred profile by using the "Link" header together with the "profile" relation as described above and
-					having the server specify which profile the returned resource conforms to and also
-					link to alternate representations of the same resource. Currently, there is no target attribute 
-					linking to a resource's profile. In order to enable this, this document registers the "profile"
-					attribute to be used with the "Link" header.
-					<figure align="center" anchor="rfc5988-example">
-						<preamble>Example:</preamble>
-						<artwork align="left">
-GET some/resource HTTP/1.1
-Accept: application/xml
-Link: &lt;urn:example:schema-1&gt;; rel="profile"
-
-HTTP/1.1 200 OK
-Content-Type: application/xml
-Link: 	rel="self";
-		type="application/xml"
-		profile="&lt;urn:example:schema-1&gt;",
-		rel="alternate";
-		type="application/xml";
-		profile="&lt;urn:example:schema-2&gt;
+					and
+					<figure>
+						<artwork>
+							application/ld+json; profile="https://www.w3.org/ns/activitystreams"
 						</artwork>
 					</figure>
-					</t>
+					On the one hand,
+					this example shows the usage of the profile parameter
+					to increase the specificity of an existing media type.
+					On the other hand,
+					it reveals the limitations of MIME types:
+					application/activity+json by itself
+					does not inform clients without prior knowledge of this media type
+					that the message body is a JSON document and a JSON-LD document,
+					i.e., also necessarily conforms to the application/json
+					and application/ld+json MIME types.
+					Clients without built-in support for application/activity+json
+					only have the <xref target="RFC6839">+json suffix</xref>
+					as a non-binding suggestion that the content conforms to application/json,
+					and such an indicator does not exist for JSON-LD and most other media types.
+					As such, those clients are not informed about their possible ability
+					to parse a message body as JSON or JSON-LD.
+					Clients that do have support for application/activity+json
+					will likely need to involve JSON and JSON-LD parsers regardless.
+				</t>
+				<t>
+					The need to mint specific media types for profiles
+					becomes a combinatorial issue when
+					profiles can apply to multiple media types,
+					or when representations can conform to multiple profiles.
+					This document introduces a solution by considering profiles
+					as an additional, independent dimension in content negotiation.
+				</t>
+			</section>
 
-					<t>A further way to convey profile information is through the 
-							http Accept and Content-Type header field as specified in <xref target="RFC7231">RFC 7231</xref>.
-						<figure align="center" anchor="accept_with_profile">
-							<preamble>Example:</preamble>
-							<artwork align="left">
+			<section title="Accept">
+				<t>
+					The Accept header defined in <xref target="RFC7231">RFC 7231</xref>
+					is the counterpart of the Content-Type header.
+					Whereas Content-Type indicates the option the sender has chosen
+					for representing the message body,
+					Accept communicates the receipient's representation preferences beforehand.
+				</t>
+				<t>
+					The value of an Accept header field is a comma-separated list of MIME types,
+					each of which can optionally have parameters.
+					The q parameter is a number between 0.0 and 1.0
+					indicating the degree of preference for that MIME type.
+					Analogously to the Content-Type field,
+					the profile parameter defined in <xref target="RFC6906">RFC 6906</xref>
+					can be used to indicate a preference for a media-type-specific profile.
+				</t>
+			</section>
+
+			<section title="Content-Location">
+				<t>
+					The Content-Location header (<xref target="RFC7231">RFC 7231</xref>)
+					can be used to provide an identifier
+					for the specific representation of a resource
+					that is enclosed in the message body.
+					For example, when a user agent issues the following request
+					for /some/resource:
+					<figure>
+						<artwork align="left">
 GET /some/resource HTTP/1.1
-Accept: text/turtle;q=0.9;profile="urn:example:profile-1",
-		text/turtle;q=0.7;profile="urn:example:profile-2";
-
+Accept: application/ld+json; profile="https://www.w3.org/ns/activitystreams"
+						</artwork>
+					</figure>
+					The server might reply with:
+					<figure>
+						<artwork align="left">
 HTTP/1.1 200 OK
-Content-Type: text/turtle;profile=&lt;urn:example:profile-2&gt;
-							</artwork>
-						</figure>
-							If this is possible depends on the media 
-							type. Of the media types commonly used for linked data, 
-							only two registrations in the <xref target="IANAMEDIAREG">IANA Media Type Registry</xref>
-							foresee the use of profiles: <xref target="RFC3236">application/xhtml+xml</xref>
-							and <xref target="JSONLD">application/ld+json</xref>.
-							E. g. neither <xref target="RFC3870">application/rdf+xml</xref> nor 
-						<xref target="TURTLE">text/turtle</xref> do not
-							mention the use of profiles.
-					</t>
-					<t>A fourth option would be to use the http "Prefer" and "Preference-Applied"
-						headers as specified in <xref target="RFC7240">RFC 7240</xref>. This approach
-						has two disadvantages. The first is - as with the "Link" header, that there
-						is no possibility to work with q-values. The second one is that the only
-						way for a server to state that it ignored the preference stated by the user agent
-						is to omit sending a "Preference-Applied" header. For the user agent - however -
-						it is not clear if the "Preference-Applied" header is absent because the server
-						did not honor the preference, or if it is because the server did not understand
-						the "Prefer" header in the first place. This could be solved by making it mandatory
-						to send a "Link: rel=profile" header when answering to a request with a
-						"Prefer: profile=''" header in it. This solution requires that a user agent evaluates
-						two different headers in order to find a response to its request for a specific profile,
-						which would make user agent implementation more complicated.
-						<figure align="center" anchor="rfc7240-example">
-							<preamble>Example:</preamble>
-							<artwork align="left">
-GET /some/resource HTTP/1.1
-Accept: text/turtle
-Prefer: profile=&lt;urn:example:schema&gt;
+Content-Type: application/ld+json; profile="https://www.w3.org/ns/activitystreams"
+Content-Location: /some/resource.as.jsonld
+						</artwork>
+					</figure>
+					This then indicates that this specific representation
+					is available directly, without content negotiation,
+					from /some/resource.as.jsonld.
+				</t>
+			</section>
 
-HTTP/1.1 200 OK
-Content-Type: text/turtle
-Preference-Applied: profile=&lt;urn:example:schema&gt;
-							</artwork>
-						</figure>
-					</t>
-				</list>
-			</t>
+			<section title="Link">
+				<t>
+					The Link header (<xref target="RFC8288">RFC 8288</xref>)
+					allows the sender of a message to model additional relationships
+					from the represented resource to others.
+					Such relations are expressed as a link to a target
+					with a relation type and, optionally, target attributes.
+					Of particular interest for content negotiation
+					are the self and alternate relation types,
+					whose targets identify respectively the current representation
+					and other existing representations.
+					The Link header can thereby serve as a mechanism
+					for discovering supported representations and profiles.
+					The profile relation type defined in <xref target="RFC6906">RFC 6906</xref>
+					can be used to relate a representation to a profile to which it conforms.
+				</t>
+				<t>
+					The self relation type overlaps with the functionality
+					provided by the Content-Location field,
+					and they will likely use the same identifier.
+					The alternate relation essentially provides Content-Location functionality
+					for other available representations.
+					Finally, the profile relation type
+					mimics the profile parameter in the Content-Type field,
+					except that conformance of a representation to multiple profiles
+					could be expressed through multiple profile links,
+					whereas Content-Type only accepts one profile parameter.
+				</t>
+			</section>
 		</section>
+
 		<section title="New http Headers">
 			<t>The "Accept-Profile" and "Content-Profile" header fields can be sent by both
 				the UA and the server. The "Accept-Profile" header is used to specify
@@ -488,7 +531,7 @@ Profile: &lt;urn:example:namespaces:ns1
 				registration should take place at the following location:
 				http://www.iana.org/assignments/message-headers/message-headers.xhtml]
 				Further, it defines a parameter for the "Link" header. There is no registry
-				for link-param except for the values listed in <xref target="RFC5988">[RFC5988]</xref>
+				for link-param except for the values listed in <xref target="RFC8288">RFC 8288</xref>
 				so the parameter "profile" will be seen as a link-extension.</t>
 			<section title="Accept-Profile HTTP Header Registration" anchor="iana_accept_profile">
 				<t>The Accept-Profile header should be added to the permanent
@@ -548,7 +591,8 @@ Profile: &lt;urn:example:namespaces:ns1
 			&RFC3236;
 			&RFC3870;
 			&RFC3864;
-			&RFC5988;
+			&RFC8288;
+			&RFC6839;
 			&RFC6906;
 			&RFC7240;
 			<reference anchor="DSP" target="http://dublincore.org/documents/dc-dsp/">
@@ -560,6 +604,21 @@ Profile: &lt;urn:example:namespaces:ns1
 					</author>
 
 					<date year="2008" />
+				</front>
+			</reference>
+			<reference anchor="ActivityStreams2"
+					target="https://www.w3.org/TR/activitystreams-core/">
+				<front>
+					<title>Activity Streams 2.0</title>
+
+					<author initials="J. M." surname="Snell">
+						<organization>IBM</organization>
+					</author>
+					<author initials="E." surname="Prodromou">
+						<organization>Fuzzy.ai</organization>
+					</author>
+
+					<date year="2017" />
 				</front>
 			</reference>
 			<reference anchor="IANAMEDIAREG"
