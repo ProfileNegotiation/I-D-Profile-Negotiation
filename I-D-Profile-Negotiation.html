@@ -541,7 +541,7 @@ application/activity+json
 <pre>
 application/ld+json; profile="https://www.w3.org/ns/activitystreams"
 						</pre>
-<p id="rfc.section.2.1.p.3">The profile parameter, defined in <a href="#RFC6906" class="xref">RFC 6906</a>, can be used in the Content-Type field in addition to a MIME type to indicate a media-type-specific profile the representation conforms to.  Such profile parameters are often defined within the specification of document formats.  For instance, <a href="#ActivityStreams2" class="xref">Activity Streams 2.0</a> defines the equivalent media types <a href="#RFC6839" class="xref">+json suffix</a> as a non-binding suggestion that the content conforms to application/json, and such an indicator does not exist for JSON-LD and most other media types.  As such, those clients are not informed about their possible ability to parse a message body as JSON or JSON-LD.  Clients that do have support for application/activity+json will likely need to involve JSON and JSON-LD parsers regardless.  </p>
+<p id="rfc.section.2.1.p.3">The profile parameter, defined in <a href="#RFC6906" class="xref">RFC 6906</a>, can be used in the Content-Type field in addition to a MIME type to indicate a media-type-specific profile the representation conforms to.  Such profile parameters are often defined within the specification of document formats.  For instance, <a href="#AS2" class="xref">Activity Streams 2.0</a> defines the equivalent media types <a href="#RFC6839" class="xref">+json suffix</a> as a non-binding suggestion that the content conforms to application/json, and such an indicator does not exist for JSON-LD and most other media types.  As such, those clients are not informed about their possible ability to parse a message body as JSON or JSON-LD.  Clients that do have support for application/activity+json will likely need to involve JSON and JSON-LD parsers regardless.  </p>
 <p id="rfc.section.2.1.p.4">The need to mint specific media types for profiles becomes a combinatorial issue when profiles can apply to multiple media types, or when representations can conform to multiple profiles.  This document introduces a solution by considering profiles as an additional, independent dimension in content negotiation.  </p>
 <h1 id="rfc.section.2.2">
 <a href="#rfc.section.2.2">2.2.</a> Accept</h1>
@@ -741,7 +741,7 @@ Profile: &lt;urn:example:namespaces:ns1
 <a href="#rfc.references.2">8.2.</a> Informative References</h1>
 <table><tbody>
 <tr>
-<td class="reference"><b id="ActivityStreams2">[ActivityStreams2]</b></td>
+<td class="reference"><b id="AS2">[AS2]</b></td>
 <td class="top">
 <a title="IBM">Snell, J.</a> and <a title="Fuzzy.ai">E. Prodromou</a>, "<a href="https://www.w3.org/TR/activitystreams-core/">Activity Streams 2.0</a>", 2017.</td>
 </tr>

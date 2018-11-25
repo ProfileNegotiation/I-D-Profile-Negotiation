@@ -194,8 +194,8 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
    the Content-Type field in addition to a MIME type to indicate a
    media-type-specific profile the representation conforms to.  Such
    profile parameters are often defined within the specification of
-   document formats.  For instance, Activity Streams 2.0
-   [ActivityStreams2] defines the equivalent media types
+   document formats.  For instance, Activity Streams 2.0 [AS2] defines
+   the equivalent media types
 
    application/activity+json
 
@@ -648,8 +648,7 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
 
 8.2.  Informative References
 
-   [ActivityStreams2]
-              Snell, J. and E. Prodromou, "Activity Streams 2.0", 2017,
+   [AS2]      Snell, J. and E. Prodromou, "Activity Streams 2.0", 2017,
               <https://www.w3.org/TR/activitystreams-core/>.
 
    [DSP]      Nilsson, M., "Description Set Profiles: A constraint
@@ -663,6 +662,7 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
    [JSONLD]   Sporny, M., Kellogg, G., and M. Lanthaler, "JSON-LD 1.0: A
               JSON-based Serialization for Linked Data", 2015,
               <http://www.w3.org/TR/json-ld/>.
+
 
 
 
