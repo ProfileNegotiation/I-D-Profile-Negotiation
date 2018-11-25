@@ -172,20 +172,20 @@
 		<section title="Related HTTP Headers">
 			<section title="Content-Type">
 				<t>
-					The <xref target="RFC7231">Content-Type HTTP header</xref>
+					The <xref target="RFC7231">"Content-Type" HTTP header</xref>
 					is used to indicate the media type of a representation.
 					This header allows receipients to determine appropriate processing
 					for a received message body, such as the parser they need to use.
-					A Content-Type field value contains a MIME type,
-					such as text/html or application/json,
+					A "Content-Type" field value contains a MIME type,
+					such as "text/html" or "application/json,"
 					and can optionally have parameters,
-					such as charset.
+					such as "charset".
 				</t>
 				<t>
 					In many current interactions,
 					senders of HTTP messages underspecify the MIME type of their messages.
 					They opt for common, generic media types
-					such as text/xml or application/json,
+					such as "text/xml" or "application/json,"
 					whereas the contents of their messages
 					actually implicitly conform to stricter assumptions.
 					These assumptions are communicated out of band
@@ -199,10 +199,10 @@
 					which would need to be specified out of band.
 				</t>
 				<t>
-					The <xref target="RFC6906">profile parameter</xref>
-					can be used in the Content-Type field in addition to a MIME type
+					The <xref target="RFC6906">"profile" parameter</xref>
+					can be used in the "Content-Type" field in addition to a MIME type
 					to indicate a media-type-specific profile the representation conforms to.
-					Such profile parameters are often defined
+					Such profiles are often defined
 					within the specification of document formats.
 					For instance, <xref target="AS2">Activity Streams 2.0</xref>
 					defines the following equivalent media types:
@@ -218,18 +218,18 @@ application/ld+json; profile="https://www.w3.org/ns/activitystreams"
 					to increase the specificity of an existing media type.
 					On the other hand,
 					it reveals the limitations of MIME types:
-					application/activity+json by itself
+					"application/activity+json" by itself
 					does not inform clients without prior knowledge of this media type
 					that the message body is a JSON document and a JSON-LD document,
-					i.e., also necessarily conforms to the application/json
-					and application/ld+json MIME types.
-					Clients without built-in support for application/activity+json
-					only have the <xref target="RFC6839">+json suffix</xref>
-					as a non-binding suggestion that the content conforms to application/json,
+					i.e., also necessarily conforms to the "application/json"
+					and "application/ld+json" MIME types.
+					Clients without built-in support for "application/activity+json"
+					only have the <xref target="RFC6839">"+json" suffix</xref>
+					as a non-binding suggestion that the content conforms to "application/json",
 					and such an indicator does not exist for JSON-LD and most other media types.
 					As such, those clients are not informed about their possible ability
 					to parse a message body as JSON or JSON-LD.
-					Clients that do have support for application/activity+json
+					Clients that do have support for "application/activity+json"
 					will likely need to involve JSON and JSON-LD parsers regardless.
 				</t>
 				<t>
@@ -244,26 +244,26 @@ application/ld+json; profile="https://www.w3.org/ns/activitystreams"
 
 			<section title="Accept">
 				<t>
-					The <xref target="RFC7231">Accept header</xref>
-					is the counterpart of the Content-Type header.
-					Whereas Content-Type indicates the option the sender has chosen
+					The <xref target="RFC7231">"Accept" header</xref>
+					is the counterpart of the "Content-Type" header.
+					Whereas "Content-Type" indicates the option the sender has chosen
 					for representing the message body,
-					Accept communicates the receipient's representation preferences beforehand.
+					"Accept" communicates the receipient's representation preferences beforehand.
 				</t>
 				<t>
-					The value of an Accept header field is a comma-separated list of MIME types,
+					The value of an "Accept" header field is a comma-separated list of MIME types,
 					each of which can optionally have parameters.
-					The q parameter is a number between 0.0 and 1.0
+					The "q" parameter is a number between 0.0 and 1.0
 					indicating the degree of preference for that MIME type.
-					Analogously to the Content-Type field,
-					the <xref target="RFC6906">profile parameter</xref>
+					Analogously to the "Content-Type" field,
+					the <xref target="RFC6906">"profile" parameter</xref>
 					can be used to indicate a preference for a media-type-specific profile.
 				</t>
 			</section>
 
 			<section title="Content-Location">
 				<t>
-					The <xref target="RFC7231">Content-Location header</xref>
+					The <xref target="RFC7231">"Content-Location" header</xref>
 					can be used to provide an identifier
 					for the specific representation of a resource
 					that is enclosed in the message body.
@@ -293,7 +293,7 @@ Content-Location: /some/resource.as.jsonld
 
 			<section title="Link">
 				<t>
-					The <xref target="RFC8288">Link header</xref>
+					The <xref target="RFC8288">"Link" header</xref>
 					allows the sender of a message to model additional relationships
 					from the represented resource to others.
 					Such relations are expressed as a link to a target
@@ -302,22 +302,22 @@ Content-Location: /some/resource.as.jsonld
 					are the self and alternate relation types,
 					whose targets identify respectively the current representation
 					and other existing representations.
-					The Link header can thereby serve as a mechanism
+					The "Link" header can thereby serve as a mechanism
 					for discovering supported representations and profiles.
-					The <xref target="RFC6906">profile relation type</xref>
+					The <xref target="RFC6906">"profile" relation type</xref>
 					can be used to relate a representation to a profile to which it conforms.
 				</t>
 				<t>
-					The self relation type overlaps with the functionality
+					The "self" relation type overlaps with the functionality
 					provided by the Content-Location field,
 					and they will likely use the same identifier.
-					The alternate relation essentially provides Content-Location functionality
+					The "alternate" relation essentially provides Content-Location functionality
 					for other available representations.
-					Finally, the profile relation type
-					mimics the profile parameter in the Content-Type field,
+					Finally, the "profile" relation type
+					mimics the "profile" parameter in the "Content-Type" field,
 					except that conformance of a representation to multiple profiles
-					could be expressed through multiple profile links,
-					whereas Content-Type only accepts one profile parameter.
+					could be expressed through multiple "profile" links,
+					whereas "Content-Type" only accepts one "profile" parameter.
 				</t>
 			</section>
 		</section>
