@@ -536,10 +536,10 @@
 <p><a href="#RFC7231" class="xref">RFC 7231</a> defines the Content-Type HTTP header for indicating the media type of a representation.  This header allows receipients to determine appropriate processing for a received message body, such as the parser they need to use.  A Content-Type field value contains a MIME type, such as text/html or application/json, and can optionally have parameters, such as charset.  </p>
 <p id="rfc.section.2.1.p.2">In many current interactions, senders of HTTP messages underspecify the MIME type of their messages.  They opt for common, generic media types such as text/xml or application/json, whereas the contents of their messages actually implicitly conform to stricter assumptions.  These assumptions are communicated out of band and then silently (if at all) implemented by recipients.  Because those assunptions are not specified explicitly, clients cannot discover them at runtime to adjust their processing accordingly.  Minting new media types is possible, but this loses the formal relationship with the generic media type, which would need to be specified out of band.  </p>
 <pre>
-							application/activity+json
+application/activity+json
 						</pre>
 <pre>
-							application/ld+json; profile="https://www.w3.org/ns/activitystreams"
+application/ld+json; profile="https://www.w3.org/ns/activitystreams"
 						</pre>
 <p id="rfc.section.2.1.p.3">The profile parameter, defined in <a href="#RFC6906" class="xref">RFC 6906</a>, can be used in the Content-Type field in addition to a MIME type to indicate a media-type-specific profile the representation conforms to.  Such profile parameters are often defined within the specification of document formats.  For instance, <a href="#ActivityStreams2" class="xref">Activity Streams 2.0</a> defines the equivalent media types <a href="#RFC6839" class="xref">+json suffix</a> as a non-binding suggestion that the content conforms to application/json, and such an indicator does not exist for JSON-LD and most other media types.  As such, those clients are not informed about their possible ability to parse a message body as JSON or JSON-LD.  Clients that do have support for application/activity+json will likely need to involve JSON and JSON-LD parsers regardless.  </p>
 <p id="rfc.section.2.1.p.4">The need to mint specific media types for profiles becomes a combinatorial issue when profiles can apply to multiple media types, or when representations can conform to multiple profiles.  This document introduces a solution by considering profiles as an additional, independent dimension in content negotiation.  </p>
@@ -551,11 +551,13 @@
 <a href="#rfc.section.2.3">2.3.</a> Content-Location</h1>
 <pre>
 GET /some/resource HTTP/1.1
-Accept: application/ld+json; profile="https://www.w3.org/ns/activitystreams"
+Accept: application/ld+json;
+        profile="https://www.w3.org/ns/activitystreams"
 						</pre>
 <pre>
 HTTP/1.1 200 OK
-Content-Type: application/ld+json; profile="https://www.w3.org/ns/activitystreams"
+Content-Type: application/ld+json;
+              profile="https://www.w3.org/ns/activitystreams"
 Content-Location: /some/resource.as.jsonld
 						</pre>
 <p id="rfc.section.2.3.p.1">The Content-Location header (<a href="#RFC7231" class="xref">RFC 7231</a>) can be used to provide an identifier for the specific representation of a resource that is enclosed in the message body.  For example, when a user agent issues the following request for /some/resource: </p>

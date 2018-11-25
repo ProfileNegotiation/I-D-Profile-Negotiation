@@ -79,8 +79,8 @@ Table of Contents
      2.3.  Content-Location  . . . . . . . . . . . . . . . . . . . .   5
      2.4.  Link  . . . . . . . . . . . . . . . . . . . . . . . . . .   5
    3.  New http Headers  . . . . . . . . . . . . . . . . . . . . . .   6
-     3.1.  Accept-Profile Header Syntax  . . . . . . . . . . . . . .   6
-     3.2.  Content-Profile Header Syntax . . . . . . . . . . . . . .   7
+     3.1.  Accept-Profile Header Syntax  . . . . . . . . . . . . . .   7
+     3.2.  Content-Profile Header Syntax . . . . . . . . . . . . . .   8
    4.  Content Negotiation . . . . . . . . . . . . . . . . . . . . .   8
      4.1.  Mechanisms  . . . . . . . . . . . . . . . . . . . . . . .   8
      4.2.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .   8
@@ -197,11 +197,11 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
    document formats.  For instance, Activity Streams 2.0
    [ActivityStreams2] defines the equivalent media types
 
-                                                        application/activity+json
+   application/activity+json
 
    and
 
-                                                        application/ld+json; profile="https://www.w3.org/ns/activitystreams"
+   application/ld+json; profile="https://www.w3.org/ns/activitystreams"
 
    On the one hand, this example shows the usage of the profile
    parameter to increase the specificity of an existing media type.  On
@@ -253,14 +253,16 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
    that is enclosed in the message body.  For example, when a user agent
    issues the following request for /some/resource:
 
-GET /some/resource HTTP/1.1
-Accept: application/ld+json; profile="https://www.w3.org/ns/activitystreams"
+   GET /some/resource HTTP/1.1
+   Accept: application/ld+json;
+           profile="https://www.w3.org/ns/activitystreams"
 
    The server might reply with:
 
-HTTP/1.1 200 OK
-Content-Type: application/ld+json; profile="https://www.w3.org/ns/activitystreams"
-Content-Location: /some/resource.as.jsonld
+   HTTP/1.1 200 OK
+   Content-Type: application/ld+json;
+                 profile="https://www.w3.org/ns/activitystreams"
+   Content-Location: /some/resource.as.jsonld
 
    This then indicates that this specific representation is available
    directly, without content negotiation, from /some/resource.as.jsonld.
@@ -272,8 +274,6 @@ Content-Location: /some/resource.as.jsonld
    others.  Such relations are expressed as a link to a target with a
    relation type and, optionally, target attributes.  Of particular
    interest for content negotiation are the self and alternate relation
-   types, whose targets identify respectively the current representation
-   and other existing representations.  The Link header can thereby
 
 
 
@@ -282,6 +282,8 @@ Svensson & Verborgh       Expires May 29, 2019                  [Page 5]
 Internet-Draft        Negotiating Profiles in HTTP         November 2017
 
 
+   types, whose targets identify respectively the current representation
+   and other existing representations.  The Link header can thereby
    serve as a mechanism for discovering supported representations and
    profiles.  The profile relation type defined in RFC 6906 [RFC6906]
    can be used to relate a representation to a profile to which it
@@ -324,12 +326,10 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
    RECOMMENDED that it dereference to a document containing the profile
    definition.
 
-3.1.  Accept-Profile Header Syntax
 
-   The "Accept-Profile" header field is used to specify one or more
-   content profiles the issuing agent can accept for processing.  Each
-   profile is identified by a URI reference inside angle brackets
-   ("<>").  URI references MUST be absolute URIs.  If several profiles
+
+
+
 
 
 
@@ -338,6 +338,12 @@ Svensson & Verborgh       Expires May 29, 2019                  [Page 6]
 Internet-Draft        Negotiating Profiles in HTTP         November 2017
 
 
+3.1.  Accept-Profile Header Syntax
+
+   The "Accept-Profile" header field is used to specify one or more
+   content profiles the issuing agent can accept for processing.  Each
+   profile is identified by a URI reference inside angle brackets
+   ("<>").  URI references MUST be absolute URIs.  If several profiles
    are specified, quality values as defined in Section 5.3.1 of RFC 7230
    [RFC7230] can be used to assign a relative "weight" to the
    preference.  Exactly how that weight is used to determine the best
@@ -377,6 +383,17 @@ profile-value =  "<" URI-reference ">" [weight]
 
                                  Figure 1
 
+
+
+
+
+
+
+Svensson & Verborgh       Expires May 29, 2019                  [Page 7]
+
+Internet-Draft        Negotiating Profiles in HTTP         November 2017
+
+
 3.2.  Content-Profile Header Syntax
 
    The "Content-Profile" header field is used to specify a profile the
@@ -386,13 +403,6 @@ profile-value =  "<" URI-reference ">" [weight]
    to accept and a server does not use the "Content-Profile" header to
    specify which profile the returned content conforms to, the user
    agent MAY process the returned content as it deems fit.
-
-
-
-Svensson & Verborgh       Expires May 29, 2019                  [Page 7]
-
-Internet-Draft        Negotiating Profiles in HTTP         November 2017
-
 
    The Content-Profile field MAY contain a comma-separated list of
    profile-URIs.  In that case the recipient SHOULD interpret this as if
@@ -430,16 +440,6 @@ Content-Profile = "Content-Profile" ":"  "<" URI-reference ">" *("," "<" URI-ref
    between a user agent and a server.  For clarity, the examples only
    contain minimal information, i. e.  only the relevant headers are
    included and message bodies are ignored.
-
-
-
-
-
-
-
-
-
-
 
 
 

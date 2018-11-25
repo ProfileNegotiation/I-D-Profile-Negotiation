@@ -208,13 +208,13 @@
 					defines the equivalent media types
 					<figure>
 						<artwork>
-							application/activity+json
+application/activity+json
 						</artwork>
 					</figure>
 					and
 					<figure>
 						<artwork>
-							application/ld+json; profile="https://www.w3.org/ns/activitystreams"
+application/ld+json; profile="https://www.w3.org/ns/activitystreams"
 						</artwork>
 					</figure>
 					On the one hand,
@@ -276,14 +276,16 @@
 					<figure>
 						<artwork align="left">
 GET /some/resource HTTP/1.1
-Accept: application/ld+json; profile="https://www.w3.org/ns/activitystreams"
+Accept: application/ld+json;
+        profile="https://www.w3.org/ns/activitystreams"
 						</artwork>
 					</figure>
 					The server might reply with:
 					<figure>
 						<artwork align="left">
 HTTP/1.1 200 OK
-Content-Type: application/ld+json; profile="https://www.w3.org/ns/activitystreams"
+Content-Type: application/ld+json;
+              profile="https://www.w3.org/ns/activitystreams"
 Content-Location: /some/resource.as.jsonld
 						</artwork>
 					</figure>
