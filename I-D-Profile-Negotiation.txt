@@ -79,8 +79,8 @@ Table of Contents
      2.3.  Content-Location  . . . . . . . . . . . . . . . . . . . .   5
      2.4.  Link  . . . . . . . . . . . . . . . . . . . . . . . . . .   5
    3.  New http Headers  . . . . . . . . . . . . . . . . . . . . . .   6
-     3.1.  Accept-Profile Header Syntax  . . . . . . . . . . . . . .   7
-     3.2.  Content-Profile Header Syntax . . . . . . . . . . . . . .   8
+     3.1.  Accept-Profile Header Syntax  . . . . . . . . . . . . . .   6
+     3.2.  Content-Profile Header Syntax . . . . . . . . . . . . . .   7
    4.  Content Negotiation . . . . . . . . . . . . . . . . . . . . .   8
      4.1.  Mechanisms  . . . . . . . . . . . . . . . . . . . . . . .   8
      4.2.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .   8
@@ -172,52 +172,52 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
 
 2.1.  Content-Type
 
-   RFC 7231 [RFC7231] defines the Content-Type HTTP header for
-   indicating the media type of a representation.  This header allows
-   receipients to determine appropriate processing for a received
-   message body, such as the parser they need to use.  A Content-Type
-   field value contains a MIME type, such as text/html or application/
-   json, and can optionally have parameters, such as charset.
+   The "Content-Type" HTTP header [RFC7231] is used to indicate the
+   media type of a representation.  This header allows receipients to
+   determine appropriate processing for a received message body, such as
+   the parser they need to use.  A "Content-Type" field value contains a
+   MIME type, such as "text/html" or "application/json," and can
+   optionally have parameters, such as "charset".
 
    In many current interactions, senders of HTTP messages underspecify
    the MIME type of their messages.  They opt for common, generic media
-   types such as text/xml or application/json, whereas the contents of
-   their messages actually implicitly conform to stricter assumptions.
-   These assumptions are communicated out of band and then silently (if
-   at all) implemented by recipients.  Because those assunptions are not
-   specified explicitly, clients cannot discover them at runtime to
-   adjust their processing accordingly.  Minting new media types is
-   possible, but this loses the formal relationship with the generic
-   media type, which would need to be specified out of band.
+   types such as "text/xml" or "application/json," whereas the contents
+   of their messages actually implicitly conform to stricter
+   assumptions.  These assumptions are communicated out of band and then
+   silently (if at all) implemented by recipients.  Because those
+   assunptions are not specified explicitly, clients cannot discover
+   them at runtime to adjust their processing accordingly.  Minting new
+   media types is possible, but this loses the formal relationship with
+   the generic media type, which would need to be specified out of band.
 
-   The profile parameter, defined in RFC 6906 [RFC6906], can be used in
-   the Content-Type field in addition to a MIME type to indicate a
-   media-type-specific profile the representation conforms to.  Such
-   profile parameters are often defined within the specification of
-   document formats.  For instance, Activity Streams 2.0 [AS2] defines
-   the equivalent media types
+   The "profile" parameter [RFC6906] can be used in the "Content-Type"
+   field in addition to a MIME type to indicate a media-type-specific
+   profile the representation conforms to.  Such profiles are often
+   defined within the specification of document formats.  For instance,
+   Activity Streams 2.0 [AS2] defines the following equivalent media
+   types:
 
    application/activity+json
-
-   and
 
    application/ld+json; profile="https://www.w3.org/ns/activitystreams"
 
    On the one hand, this example shows the usage of the profile
    parameter to increase the specificity of an existing media type.  On
    the other hand, it reveals the limitations of MIME types:
-   application/activity+json by itself does not inform clients without
+   "application/activity+json" by itself does not inform clients without
    prior knowledge of this media type that the message body is a JSON
    document and a JSON-LD document, i.e., also necessarily conforms to
-   the application/json and application/ld+json MIME types.  Clients
-   without built-in support for application/activity+json only have the
-   +json suffix [RFC6839] as a non-binding suggestion that the content
-   conforms to application/json, and such an indicator does not exist
-   for JSON-LD and most other media types.  As such, those clients are
-   not informed about their possible ability to parse a message body as
-   JSON or JSON-LD.  Clients that do have support for application/
-   activity+json will likely need to involve JSON and JSON-LD parsers
-   regardless.
+   the "application/json" and "application/ld+json" MIME types.  Clients
+   without built-in support for "application/activity+json" only have
+   the "+json" suffix [RFC6839] as a non-binding suggestion that the
+   content conforms to "application/json", and such an indicator does
+   not exist for JSON-LD and most other media types.  As such, those
+   clients are not informed about their possible ability to parse a
+   message body as JSON or JSON-LD.  Clients that do have support for
+   "application/activity+json" will likely need to involve JSON and
+   JSON-LD parsers regardless.
+
+
 
 
 
@@ -234,24 +234,24 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
 
 2.2.  Accept
 
-   The Accept header defined in RFC 7231 [RFC7231] is the counterpart of
-   the Content-Type header.  Whereas Content-Type indicates the option
-   the sender has chosen for representing the message body, Accept
-   communicates the receipient's representation preferences beforehand.
+   The "Accept" header [RFC7231] is the counterpart of the "Content-
+   Type" header.  Whereas "Content-Type" indicates the option the sender
+   has chosen for representing the message body, "Accept" communicates
+   the receipient's representation preferences beforehand.
 
-   The value of an Accept header field is a comma-separated list of MIME
-   types, each of which can optionally have parameters.  The q parameter
-   is a number between 0.0 and 1.0 indicating the degree of preference
-   for that MIME type.  Analogously to the Content-Type field, the
-   profile parameter defined in RFC 6906 [RFC6906] can be used to
-   indicate a preference for a media-type-specific profile.
+   The value of an "Accept" header field is a comma-separated list of
+   MIME types, each of which can optionally have parameters.  The "q"
+   parameter is a number between 0.0 and 1.0 indicating the degree of
+   preference for that MIME type.  Analogously to the "Content-Type"
+   field, the "profile" parameter [RFC6906] can be used to indicate a
+   preference for a media-type-specific profile.
 
 2.3.  Content-Location
 
-   The Content-Location header (RFC 7231 [RFC7231]) can be used to
-   provide an identifier for the specific representation of a resource
-   that is enclosed in the message body.  For example, when a user agent
-   issues the following request for /some/resource:
+   The "Content-Location" header [RFC7231] can be used to provide an
+   identifier for the specific representation of a resource that is
+   enclosed in the message body.  For example, when a user agent issues
+   the following request for /some/resource:
 
    GET /some/resource HTTP/1.1
    Accept: application/ld+json;
@@ -269,11 +269,11 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
 
 2.4.  Link
 
-   The Link header (RFC 8288 [RFC8288]) allows the sender of a message
-   to model additional relationships from the represented resource to
-   others.  Such relations are expressed as a link to a target with a
-   relation type and, optionally, target attributes.  Of particular
-   interest for content negotiation are the self and alternate relation
+   The "Link" header [RFC8288] allows the sender of a message to model
+   additional relationships from the represented resource to others.
+   Such relations are expressed as a link to a target with a relation
+   type and, optionally, target attributes.  Of particular interest for
+   content negotiation are the self and alternate relation types, whose
 
 
 
@@ -282,21 +282,20 @@ Svensson & Verborgh       Expires May 29, 2019                  [Page 5]
 Internet-Draft        Negotiating Profiles in HTTP         November 2017
 
 
-   types, whose targets identify respectively the current representation
-   and other existing representations.  The Link header can thereby
-   serve as a mechanism for discovering supported representations and
-   profiles.  The profile relation type defined in RFC 6906 [RFC6906]
-   can be used to relate a representation to a profile to which it
-   conforms.
+   targets identify respectively the current representation and other
+   existing representations.  The "Link" header can thereby serve as a
+   mechanism for discovering supported representations and profiles.
+   The "profile" relation type [RFC6906] can be used to relate a
+   representation to a profile to which it conforms.
 
-   The self relation type overlaps with the functionality provided by
+   The "self" relation type overlaps with the functionality provided by
    the Content-Location field, and they will likely use the same
-   identifier.  The alternate relation essentially provides Content-
+   identifier.  The "alternate" relation essentially provides Content-
    Location functionality for other available representations.  Finally,
-   the profile relation type mimics the profile parameter in the
-   Content-Type field, except that conformance of a representation to
-   multiple profiles could be expressed through multiple profile links,
-   whereas Content-Type only accepts one profile parameter.
+   the "profile" relation type mimics the "profile" parameter in the
+   "Content-Type" field, except that conformance of a representation to
+   multiple profiles could be expressed through multiple "profile"
+   links, whereas "Content-Type" only accepts one "profile" parameter.
 
 3.  New http Headers
 
@@ -326,10 +325,11 @@ Internet-Draft        Negotiating Profiles in HTTP         November 2017
    RECOMMENDED that it dereference to a document containing the profile
    definition.
 
+3.1.  Accept-Profile Header Syntax
 
-
-
-
+   The "Accept-Profile" header field is used to specify one or more
+   content profiles the issuing agent can accept for processing.  Each
+   profile is identified by a URI reference inside angle brackets
 
 
 
@@ -338,11 +338,6 @@ Svensson & Verborgh       Expires May 29, 2019                  [Page 6]
 Internet-Draft        Negotiating Profiles in HTTP         November 2017
 
 
-3.1.  Accept-Profile Header Syntax
-
-   The "Accept-Profile" header field is used to specify one or more
-   content profiles the issuing agent can accept for processing.  Each
-   profile is identified by a URI reference inside angle brackets
    ("<>").  URI references MUST be absolute URIs.  If several profiles
    are specified, quality values as defined in Section 5.3.1 of RFC 7230
    [RFC7230] can be used to assign a relative "weight" to the
@@ -383,8 +378,13 @@ profile-value =  "<" URI-reference ">" [weight]
 
                                  Figure 1
 
+3.2.  Content-Profile Header Syntax
 
-
+   The "Content-Profile" header field is used to specify a profile the
+   payload in the message conforms to.  The profile is identified by a
+   URI reference that MUST be an absolute URI.  If a user agent uses the
+   "Accept-Profile" header to specify one or more profiles it is willing
+   to accept and a server does not use the "Content-Profile" header to
 
 
 
@@ -394,13 +394,6 @@ Svensson & Verborgh       Expires May 29, 2019                  [Page 7]
 Internet-Draft        Negotiating Profiles in HTTP         November 2017
 
 
-3.2.  Content-Profile Header Syntax
-
-   The "Content-Profile" header field is used to specify a profile the
-   payload in the message conforms to.  The profile is identified by a
-   URI reference that MUST be an absolute URI.  If a user agent uses the
-   "Accept-Profile" header to specify one or more profiles it is willing
-   to accept and a server does not use the "Content-Profile" header to
    specify which profile the returned content conforms to, the user
    agent MAY process the returned content as it deems fit.
 
@@ -440,6 +433,13 @@ Content-Profile = "Content-Profile" ":"  "<" URI-reference ">" *("," "<" URI-ref
    between a user agent and a server.  For clarity, the examples only
    contain minimal information, i. e.  only the relevant headers are
    included and message bodies are ignored.
+
+
+
+
+
+
+
 
 
 
