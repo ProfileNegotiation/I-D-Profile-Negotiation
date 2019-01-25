@@ -160,26 +160,40 @@
 				</t>
 			</section>
 			<section title="High-level overview of solution">
-				<t>The proposed solution introduces two new http header fields: Accept-Profile and Content-Profile.
-					The typical use of those fields is for an agent	to include an Accept-Profile header field in an http request
+				<t>The proposed solution introduces two new HTTP header fields: "Accept-Profile" and "Content-Profile".
+					The typical use of those fields is for an agent	to include an "Accept-Profile" header field in an HTTP request
 					to indicate to the origin server which profile or profiles the returned payload should conform to
 					in order for the agent to be able to process it correctly.
 					An agent can specify several profiles and use quality indicators (q-values) to indicate preferences.</t>
 				<t>An origin that supports content negotiation by profile
-				  will then include one or more Content-Profile header fields in its response
+				  will then list one or more profiles in the "Content-Profile" header in its response
 				  specifying which profile or profiles the returned payload conforms to.
 					The specified list of profiles may not be exhaustive
 					since the returned content can conform to profiles that the origin server is not aware of.
 					If there are multiple representations of the same resource available
 					and those conform to different profiles,
-					an origin server can use a Link header field together with the profile attribute
+					an origin server can use a "Link" header field together with the "profile" attribute
 					to point an agent to those other representations.</t>
-				<t>Similarily, an agent sending information to an origins server,
-					e. g. by using PUT or POST, can also include a Content-Profile header field in the http request
+				<t>Similarily, an agent sending information to an origin server,
+					e. g. by using PUT or POST, can also include a "Content-Profile" header field in the HTTP request
 					to state which profile or profiles the request payload conforms to.
-					If the targeted origin server cannot process content conforming to the specified profile
-					it can reply with status code 406 Not Acceptable 
-					and include an Accept-Profile header field stating which profiles the origin server can handle.</t>
+					The targeted origin server can include an "Accept-Profile" header field in its response
+					to indicate which profiles the resource is willing to accept in payloads from
+					PUT/POST/PATCH requests.</t>
+				<t>Note that this information is specific to the associated request;
+					the set of supported profiles might be different for other resources on the same server
+					and could change over time or depend on other aspects of the request (such as the request method).</t>
+				<t>The absence of an "Accept-Profile" header field in an HTTP response
+					SHOULD be taken as an indication that the origin server does not implement profile negotiation.
+					It MUST NOT be seen as an indication that the origin can handle payloads
+					conforming to any profile.</t>
+				<t>An origin that fails a request due to an unsupported profile SHOULD respond with a 415 status
+					and SHOULD include an "Accept-Profile" header in its response,
+					allowing clients to distinguish between issues related to profiles and media types.
+					In order to avoid confusion with issues related to media types,
+					origins that fail a request with a 415 status for reasons unrelated to profiles
+					MUST NOT include the "Accept-Profile" header field.
+				</t>
 			</section>
 			<section title="Notational Conventions">
 				<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
