@@ -401,7 +401,7 @@
 <link href="#rfc.authors" rel="Chapter">
 
 
-  <meta name="generator" content="xml2rfc version 2.14.1 - https://tools.ietf.org/tools/xml2rfc" />
+  <meta name="generator" content="xml2rfc version 2.17.1 - https://tools.ietf.org/tools/xml2rfc" />
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
   <meta name="dct.creator" content="Svensson, L. and R. Verborgh" />
@@ -430,12 +430,12 @@
 <td class="right">R. Verborgh</td>
 </tr>
 <tr>
-<td class="left">Expires: May 29, 2019</td>
+<td class="left">Expires: July 29, 2019</td>
 <td class="right">Ghent University &#8211; imec</td>
 </tr>
 <tr>
 <td class="left"></td>
-<td class="right">November 25, 2017</td>
+<td class="right">January 25, 2017</td>
 </tr>
 
     	
@@ -451,7 +451,7 @@
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on May 29, 2019.</p>
+<p>This Internet-Draft will expire on July 29, 2019.</p>
 <h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
 <p>Copyright (c) 2017 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
 <p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
@@ -526,6 +526,12 @@
 <p id="rfc.section.1.2.p.1">In the context of this proposal, a "profile" is a document that expresses the structural and/or semantic constraints of other documents. Examples of "profile" in this context include, but are not limited to, Dublin Core application profiles - formally expressed in <a href="#DSP" class="xref">Description Set Profiles (DSP)</a> -, <a href="#XSD" class="xref">XML Schema documents</a> and RDF Shapes expressed in <a href="#SHACL" class="xref">SHACL</a>. How those profiles are used by consuming applications is beyond the scope of this proposal, but typical use cases are validation of data received from another system and the automated creation of objects from received data as in <a href="#XMLBEANS" class="xref">Java XMLBeans</a>. The choice of the term "profile"was derived from the term "Application Profile" which the Dublin Core community defines as "schemas which consist of data elements drawn from one or more namespaces, combined together by implementors, and optimised for a particular local application" <a href="#rachelandheery" class="xref">[Rachel &amp; Heery]</a>.  </p>
 <h1 id="rfc.section.1.3">
 <a href="#rfc.section.1.3">1.3.</a> High-level overview of solution</h1>
+<p id="rfc.section.1.3.p.1">The proposed solution introduces two new HTTP header fields: "Accept-Profile" and "Content-Profile".  The typical use of those fields is for an agent	to include an "Accept-Profile" header field in an HTTP request to indicate to the origin server which profile or profiles the returned payload should conform to in order for the agent to be able to process it correctly.  An agent can specify several profiles and use quality indicators (q-values) to indicate preferences.</p>
+<p id="rfc.section.1.3.p.2">An origin that supports content negotiation by profile will then list one or more profiles in the "Content-Profile" header in its response specifying which profile or profiles the returned payload conforms to.  The specified list of profiles may not be exhaustive since the returned content can conform to profiles that the origin server is not aware of.  If there are multiple representations of the same resource available and those conform to different profiles, an origin server can use a "Link" header field together with the "profile" attribute to point an agent to those other representations.</p>
+<p id="rfc.section.1.3.p.3">Similarily, an agent sending information to an origin server, e. g. by using PUT or POST, can also include a "Content-Profile" header field in the HTTP request to state which profile or profiles the request payload conforms to.  The targeted origin server can include an "Accept-Profile" header field in its response to indicate which profiles the resource is willing to accept in payloads from PUT/POST/PATCH requests.</p>
+<p id="rfc.section.1.3.p.4">Note that this information is specific to the associated request; the set of supported profiles might be different for other resources on the same server and could change over time or depend on other aspects of the request (such as the request method).</p>
+<p id="rfc.section.1.3.p.5">The absence of an "Accept-Profile" header field in an HTTP response SHOULD be taken as an indication that the origin server does not implement profile negotiation.  It MUST NOT be seen as an indication that the origin can handle payloads conforming to any profile.</p>
+<p id="rfc.section.1.3.p.6">An origin that fails a request due to an unsupported profile SHOULD respond with a 415 status and SHOULD include an "Accept-Profile" header in its response, allowing clients to distinguish between issues related to profiles and media types.  In order to avoid confusion with issues related to media types, origins that fail a request with a 415 status for reasons unrelated to profiles MUST NOT include the "Accept-Profile" header field.  </p>
 <h1 id="rfc.section.1.4">
 <a href="#rfc.section.1.4">1.4.</a> Notational Conventions</h1>
 <p id="rfc.section.1.4.p.1">The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in <a href="#RFC2119" class="xref">RFC 2119</a>.</p>
