@@ -6,7 +6,7 @@ Internet Engineering Task Force                              L. Svensson
 Internet-Draft                               Deutsche Nationalbibliothek
 Intended status: Standards Track                             R. Verborgh
 Expires: September 10, 2019                      Ghent University - imec
-                                                           March 9, 2017
+                                                           March 9, 2019
 
 
                       Negotiating Profiles in HTTP
@@ -46,7 +46,7 @@ Status of This Memo
 
 Copyright Notice
 
-   Copyright (c) 2017 IETF Trust and the persons identified as the
+   Copyright (c) 2019 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
 
@@ -55,7 +55,7 @@ Copyright Notice
 
 Svensson & Verborgh    Expires September 10, 2019               [Page 1]
 
-Internet-Draft        Negotiating Profiles in HTTP            March 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -111,7 +111,7 @@ Table of Contents
 
 Svensson & Verborgh    Expires September 10, 2019               [Page 2]
 
-Internet-Draft        Negotiating Profiles in HTTP            March 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 
    Typically, a UA specifies preferences by setting appropriate HTTP
@@ -167,7 +167,7 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 Svensson & Verborgh    Expires September 10, 2019               [Page 3]
 
-Internet-Draft        Negotiating Profiles in HTTP            March 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 
    recipient of a message can indicate its preference for receiving
@@ -223,7 +223,7 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 Svensson & Verborgh    Expires September 10, 2019               [Page 4]
 
-Internet-Draft        Negotiating Profiles in HTTP            March 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 
 2.  Related HTTP Headers
@@ -279,7 +279,7 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 Svensson & Verborgh    Expires September 10, 2019               [Page 5]
 
-Internet-Draft        Negotiating Profiles in HTTP            March 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 
    The need to mint specific media types for profiles becomes a
@@ -335,7 +335,7 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 Svensson & Verborgh    Expires September 10, 2019               [Page 6]
 
-Internet-Draft        Negotiating Profiles in HTTP            March 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 
    targets identify respectively the current representation and other
@@ -391,7 +391,7 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 Svensson & Verborgh    Expires September 10, 2019               [Page 7]
 
-Internet-Draft        Negotiating Profiles in HTTP            March 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 
    ("<>").  URI references MUST be absolute URIs.  If several profiles
@@ -447,7 +447,7 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 Svensson & Verborgh    Expires September 10, 2019               [Page 8]
 
-Internet-Draft        Negotiating Profiles in HTTP            March 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 
    specify which profile the returned content conforms to, the user
@@ -503,7 +503,7 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 Svensson & Verborgh    Expires September 10, 2019               [Page 9]
 
-Internet-Draft        Negotiating Profiles in HTTP            March 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 
    A user agent requests an XML document conforming to a specific XML
@@ -559,7 +559,7 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 Svensson & Verborgh    Expires September 10, 2019              [Page 10]
 
-Internet-Draft        Negotiating Profiles in HTTP            March 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 
    A user agent PUTs a turtle document conforming to the RDF Shape
@@ -615,7 +615,7 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 Svensson & Verborgh    Expires September 10, 2019              [Page 11]
 
-Internet-Draft        Negotiating Profiles in HTTP            March 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 
    headers.xhtml] Further, it defines a parameter for the "Link" header.
@@ -671,7 +671,7 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 Svensson & Verborgh    Expires September 10, 2019              [Page 12]
 
-Internet-Draft        Negotiating Profiles in HTTP            March 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 
 7.  Acknowledgements
@@ -727,7 +727,7 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 Svensson & Verborgh    Expires September 10, 2019              [Page 13]
 
-Internet-Draft        Negotiating Profiles in HTTP            March 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 
    [rachelandheery]
@@ -783,7 +783,7 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 Svensson & Verborgh    Expires September 10, 2019              [Page 14]
 
-Internet-Draft        Negotiating Profiles in HTTP            March 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 
    [XMLSCHEMA]
