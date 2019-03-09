@@ -45,14 +45,14 @@
 <?rfc subcompact="no" ?>
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
-<rfc category="std" docName="draft-svensson-accept-profile-00" ipr="trust200902">
+<rfc category="std" docName="draft-svensson-content-profile-00" ipr="trust200902">
 	<!-- ***** FRONT MATTER ***** -->
 
 	<front>
 		<!-- The abbreviated title is used in the page header - it is only necessary if the 
 				full title is longer than 39 characters -->
 
-		<title>Negotiating Profiles in HTTP</title>
+		<title>Indicating and Negotiating Profiles in HTTP</title>
 
 		<author fullname="Lars G. Svensson" initials="L.G.S."
 				surname="Svensson">
