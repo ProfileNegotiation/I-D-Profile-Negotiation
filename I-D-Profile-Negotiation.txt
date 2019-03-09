@@ -5,8 +5,8 @@
 Internet Engineering Task Force                              L. Svensson
 Internet-Draft                               Deutsche Nationalbibliothek
 Intended status: Standards Track                             R. Verborgh
-Expires: July 29, 2019                           Ghent University - imec
-                                                        January 25, 2017
+Expires: September 10, 2019                      Ghent University - imec
+                                                           March 9, 2017
 
 
                       Negotiating Profiles in HTTP
@@ -14,17 +14,18 @@ Expires: July 29, 2019                           Ghent University - imec
 
 Abstract
 
-   This document defines two new HTTP headers that enable User Agents
-   and hosts to indicate and negotiate the profile used to represent a
-   specific resource.  In this context, a profile is a document
-   describing the structural and/or semantic constraints of a group of
-   documents in addition to the syntactical interpretation provided by a
-   media type.  Examples of profiles include Dublin Core Application
-   Profiles, XML Schemata and RDF Shape Expressions.  Further, it
-   defines and registers the profile parameter for the HTTP Link header
-   and suggests a best practice for the use of the new headers together
-   with the Link header to perform content negotiation and point user
-   agents to alternate representations.
+   This document defines two new HTTP headers "Content-Profile" and
+   "Accept-Profile" that enable User Agents and hosts to indicate and
+   negotiate the profile used for representing a specific resource.  In
+   this context, a profile is a description of the structural and/or
+   semantic constraints of a group of documents in addition to the
+   syntactical interpretation provided by more generic MIME types.
+   Examples of profiles include Dublin Core Application Profiles, XML
+   Schemata, and RDF Shape Expressions.  This document further defines
+   and registers the "profile" parameter for the HTTP "Link" header and
+   suggests a best practice for the use of the new headers together with
+   the "Link" header for the purposes of performing content negotiation
+   and pointing clients to alternate representations.
 
 Status of This Memo
 
@@ -41,23 +42,24 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on July 29, 2019.
+   This Internet-Draft will expire on September 10, 2019.
 
 Copyright Notice
 
    Copyright (c) 2017 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
+
+
+
+
+Svensson & Verborgh    Expires September 10, 2019               [Page 1]
+
+Internet-Draft        Negotiating Profiles in HTTP            March 2017
+
+
    This document is subject to BCP 78 and the IETF Trust's Legal
    Provisions Relating to IETF Documents
-
-
-
-Svensson & Verborgh       Expires July 29, 2019                 [Page 1]
-
-Internet-Draft        Negotiating Profiles in HTTP          January 2017
-
-
    (https://trustee.ietf.org/license-info) in effect on the date of
    publication of this document.  Please review these documents
    carefully, as they describe your rights and restrictions with respect
@@ -104,16 +106,15 @@ Table of Contents
    cases.  When a UA issues a GET request for a specific URI, the UA and
    the server negotiate which of the available representations best suit
    the UA's needs and capabilities.  Typically a UA specifies
-   preferences by setting appropriate HTTP headers, e. g.  Accept for
 
 
 
-
-Svensson & Verborgh       Expires July 29, 2019                 [Page 2]
+Svensson & Verborgh    Expires September 10, 2019               [Page 2]
 
-Internet-Draft        Negotiating Profiles in HTTP          January 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 
+   preferences by setting appropriate HTTP headers, e. g.  Accept for
    media type, Accept-Language for content language or Accept-Charset
    for character encoding.
 
@@ -161,15 +162,15 @@ Internet-Draft        Negotiating Profiles in HTTP          January 2017
 
    An origin that supports content negotiation by profile will then list
    one or more profiles in the "Content-Profile" header in its response
-   specifying which profile or profiles the returned payload conforms
 
 
 
-Svensson & Verborgh       Expires July 29, 2019                 [Page 3]
+Svensson & Verborgh    Expires September 10, 2019               [Page 3]
 
-Internet-Draft        Negotiating Profiles in HTTP          January 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 
+   specifying which profile or profiles the returned payload conforms
    to.  The specified list of profiles may not be exhaustive since the
    returned content can conform to profiles that the origin server is
    not aware of.  If there are multiple representations of the same
@@ -220,10 +221,9 @@ Internet-Draft        Negotiating Profiles in HTTP          January 2017
 
 
 
-
-Svensson & Verborgh       Expires July 29, 2019                 [Page 4]
+Svensson & Verborgh    Expires September 10, 2019               [Page 4]
 
-Internet-Draft        Negotiating Profiles in HTTP          January 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 
    MIME type, such as "text/html" or "application/json," and can
@@ -277,9 +277,9 @@ Internet-Draft        Negotiating Profiles in HTTP          January 2017
 
 
 
-Svensson & Verborgh       Expires July 29, 2019                 [Page 5]
+Svensson & Verborgh    Expires September 10, 2019               [Page 5]
 
-Internet-Draft        Negotiating Profiles in HTTP          January 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 
 2.2.  Accept
@@ -333,9 +333,9 @@ Internet-Draft        Negotiating Profiles in HTTP          January 2017
 
 
 
-Svensson & Verborgh       Expires July 29, 2019                 [Page 6]
+Svensson & Verborgh    Expires September 10, 2019               [Page 6]
 
-Internet-Draft        Negotiating Profiles in HTTP          January 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 
    The "self" relation type overlaps with the functionality provided by
@@ -389,9 +389,9 @@ Internet-Draft        Negotiating Profiles in HTTP          January 2017
 
 
 
-Svensson & Verborgh       Expires July 29, 2019                 [Page 7]
+Svensson & Verborgh    Expires September 10, 2019               [Page 7]
 
-Internet-Draft        Negotiating Profiles in HTTP          January 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 
    A request without any "Accept-Profile" header field implies that the
@@ -445,9 +445,9 @@ profile-value =  "<" URI-reference ">" [weight]
 
 
 
-Svensson & Verborgh       Expires July 29, 2019                 [Page 8]
+Svensson & Verborgh    Expires September 10, 2019               [Page 8]
 
-Internet-Draft        Negotiating Profiles in HTTP          January 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 
    list of profile URIs in the Content-Profile header field, and agent
@@ -501,9 +501,9 @@ Content-Profile = "Content-Profile" ":"  "<" URI-reference ">" *("," "<" URI-ref
 
 
 
-Svensson & Verborgh       Expires July 29, 2019                 [Page 9]
+Svensson & Verborgh    Expires September 10, 2019               [Page 9]
 
-Internet-Draft        Negotiating Profiles in HTTP          January 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 
    A user agent requests an XML document conforming to a specific XML
@@ -557,9 +557,9 @@ Internet-Draft        Negotiating Profiles in HTTP          January 2017
 
 
 
-Svensson & Verborgh       Expires July 29, 2019                [Page 10]
+Svensson & Verborgh    Expires September 10, 2019              [Page 10]
 
-Internet-Draft        Negotiating Profiles in HTTP          January 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 
    A user agent PUTs a turtle document conforming to the RDF Shape
@@ -613,9 +613,9 @@ Internet-Draft        Negotiating Profiles in HTTP          January 2017
 
 
 
-Svensson & Verborgh       Expires July 29, 2019                [Page 11]
+Svensson & Verborgh    Expires September 10, 2019              [Page 11]
 
-Internet-Draft        Negotiating Profiles in HTTP          January 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 
    headers.xhtml] Further, it defines a parameter for the "Link" header.
@@ -669,9 +669,9 @@ Internet-Draft        Negotiating Profiles in HTTP          January 2017
 
 
 
-Svensson & Verborgh       Expires July 29, 2019                [Page 12]
+Svensson & Verborgh    Expires September 10, 2019              [Page 12]
 
-Internet-Draft        Negotiating Profiles in HTTP          January 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 
 7.  Acknowledgements
@@ -725,9 +725,9 @@ Internet-Draft        Negotiating Profiles in HTTP          January 2017
 
 
 
-Svensson & Verborgh       Expires July 29, 2019                [Page 13]
+Svensson & Verborgh    Expires September 10, 2019              [Page 13]
 
-Internet-Draft        Negotiating Profiles in HTTP          January 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 
    [rachelandheery]
@@ -781,9 +781,9 @@ Internet-Draft        Negotiating Profiles in HTTP          January 2017
 
 
 
-Svensson & Verborgh       Expires July 29, 2019                [Page 14]
+Svensson & Verborgh    Expires September 10, 2019              [Page 14]
 
-Internet-Draft        Negotiating Profiles in HTTP          January 2017
+Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
 
    [XMLSCHEMA]
@@ -837,4 +837,4 @@ Authors' Addresses
 
 
 
-Svensson & Verborgh       Expires July 29, 2019                [Page 15]
+Svensson & Verborgh    Expires September 10, 2019              [Page 15]
