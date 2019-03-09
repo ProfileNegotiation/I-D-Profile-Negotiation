@@ -102,17 +102,20 @@
 		<keyword>HTTP, Header, Content Negotiation</keyword>
 
 		<abstract>
-			<t>This document defines two new HTTP headers that enable User Agents
-				and hosts to indicate and negotiate the profile
-				used to represent a specific resource.
-				In this context, a profile is a document describing the structural
-				and/or semantic constraints of a group of documents
-				in addition to the syntactical interpretation provided by a media type.
-				Examples of profiles include Dublin Core Application Profiles, XML Schemata and 
-				RDF Shape Expressions. Further, it defines and registers the profile
-				parameter for the HTTP Link header and suggests a best practice for
-				the use of the new headers together with the Link header to perform content
-				negotiation and point user agents to alternate representations.</t>
+			<t>This document defines two new HTTP headers
+				"Content-Profile" and "Accept-Profile"
+				that enable User Agents and hosts to indicate and negotiate
+				the profile used for representing a specific resource.
+				In this context, a profile is a description of
+				the structural and/or semantic constraints of a group of documents
+				in addition to the syntactical interpretation provided by more generic MIME types.
+				Examples of profiles include Dublin Core Application Profiles, XML Schemata, and
+				RDF Shape Expressions.
+				This document further defines and registers the "profile" parameter
+				for the HTTP "Link" header and suggests a best practice for
+				the use of the new headers together with the "Link" header
+				for the purposes of performing content negotiation
+				and pointing clients to alternate representations.</t>
 		</abstract>
 	</front>
 
