@@ -545,7 +545,7 @@
 application/activity+json
 
 application/ld+json; profile="https://www.w3.org/ns/activitystreams"
-						</pre>
+</pre>
 <p id="rfc.section.2.1.p.3">The <a href="#RFC6906" class="xref">"profile" parameter</a> can be used in the "Content-Type" field in addition to a MIME type to indicate a media-type-specific profile the representation conforms to.  Such profiles are often defined within the specification of document formats.  For instance, <a href="#AS2" class="xref">Activity Streams 2.0</a> defines the following equivalent media types: <a href="#RFC6839" class="xref">"+json" suffix</a> as a non-binding suggestion that the content conforms to "application/json", and such an indicator does not exist for JSON-LD and most other media types.  As such, those clients are not informed about their possible ability to parse a message body as JSON or JSON-LD.  Clients that do have support for "application/activity+json" will likely need to involve JSON and JSON-LD parsers regardless.  </p>
 <p id="rfc.section.2.1.p.4">The need to mint specific media types for profiles becomes a combinatorial issue when profiles can apply to multiple media types, or when representations can conform to multiple profiles.  This document introduces a solution by considering profiles as an additional, independent dimension in content negotiation.  </p>
 <h1 id="rfc.section.2.2">
@@ -558,13 +558,13 @@ application/ld+json; profile="https://www.w3.org/ns/activitystreams"
 GET /some/resource HTTP/1.1
 Accept: application/ld+json;
         profile="https://www.w3.org/ns/activitystreams"
-						</pre>
+</pre>
 <pre>
 HTTP/1.1 200 OK
 Content-Type: application/ld+json;
               profile="https://www.w3.org/ns/activitystreams"
 Content-Location: /some/resource.as.jsonld
-						</pre>
+</pre>
 <p id="rfc.section.2.3.p.1">The <a href="#RFC7231" class="xref">"Content-Location" header</a> can be used to provide an identifier for the specific representation of a resource that is enclosed in the message body.  For example, when a user agent issues the following request for /some/resource: </p>
 <h1 id="rfc.section.2.4">
 <a href="#rfc.section.2.4">2.4.</a> Link</h1>
@@ -584,9 +584,10 @@ Content-Location: /some/resource.as.jsonld
 <div id="abnf_accept_profile"></div>
 <p>Accept-Profile header syntax</p>
 <pre>
-Accept-Profile = "Accept-Profile" ":" (profile-value) *("," profile-value)
-profile-value =  "&lt;" URI-reference "&gt;" [weight] 
-					</pre>
+Accept-Profile = "Accept-Profile" ":"
+                  (profile-value) *("," profile-value)
+profile-value = "&lt;" URI-reference "&gt;" [weight]
+</pre>
 <p class="figure">Figure 1</p>
 <h1 id="rfc.section.3.2">
 <a href="#rfc.section.3.2">3.2.</a> Content-Profile Header Syntax</h1>
@@ -598,8 +599,9 @@ profile-value =  "&lt;" URI-reference "&gt;" [weight]
 <div id="abnf_content_profile"></div>
 <p>Profile header syntax</p>
 <pre>
-Content-Profile = "Content-Profile" ":"  "&lt;" URI-reference "&gt;" *("," "&lt;" URI-reference "&gt;")
-					</pre>
+Content-Profile = "Content-Profile" ":"
+                   "&lt;" URI-reference "&gt;" *("," "&lt;" URI-reference "&gt;")
+</pre>
 <p class="figure">Figure 2</p>
 <h1 id="rfc.section.4">
 <a href="#rfc.section.4">4.</a> Content Negotiation</h1>
@@ -621,14 +623,14 @@ Accept-Profile: &lt;urn:example:schema:e-commerce-payment&gt;
 Response:
 HTTP/1.1 200 OK
 Content-Type: application/xml
-Profile: &lt;urn:example:schema:e-commerce-payment&gt;
-Link: 	rel="self";
-		type="application/xml";
-		profile="&lt;urn:example:schema:e-commerce-payment&gt;",
-		rel="alternate";
-		type="application/xml";
-		profile="&lt;urn:example:schema:e-commerce-accounting&gt;"
-						</pre>
+Content-Profile: &lt;urn:example:schema:e-commerce-payment&gt;
+Link: rel="self";
+        type="application/xml";
+        profile="&lt;urn:example:schema:e-commerce-payment&gt;",
+      rel="alternate";
+        type="application/xml";
+        profile="&lt;urn:example:schema:e-commerce-accounting&gt;"
+</pre>
 <p class="figure">Figure 3</p>
 <div id="rfc.figure.4"></div>
 <div id="example_2"></div>
@@ -638,19 +640,19 @@ Request:
 GET /some-resource HTTP/1.1
 Accept: application/rdf+xml
 Accept-Profile: &lt;http://example.com/shapes/shape-1&gt;; q=0.8,
-               &lt;http://example.com/shapes/shape-2&gt;; q=0.5
+                &lt;http://example.com/shapes/shape-2&gt;; q=0.5
 
 Response:
 HTTP/1.1 200 OK
 Content-Type: application/rdf+xml
-Profile: &lt;http://example.com/shapes/shape-2&gt;
-Link:	rel="self";
-		type="application/rdf+xml";
-		profile="&lt;http://example.com/shapes/shape-2&gt;",
-		rel="alternate";
-		type="application/rdf+xml";
-		profile="&lt;http://example.com/shapes/shape-3&gt;"
-						</pre>
+Content-Profile: &lt;http://example.com/shapes/shape-2&gt;
+Link: rel="self";
+        type="application/rdf+xml";
+        profile="&lt;http://example.com/shapes/shape-2&gt;",
+      rel="alternate";
+        type="application/rdf+xml";
+        profile="&lt;http://example.com/shapes/shape-3&gt;"
+</pre>
 <p class="figure">Figure 4</p>
 <div id="rfc.figure.5"></div>
 <div id="example_3"></div>
@@ -658,13 +660,13 @@ Link:	rel="self";
 <pre>
 Request:
 PUT /some-resource HTTP/1.1
-Profile: &lt;http://example.com/shapes/shape-1&gt;
+Content-Profile: &lt;http://example.com/shapes/shape-1&gt;
 
 Response:
 HTTP/1.1 406 Not acceptable
 Content-Type: application/xhtml+xml
 Accept-Profile: &lt;http://example.com/shapes/shape-2&gt;
-						</pre>
+</pre>
 <p class="figure">Figure 5</p>
 <div id="rfc.figure.6"></div>
 <div id="example_4"></div>
@@ -672,19 +674,19 @@ Accept-Profile: &lt;http://example.com/shapes/shape-2&gt;
 <pre>
 Request:
 GET /some-resource HTTP/1.1
-Accept-Profile: 	&lt;urn:example:namespaces:ns1
-				http://example.com/schema/schema-1
-				urn:example:namespaces:ns2
-				http://example.com/schema/schema-2&gt;
+Accept-Profile: &lt;urn:example:namespaces:ns1
+                 http://example.com/schema/schema-1
+                 urn:example:namespaces:ns2
+                 http://example.com/schema/schema-2&gt;
 
 Response:
 HTTP/1.1 200 OK
 Content-Type: application/xml
-Profile: &lt;urn:example:namespaces:ns1
-		http://example.com/schema/schema-1
-		urn:example:namespaces:ns2
-		http://example.com/schema/schema-2&gt;
-						</pre>
+Content-Profile: &lt;urn:example:namespaces:ns1
+                 http://example.com/schema/schema-1
+                 urn:example:namespaces:ns2
+                 http://example.com/schema/schema-2&gt;
+</pre>
 <p class="figure">Figure 6</p>
 <h1 id="rfc.section.5">
 <a href="#rfc.section.5">5.</a> <a href="#IANA" id="IANA">IANA Considerations</a>

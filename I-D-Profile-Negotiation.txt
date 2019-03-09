@@ -429,8 +429,9 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
                        Accept-Profile header syntax
 
-Accept-Profile = "Accept-Profile" ":" (profile-value) *("," profile-value)
-profile-value =  "<" URI-reference ">" [weight]
+   Accept-Profile = "Accept-Profile" ":"
+                     (profile-value) *("," profile-value)
+   profile-value = "<" URI-reference ">" [weight]
 
                                  Figure 1
 
@@ -441,7 +442,6 @@ profile-value =  "<" URI-reference ">" [weight]
    URI reference that MUST be an absolute URI.  If a user agent uses the
    "Accept-Profile" header to specify one or more profiles it is willing
    to accept and a server does not use the "Content-Profile" header to
-
 
 
 
@@ -475,7 +475,8 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
                            Profile header syntax
 
-Content-Profile = "Content-Profile" ":"  "<" URI-reference ">" *("," "<" URI-reference ">")
+   Content-Profile = "Content-Profile" ":"
+                      "<" URI-reference ">" *("," "<" URI-reference ">")
 
                                  Figure 2
 
@@ -489,7 +490,6 @@ Content-Profile = "Content-Profile" ":"  "<" URI-reference ">" *("," "<" URI-ref
    between a user agent and a server.  For clarity, the examples only
    contain minimal information, i. e.  only the relevant headers are
    included and message bodies are ignored.
-
 
 
 
@@ -518,13 +518,13 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2017
    Response:
    HTTP/1.1 200 OK
    Content-Type: application/xml
-   Profile: <urn:example:schema:e-commerce-payment>
-   Link:   rel="self";
-                   type="application/xml";
-                   profile="<urn:example:schema:e-commerce-payment>",
-                   rel="alternate";
-                   type="application/xml";
-                   profile="<urn:example:schema:e-commerce-accounting>"
+   Content-Profile: <urn:example:schema:e-commerce-payment>
+   Link: rel="self";
+           type="application/xml";
+           profile="<urn:example:schema:e-commerce-payment>",
+         rel="alternate";
+           type="application/xml";
+           profile="<urn:example:schema:e-commerce-accounting>"
 
                                  Figure 3
 
@@ -538,18 +538,18 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2017
    GET /some-resource HTTP/1.1
    Accept: application/rdf+xml
    Accept-Profile: <http://example.com/shapes/shape-1>; q=0.8,
-                  <http://example.com/shapes/shape-2>; q=0.5
+                   <http://example.com/shapes/shape-2>; q=0.5
 
    Response:
    HTTP/1.1 200 OK
    Content-Type: application/rdf+xml
-   Profile: <http://example.com/shapes/shape-2>
-   Link:   rel="self";
-                   type="application/rdf+xml";
-                   profile="<http://example.com/shapes/shape-2>",
-                   rel="alternate";
-                   type="application/rdf+xml";
-                   profile="<http://example.com/shapes/shape-3>"
+   Content-Profile: <http://example.com/shapes/shape-2>
+   Link: rel="self";
+           type="application/rdf+xml";
+           profile="<http://example.com/shapes/shape-2>",
+         rel="alternate";
+           type="application/rdf+xml";
+           profile="<http://example.com/shapes/shape-3>"
 
                                  Figure 4
 
@@ -569,7 +569,7 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
    Request:
    PUT /some-resource HTTP/1.1
-   Profile: <http://example.com/shapes/shape-1>
+   Content-Profile: <http://example.com/shapes/shape-1>
 
    Response:
    HTTP/1.1 406 Not acceptable
@@ -587,18 +587,18 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2017
 
    Request:
    GET /some-resource HTTP/1.1
-   Accept-Profile:         <urn:example:namespaces:ns1
-                                   http://example.com/schema/schema-1
-                                   urn:example:namespaces:ns2
-                                   http://example.com/schema/schema-2>
+   Accept-Profile: <urn:example:namespaces:ns1
+                    http://example.com/schema/schema-1
+                    urn:example:namespaces:ns2
+                    http://example.com/schema/schema-2>
 
    Response:
    HTTP/1.1 200 OK
    Content-Type: application/xml
-   Profile: <urn:example:namespaces:ns1
-                   http://example.com/schema/schema-1
-                   urn:example:namespaces:ns2
-                   http://example.com/schema/schema-2>
+   Content-Profile: <urn:example:namespaces:ns1
+                    http://example.com/schema/schema-1
+                    urn:example:namespaces:ns2
+                    http://example.com/schema/schema-2>
 
                                  Figure 6
 
