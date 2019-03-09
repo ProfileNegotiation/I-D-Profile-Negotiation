@@ -3,7 +3,7 @@
 		which is available here: http://xml.resource.org. -->
 <!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
 <!-- One method to get references from the online citation libraries.
-		There has to be one entity for each item to be referenced. 
+		There has to be one entity for each item to be referenced.
 		An alternate method (rfc include) is described in the references. -->
 
 <!ENTITY RFC2119 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml">
@@ -22,7 +22,7 @@
 ]>
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 <!-- used by XSLT processors -->
-<!-- For a complete list and description of processing instructions (PIs), 
+<!-- For a complete list and description of processing instructions (PIs),
 		please see http://xml.resource.org/authoring/README.html. -->
 <!-- Below are generally applicable Processing Instructions (PIs) that most I-Ds might want to use.
 		(Here they are set differently than their defaults in xml2rfc v1.32) -->
@@ -38,7 +38,7 @@
 <!-- use symbolic references tags, i.e, [RFC2119] instead of [1] -->
 <?rfc sortrefs="yes" ?>
 <!-- sort the reference entries alphabetically -->
-<!-- control vertical white space 
+<!-- control vertical white space
 		(using these PIs as follows is recommended by the RFC Editor) -->
 <?rfc compact="yes" ?>
 <!-- do not start each main section on a new page -->
@@ -49,7 +49,7 @@
 	<!-- ***** FRONT MATTER ***** -->
 
 	<front>
-		<!-- The abbreviated title is used in the page header - it is only necessary if the 
+		<!-- The abbreviated title is used in the page header - it is only necessary if the
 				full title is longer than 39 characters -->
 
 		<title>Negotiating Profiles in HTTP</title>
@@ -95,7 +95,7 @@
 		<workgroup>Internet Engineering Task Force</workgroup>
 
 		<!-- WG name at the upperleft corner of the doc,
-				IETF is fine for individual submissions.	
+				IETF is fine for individual submissions.
 	 If this element is not present, the default is "Network Working Group",
 				which is used by the RFC Editor as a nod to the history of the IETF. -->
 
@@ -260,11 +260,11 @@
 					For instance, <xref target="AS2">Activity Streams 2.0</xref>
 					defines the following equivalent media types:
 					<figure>
-						<artwork>
+<artwork>
 application/activity+json
 
 application/ld+json; profile="https://www.w3.org/ns/activitystreams"
-						</artwork>
+</artwork>
 					</figure>
 					On the one hand,
 					this example shows the usage of the profile parameter
@@ -323,20 +323,20 @@ application/ld+json; profile="https://www.w3.org/ns/activitystreams"
 					For example, when a user agent issues the following request
 					for /some/resource:
 					<figure>
-						<artwork align="left">
+<artwork align="left">
 GET /some/resource HTTP/1.1
 Accept: application/ld+json;
         profile="https://www.w3.org/ns/activitystreams"
-						</artwork>
+</artwork>
 					</figure>
 					The server might reply with:
 					<figure>
-						<artwork align="left">
+<artwork align="left">
 HTTP/1.1 200 OK
 Content-Type: application/ld+json;
               profile="https://www.w3.org/ns/activitystreams"
 Content-Location: /some/resource.as.jsonld
-						</artwork>
+</artwork>
 					</figure>
 					This then indicates that this specific representation
 					is available directly, without content negotiation,
@@ -379,10 +379,10 @@ Content-Location: /some/resource.as.jsonld
 			<t>The "Accept-Profile" and "Content-Profile" header fields can be sent by both
 				the UA and the server. The "Accept-Profile" header is used to specify
 				one or more profiles the Agent can accept,
-				whereas the "Content-Profile" header tells the other Agent 
+				whereas the "Content-Profile" header tells the other Agent
 				which profile or profiles the payload of the message conforms to.
 				So can a UA issuing a request for a resource specify that
-				it prefers persons to be described using foaf, but that the BBC Core ontology 
+				it prefers persons to be described using foaf, but that the BBC Core ontology
 				is also acceptable, and that it can only accept text/turtle, by setting the "Accept" and "Accept-Profile"
 				header fields appropriately.
 				When the server answers, it would set the "Content-Type" and "Content-Profile" header fields.
@@ -398,7 +398,7 @@ Content-Location: /some/resource.as.jsonld
 				the profile can be identified with e. g. a URN or an info-URI.
 				When a protocol-based URI is used, such as an FTP- or an HTTP-URI	is used, however,
 				it is RECOMMENDED that it dereference to a document
-				containing the profile definition. 
+				containing the profile definition.
 			</t>
 			<section title="Accept-Profile Header Syntax">
 				<t>The "Accept-Profile" header field is used to specify one or more
@@ -417,7 +417,7 @@ Content-Location: /some/resource.as.jsonld
 					that conforms to the specified profile,
 					it can either honor the header field by sending a 406 (Not	Acceptable) response
 					or disregard the header field by treating the	response as if it is not subject to content negotiation.
-					If the the origin server chooses to disregard the header field 
+					If the the origin server chooses to disregard the header field
 					and the profile the content conforms to is known,
 					the origin server SHOULD send an "AcceptProfile" header
 					indicating that profile	together with the payload.</t>
@@ -439,10 +439,11 @@ Content-Location: /some/resource.as.jsonld
 
 				<figure align="center" anchor="abnf_accept_profile">
 				<preamble>Accept-Profile header syntax</preamble>
-					<artwork align="left" type="abnf">
-Accept-Profile = "Accept-Profile" ":" (profile-value) *("," profile-value)
-profile-value =  "&lt;" URI-reference "&gt;" [weight] 
-					</artwork>
+<artwork align="left" type="abnf">
+Accept-Profile = "Accept-Profile" ":"
+                  (profile-value) *("," profile-value)
+profile-value = "&lt;" URI-reference "&gt;" [weight]
+</artwork>
 				</figure>
 			</section>
 			<section title="Content-Profile Header Syntax">
@@ -452,7 +453,7 @@ profile-value =  "&lt;" URI-reference "&gt;" [weight]
 					If a user agent uses the "Accept-Profile" header
 					to specify one or more profiles it is willing to accept
 					and a server does not use the "Content-Profile"	header to
-					specify which profile the returned content conforms to, 
+					specify which profile the returned content conforms to,
 					the user agent MAY process the returned content as it deems fit.</t>
 				<t>The Content-Profile field MAY contain a comma-separated list of profile-URIs.
 					In that case the recipient SHOULD interpret this as if the payload of the message
@@ -474,9 +475,10 @@ profile-value =  "&lt;" URI-reference "&gt;" [weight]
 					<xref target="RFC7230">RFC 7230</xref>.</t>
 				<figure align="center" anchor="abnf_content_profile">
 				<preamble>Profile header syntax</preamble>
-					<artwork align="left" type="abnf">
-Content-Profile = "Content-Profile" ":"  "&lt;" URI-reference "&gt;" *("," "&lt;" URI-reference "&gt;")
-					</artwork>
+<artwork align="left" type="abnf">
+Content-Profile = "Content-Profile" ":"
+                   "&lt;" URI-reference "&gt;" *("," "&lt;" URI-reference "&gt;")
+</artwork>
 				</figure>
 			</section>
 		</section>
@@ -490,7 +492,7 @@ Content-Profile = "Content-Profile" ":"  "&lt;" URI-reference "&gt;" *("," "&lt;
 					<figure align="left" anchor="example_1">
 						<preamble>A user agent requests an XML document conforming to a specific XML schema.
 						The XML schema is identified by "urn:example:schema:e-commerce-payment".</preamble>
-						<artwork align="left">
+<artwork align="left">
 Request:
 GET /some-resource HTTP/1.1
 Accept: application/xml
@@ -499,75 +501,75 @@ Accept-Profile: &lt;urn:example:schema:e-commerce-payment&gt;
 Response:
 HTTP/1.1 200 OK
 Content-Type: application/xml
-Profile: &lt;urn:example:schema:e-commerce-payment&gt;
-Link: 	rel="self";
-		type="application/xml";
-		profile="&lt;urn:example:schema:e-commerce-payment&gt;",
-		rel="alternate";
-		type="application/xml";
-		profile="&lt;urn:example:schema:e-commerce-accounting&gt;"
-						</artwork>
+Content-Profile: &lt;urn:example:schema:e-commerce-payment&gt;
+Link: rel="self";
+        type="application/xml";
+        profile="&lt;urn:example:schema:e-commerce-payment&gt;",
+      rel="alternate";
+        type="application/xml";
+        profile="&lt;urn:example:schema:e-commerce-accounting&gt;"
+</artwork>
 					</figure>
 					<figure align="left" anchor="example_2">
 						<preamble>A user agent requests an RDF/XML document conforming to one of
 						two RDF Shapes (http://example.com/shapes/shape-1 and http://example.com/shapes/shape-2).
 						It uses q-values to express a preference for shape-1, the server, however,
 						prefers to deliver in shape-2.</preamble>
-					<artwork align="left">
+<artwork align="left">
 Request:
 GET /some-resource HTTP/1.1
 Accept: application/rdf+xml
 Accept-Profile: &lt;http://example.com/shapes/shape-1&gt;; q=0.8,
-               &lt;http://example.com/shapes/shape-2&gt;; q=0.5
+                &lt;http://example.com/shapes/shape-2&gt;; q=0.5
 
 Response:
 HTTP/1.1 200 OK
 Content-Type: application/rdf+xml
-Profile: &lt;http://example.com/shapes/shape-2&gt;
-Link:	rel="self";
-		type="application/rdf+xml";
-		profile="&lt;http://example.com/shapes/shape-2&gt;",
-		rel="alternate";
-		type="application/rdf+xml";
-		profile="&lt;http://example.com/shapes/shape-3&gt;"
-						</artwork>
+Content-Profile: &lt;http://example.com/shapes/shape-2&gt;
+Link: rel="self";
+        type="application/rdf+xml";
+        profile="&lt;http://example.com/shapes/shape-2&gt;",
+      rel="alternate";
+        type="application/rdf+xml";
+        profile="&lt;http://example.com/shapes/shape-3&gt;"
+</artwork>
 					</figure>
 					<figure align="left" anchor="example_3">
 						<preamble>A user agent PUTs a turtle document conforming to the RDF Shape
 						http://example.com/shapes/shape-1. The server answers that it can only process
 						documents conforming to http://example.com/shapes/shape-2.</preamble>
-						<artwork align="left">
+<artwork align="left">
 Request:
 PUT /some-resource HTTP/1.1
-Profile: &lt;http://example.com/shapes/shape-1&gt;
+Content-Profile: &lt;http://example.com/shapes/shape-1&gt;
 
 Response:
 HTTP/1.1 406 Not acceptable
 Content-Type: application/xhtml+xml
 Accept-Profile: &lt;http://example.com/shapes/shape-2&gt;
-						</artwork>
+</artwork>
 					</figure>
 					<figure align="left" anchor="example_4">
 						<preamble>A user agent requests an XML document where the elements in
 						namespace urn:example:namespaces:ns1 must conform to XML schema http://example.com/schema/schema-1
 						and the elements in namespace urn:example:namespaces:ns2 must conform to XML schema
 						http://example.com/schema/schema-2. The server answers that it can supply the document as requested.</preamble>
-						<artwork align="left">
+<artwork align="left">
 Request:
 GET /some-resource HTTP/1.1
-Accept-Profile: 	&lt;urn:example:namespaces:ns1
-				http://example.com/schema/schema-1
-				urn:example:namespaces:ns2
-				http://example.com/schema/schema-2&gt;
+Accept-Profile: &lt;urn:example:namespaces:ns1
+                 http://example.com/schema/schema-1
+                 urn:example:namespaces:ns2
+                 http://example.com/schema/schema-2&gt;
 
 Response:
 HTTP/1.1 200 OK
 Content-Type: application/xml
-Profile: &lt;urn:example:namespaces:ns1
-		http://example.com/schema/schema-1
-		urn:example:namespaces:ns2
-		http://example.com/schema/schema-2&gt;
-						</artwork>
+Content-Profile: &lt;urn:example:namespaces:ns1
+                 http://example.com/schema/schema-1
+                 urn:example:namespaces:ns2
+                 http://example.com/schema/schema-2&gt;
+</artwork>
 					</figure>
 				</t>
 			</section>
