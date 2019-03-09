@@ -501,15 +501,42 @@ profile-value = "&lt;" URI-reference "&gt;" [weight]
 		</section>
 		<section title="Content Negotiation">
 			<section title="Mechanisms">
+				<t>User Agents and servers supporting profiles
+					can agree on mutually acceptable profiles for the payload
+					through the content negotiation processes described in
+					<xref target="RFC7231">Section 3.4 of RFC 7231</xref>.
+					The present document does not define or alter content negotiation,
+					but rather adds an additional dimension to the content negotiation process.
+					Agents can indicate their preferences for certain profiles
+					by specifying an "Accept-Profile" header on requests,
+					and servers indicate their choice
+					by specifying a "Content-Profile" header on responses.
+					Both proactive negotiation and reactive negotiation for profiles
+					can be supported by servers.</t>
+				<t>Although servers are free to implement negotiation as they see fit,
+					if the User Agent sends an "Accept-Profile" header,
+					they SHOULD consider representations not conforming to any of the listed profiles
+					as non-interpretable by the client.
+					This means that a representation that conforms to a listed profile,
+					but has a low preference score on other dimensions,
+					SHOULD be considered as more desired
+					than a representation with a higher preference score on other dimensions
+					but that does not conform to any listed profile.
+					If no "Accept-Profile" header preference is given,
+					the profile dimension SHOULD be ignored for negotiation purposes.
+					Nonetheless, in all cases, the server's response
+					SHOULD contain a "Content-Profile" header
+					listing the URIs of all profiles to which it knows the representation conforms.</t>
 			</section>
 			<section title="Examples">
-				<t>The following examples highlight the exchange of profile information between a User Agent
+				<t>The following examples show possible exchanges of profile information between a User Agent
 				and a server. For clarity, the examples only contain minimal information, i.e.,
 				only the relevant headers are included and message bodies are ignored.
 
 					<figure align="left" anchor="example_server_indicates_profiles">
 						<preamble>
-							A User Agent requests a JSON representation.
+							In this first example,
+							a User Agent requests a JSON representation.
 							The server returns a JSON representation,
 							and indicates that it conforms to additional structural constraints
 							as specified in a profile identified by "urn:example:schema:e-commerce-payment".
@@ -535,7 +562,7 @@ Response:
 
 					<figure align="left" anchor="example_both_support_profiles">
 						<preamble>
-							A User Agent requests a JSON representation conforming to additional constraints,
+							Another User Agent requests a JSON representation conforming to additional constraints,
 							as specified in a profile identified by "urn:example:schema:e-commerce-payment".
 							The server has such a representation of the resource available,
 							as well as an XML representation conforming to the same profile,
