@@ -102,7 +102,7 @@ Table of Contents
    and servers to indicate and negotiate the profile used for
    representing a specific resource.  On the Web, resources are
    identified with HTTP(S) URIs.  It can be useful for a server to
-   provide multiple representations of a resource to accomodate
+   provide multiple representations of a resource to accommodate
    different User Agents or use cases.  When a User Agent issues a GET
    request for a specific URI, the User Agent and the server negotiate
    which of the available representations best suit the User Agent's
@@ -147,14 +147,14 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2019
    profiles in applications is beyond the scope of this proposal; our
    only constraint is that a profile can be identified by a URI.
    Typical use cases include validation, and building clients that rely
-   on additonal assumptions in a representation received from another
+   on additional assumptions in a representation received from another
    system.  These assumptions, such as the presence of a certain
    structure or certain fields, are currently often implicitly made, or
    documented out of band, whereas profiles can explicitly capture them.
    The choice of the term "profile" was derived from the term
    "Application Profile", which the Dublin Core community defines as
    "schemas which consist of data elements drawn from one or more
-   namespaces, combined together by implementors, and optimised for a
+   namespaces, combined together by implementers, and optimised for a
    particular local application" [Rachel & Heery] [rachelandheery].
 
 1.3.  High-level overview of solution
@@ -186,7 +186,7 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2019
    together with the "profile" attribute to point an agent to those
    other representations.
 
-   Similarily, an agent sending information to a server, e.g., by using
+   Similarly, an agent sending information to a server, e.g., by using
    PUT or POST, can include a "Content-Profile" header field in the HTTP
    request to state which profile or profiles the request payload
    conforms to.  Prior to that interaction, the target server can
@@ -243,7 +243,7 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2019
    of their messages actually implicitly conform to stricter
    assumptions.  These assumptions are communicated out of band and then
    silently (if at all) implemented by recipients.  Because those
-   assunptions are not specified explicitly, clients cannot discover
+   assumptions are not specified explicitly, clients cannot discover
    them at runtime to adjust their processing accordingly.  Minting new
    media types is possible, but this loses the formal relationship with
    the generic media type, which would need to be specified out of band.
@@ -293,7 +293,7 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2019
    The "Accept" header [RFC7231] is the counterpart of the "Content-
    Type" header.  Whereas "Content-Type" indicates the option the sender
    has chosen for representing the message body, "Accept" communicates
-   the receipient's representation preferences beforehand.
+   the recipient's representation preferences beforehand.
 
    The value of an "Accept" header field is a comma-separated list of
    MIME types, each of which can optionally have parameters.  The "q"
@@ -459,7 +459,7 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2019
    the recipient accepts content conforming to any profile.  If the
    header field is present in a User Agent request and the server cannot
    provide a representation that conforms to the specified profile, it
-   SHOULD either honor the header field by responding with a a 406 (Not
+   SHOULD either honor the header field by responding with a 406 (Not
    Acceptable) status code, or disregard the header field by treating
    the response as if it is not subject to content negotiation.  If the
    server does not support profile-based content negotiation, the latter
@@ -758,7 +758,7 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2019
    REMOVED: This registration should take place at the following
    location: http://www.iana.org/assignments/message-headers/message-
    headers.xhtml] Further, it defines a parameter for the "Link" header.
-   There is no registry for link-param except for the values listed in
+   There is no registry for "link-param" except for the values listed in
    RFC 8288 [RFC8288] so the parameter "profile" will be seen as a link-
    extension.
 

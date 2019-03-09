@@ -127,7 +127,7 @@
 				On the Web, resources are identified with HTTP(S) URIs.
 				It can be useful for a server
 				to provide multiple representations of a resource
-				to accomodate different User Agents or use cases.
+				to accommodate different User Agents or use cases.
 				When a User Agent issues a GET request for a specific URI,
 				the User Agent and the server negotiate which of the
 				available representations best suit the User Agent's needs and capabilities.
@@ -163,14 +163,14 @@
 					is beyond the scope of this proposal;
 					our only constraint is that a profile can be identified by a URI.
 					Typical use cases include validation,
-					and building clients that rely on additonal assumptions
+					and building clients that rely on additional assumptions
 					in a representation received from another system.
 					These assumptions, such as the presence of a certain structure or certain fields,
 					are currently often implicitly made, or documented out of band,
 					whereas profiles can explicitly capture them.
 					The choice of the term "profile" was derived from the term "Application Profile",
 					which the Dublin Core community defines as "schemas which consist of data
-					elements drawn from one or more namespaces, combined together by implementors,
+					elements drawn from one or more namespaces, combined together by implementers,
 					and optimised for a particular local application" <xref target="rachelandheery">[Rachel &amp; Heery]</xref>.
 				</t>
 			</section>
@@ -191,7 +191,7 @@
 					and those conform to different profiles,
 					the server can use a "Link" header field together with the "profile" attribute
 					to point an agent to those other representations.</t>
-				<t>Similarily, an agent sending information to a server,
+				<t>Similarly, an agent sending information to a server,
 					e.g., by using PUT or POST, can include a "Content-Profile" header field in the HTTP request
 					to state which profile or profiles the request payload conforms to.
 					Prior to that interaction,
@@ -244,7 +244,7 @@
 					actually implicitly conform to stricter assumptions.
 					These assumptions are communicated out of band
 					and then silently (if at all) implemented by recipients.
-					Because those assunptions are not specified explicitly,
+					Because those assumptions are not specified explicitly,
 					clients cannot discover them at runtime
 					to adjust their processing accordingly.
 					Minting new media types is possible,
@@ -302,7 +302,7 @@ application/ld+json; profile="https://www.w3.org/ns/activitystreams"
 					is the counterpart of the "Content-Type" header.
 					Whereas "Content-Type" indicates the option the sender has chosen
 					for representing the message body,
-					"Accept" communicates the receipient's representation preferences beforehand.
+					"Accept" communicates the recipient's representation preferences beforehand.
 				</t>
 				<t>
 					The value of an "Accept" header field is a comma-separated list of MIME types,
@@ -462,7 +462,7 @@ Content-Profile = "Content-Profile" ":"
 					If the header field is present in a User Agent request
 					and the server cannot provide a representation
 					that conforms to the specified profile,
-					it SHOULD either honor the header field by responding with a a 406 (Not Acceptable) status code,
+					it SHOULD either honor the header field by responding with a 406 (Not Acceptable) status code,
 					or disregard the header field by treating the	response as if it is not subject to content negotiation.
 					If the server does not support profile-based content negotiation,
 					the latter behavior SHOULD also be followed.
@@ -674,7 +674,7 @@ Response:
 				registration should take place at the following location:
 				http://www.iana.org/assignments/message-headers/message-headers.xhtml]
 				Further, it defines a parameter for the "Link" header. There is no registry
-				for link-param except for the values listed in <xref target="RFC8288">RFC 8288</xref>
+				for "link-param" except for the values listed in <xref target="RFC8288">RFC 8288</xref>
 				so the parameter "profile" will be seen as a link-extension.</t>
 			<section title="Accept-Profile HTTP Header Registration" anchor="iana_accept_profile">
 				<t>The Accept-Profile header should be added to the permanent
