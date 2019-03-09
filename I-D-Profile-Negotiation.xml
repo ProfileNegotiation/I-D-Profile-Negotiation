@@ -504,88 +504,134 @@ profile-value = "&lt;" URI-reference "&gt;" [weight]
 			</section>
 			<section title="Examples">
 				<t>The following examples highlight the exchange of profile information between a User Agent
-				and a server. For clarity, the examples only contain minimal information, i. e.
+				and a server. For clarity, the examples only contain minimal information, i.e.,
 				only the relevant headers are included and message bodies are ignored.
-					<figure align="left" anchor="example_1">
-						<preamble>A User Agent requests an XML document conforming to a specific XML schema.
-						The XML schema is identified by "urn:example:schema:e-commerce-payment".</preamble>
+
+					<figure align="left" anchor="example_server_indicates_profiles">
+						<preamble>
+							A User Agent requests a JSON representation.
+							The server returns a JSON representation,
+							and indicates that it conforms to additional structural constraints
+							as specified in a profile identified by "urn:example:schema:e-commerce-payment".
+							Based on this information,
+							the client can choose to use a JSON parser,
+							and can rely on additional assumptions
+							about the structure and semantics of the resulting JSON tree.
+						</preamble>
 <artwork align="left">
 Request:
-GET /some-resource HTTP/1.1
-Accept: application/xml
-Accept-Profile: &lt;urn:example:schema:e-commerce-payment&gt;
+
+  GET /document HTTP/1.1
+  Accept: application/json
 
 Response:
-HTTP/1.1 200 OK
-Content-Type: application/xml
-Content-Profile: &lt;urn:example:schema:e-commerce-payment&gt;
-Link: rel="self";
-        type="application/xml";
-        profile="&lt;urn:example:schema:e-commerce-payment&gt;",
-      rel="alternate";
-        type="application/xml";
-        profile="&lt;urn:example:schema:e-commerce-accounting&gt;"
+
+  HTTP/1.1 200 OK
+  Content-Type: application/json
+  Content-Profile: &lt;urn:example:schema:e-commerce-payment&gt;
+
 </artwork>
 					</figure>
-					<figure align="left" anchor="example_2">
-						<preamble>A User Agent requests an RDF/XML document conforming to one of
-						two RDF Shapes (http://example.com/shapes/shape-1 and http://example.com/shapes/shape-2).
-						It uses q-values to express a preference for shape-1, the server, however,
-						prefers to deliver in shape-2.</preamble>
+
+					<figure align="left" anchor="example_both_support_profiles">
+						<preamble>
+							A User Agent requests a JSON representation conforming to additional constraints,
+							as specified in a profile identified by "urn:example:schema:e-commerce-payment".
+							The server has such a representation of the resource available,
+							as well as an XML representation conforming to the same profile,
+							and another JSON representation conforming to a different profile.
+						</preamble>
 <artwork align="left">
 Request:
-GET /some-resource HTTP/1.1
-Accept: application/rdf+xml
-Accept-Profile: &lt;http://example.com/shapes/shape-1&gt;; q=0.8,
-                &lt;http://example.com/shapes/shape-2&gt;; q=0.5
+  GET /document HTTP/1.1
+  Accept: application/json
+  Accept-Profile: &lt;urn:example:schema:e-commerce-payment&gt;
 
 Response:
-HTTP/1.1 200 OK
-Content-Type: application/rdf+xml
-Content-Profile: &lt;http://example.com/shapes/shape-2&gt;
-Link: rel="self";
-        type="application/rdf+xml";
-        profile="&lt;http://example.com/shapes/shape-2&gt;",
-      rel="alternate";
-        type="application/rdf+xml";
-        profile="&lt;http://example.com/shapes/shape-3&gt;"
+  HTTP/1.1 200 OK
+  Content-Type: application/json
+  Content-Profile: &lt;urn:example:schema:e-commerce-payment&gt;
+  Link: rel="self";
+          type="application/json";
+          profile="urn:example:schema:e-commerce-payment",
+        rel="alternate";
+          type="application/xml";
+          profile="urn:example:schema:e-commerce-payment;",
+        rel="alternate";
+          type="application/json";
+          profile="urn:example:schema:e-commerce-accounting"
 </artwork>
 					</figure>
-					<figure align="left" anchor="example_3">
-						<preamble>A User Agent PUTs a turtle document conforming to the RDF Shape
-						http://example.com/shapes/shape-1. The server answers that it can only process
-						documents conforming to http://example.com/shapes/shape-2.</preamble>
+
+					<figure align="left" anchor="example_server_prefers_other">
+						<preamble>
+							A User Agent requests an RDF document conforming to one of two RDF Shapes.
+							It uses q-values to express a preference for shape-1.
+							The server, however, prefers to deliver in shape-2,
+							and the response also happens to conform to shape-3.
+						</preamble>
 <artwork align="left">
 Request:
-PUT /some-resource HTTP/1.1
-Content-Profile: &lt;http://example.com/shapes/shape-1&gt;
+  GET /document HTTP/1.1
+  Accept: text/turtle, application/rdf+xml
+  Accept-Profile: &lt;http://example.com/shapes/shape-1&gt;;q=0.8,
+                  &lt;http://example.com/shapes/shape-2&gt;;q=0.5
 
 Response:
-HTTP/1.1 406 Not acceptable
-Content-Type: application/xhtml+xml
-Accept-Profile: &lt;http://example.com/shapes/shape-2&gt;
+  HTTP/1.1 200 OK
+  Content-Type: text/turtle
+  Content-Profile: &lt;http://example.com/shapes/shape-2&gt;,
+                   &lt;http://example.com/shapes/shape-3&gt;
+  Link: rel="self";
+          type="text/turtle";
+          profile="http://example.com/shapes/shape-2
+                   http://example.com/shapes/shape-3",
+        rel="alternate";
+          type="text/turtle";
+          profile="http://example.com/shapes/shape-4"
 </artwork>
 					</figure>
-					<figure align="left" anchor="example_4">
-						<preamble>A User Agent requests an XML document where the elements in
-						namespace urn:example:namespaces:ns1 must conform to XML schema http://example.com/schema/schema-1
-						and the elements in namespace urn:example:namespaces:ns2 must conform to XML schema
-						http://example.com/schema/schema-2. The server answers that it can supply the document as requested.</preamble>
+
+					<figure align="left" anchor="example_406">
+						<preamble>
+							A User Agent requests an RDF document conforming to one of two RDF Shapes.
+							The server, however, does not support these profiles.
+						</preamble>
 <artwork align="left">
 Request:
-GET /some-resource HTTP/1.1
-Accept-Profile: &lt;urn:example:namespaces:ns1
-                 http://example.com/schema/schema-1
-                 urn:example:namespaces:ns2
-                 http://example.com/schema/schema-2&gt;
+  GET /document HTTP/1.1
+  Accept: text/turtle, application/rdf+xml
+  Accept-Profile: &lt;http://example.com/shapes/shape-1&gt;;q=0.8,
+                  &lt;http://example.com/shapes/shape-2&gt;;q=0.5
 
 Response:
-HTTP/1.1 200 OK
-Content-Type: application/xml
-Content-Profile: &lt;urn:example:namespaces:ns1
-                 http://example.com/schema/schema-1
-                 urn:example:namespaces:ns2
-                 http://example.com/schema/schema-2&gt;
+  HTTP/1.1 406 Not Acceptable
+  Content-Type: text/html
+  Link: rel="alternate";
+          type="text/turtle";
+          profile="http://example.com/shapes/shape-4"
+</artwork>
+					</figure>
+
+					<figure align="left" anchor="example_415">
+						<preamble>
+							A User Agent PUTs an RDF document conforming to the RDF Shape
+							identified by http://example.com/shapes/shape-1.
+							The server answers that it can only process
+							documents conforming to http://example.com/shapes/shape-2.
+							The User Agent knows the problem is caused by the profile,
+							because the "Accept-Profile" header is listed.
+						</preamble>
+<artwork align="left">
+Request:
+  PUT /document HTTP/1.1
+  Content-Type: text/turtle
+  Content-Profile: &lt;http://example.com/shapes/shape-1&gt;
+
+Response:
+  HTTP/1.1 415 Unsupported Media Type
+  Content-Type: text/html
+  Accept-Profile: &lt;http://example.com/shapes/shape-2&gt;
 </artwork>
 					</figure>
 				</t>

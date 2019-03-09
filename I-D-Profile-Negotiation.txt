@@ -86,15 +86,15 @@ Table of Contents
    4.  Content Negotiation . . . . . . . . . . . . . . . . . . . . .  10
      4.1.  Mechanisms  . . . . . . . . . . . . . . . . . . . . . . .  10
      4.2.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .  10
-   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  12
-     5.1.  Accept-Profile HTTP Header Registration . . . . . . . . .  12
-     5.2.  Content-Profile HTTP Header Registration  . . . . . . . .  13
-   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  13
-   7.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  13
-   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  13
-     8.1.  Normative References  . . . . . . . . . . . . . . . . . .  13
-     8.2.  Informative References  . . . . . . . . . . . . . . . . .  14
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  15
+   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  13
+     5.1.  Accept-Profile HTTP Header Registration . . . . . . . . .  13
+     5.2.  Content-Profile HTTP Header Registration  . . . . . . . .  14
+   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  14
+   7.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  14
+   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  14
+     8.1.  Normative References  . . . . . . . . . . . . . . . . . .  14
+     8.2.  Informative References  . . . . . . . . . . . . . . . . .  15
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  16
 
 1.  Introduction
 
@@ -514,28 +514,28 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
    The following examples highlight the exchange of profile information
    between a User Agent and a server.  For clarity, the examples only
-   contain minimal information, i. e.  only the relevant headers are
+   contain minimal information, i.e., only the relevant headers are
    included and message bodies are ignored.
 
-   A User Agent requests an XML document conforming to a specific XML
-   schema.  The XML schema is identified by "urn:example:schema:e-
-   commerce-payment".
+   A User Agent requests a JSON representation.  The server returns a
+   JSON representation, and indicates that it conforms to additional
+   structural constraints as specified in a profile identified by
+   "urn:example:schema:e-commerce-payment".  Based on this information,
+   the client can choose to use a JSON parser, and can rely on
+   additional assumptions about the structure and semantics of the
+   resulting JSON tree.
 
    Request:
-   GET /some-resource HTTP/1.1
-   Accept: application/xml
-   Accept-Profile: <urn:example:schema:e-commerce-payment>
+
+     GET /document HTTP/1.1
+     Accept: application/json
 
    Response:
-   HTTP/1.1 200 OK
-   Content-Type: application/xml
-   Content-Profile: <urn:example:schema:e-commerce-payment>
-   Link: rel="self";
-           type="application/xml";
-           profile="<urn:example:schema:e-commerce-payment>",
-         rel="alternate";
-           type="application/xml";
-           profile="<urn:example:schema:e-commerce-accounting>"
+
+     HTTP/1.1 200 OK
+     Content-Type: application/json
+     Content-Profile: <urn:example:schema:e-commerce-payment>
+
 
                                  Figure 3
 
@@ -562,46 +562,46 @@ Svensson & Verborgh    Expires September 10, 2019              [Page 10]
 Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 
-   A User Agent requests an RDF/XML document conforming to one of two
-   RDF Shapes (http://example.com/shapes/shape-1 and
-   http://example.com/shapes/shape-2).  It uses q-values to express a
-   preference for shape-1, the server, however, prefers to deliver in
-   shape-2.
+   A User Agent requests a JSON representation conforming to additional
+   constraints, as specified in a profile identified by
+   "urn:example:schema:e-commerce-payment".  The server has such a
+   representation of the resource available, as well as an XML
+   representation conforming to the same profile, and another JSON
+   representation conforming to a different profile.
 
    Request:
-   GET /some-resource HTTP/1.1
-   Accept: application/rdf+xml
-   Accept-Profile: <http://example.com/shapes/shape-1>; q=0.8,
-                   <http://example.com/shapes/shape-2>; q=0.5
+     GET /document HTTP/1.1
+     Accept: application/json
+     Accept-Profile: <urn:example:schema:e-commerce-payment>
 
    Response:
-   HTTP/1.1 200 OK
-   Content-Type: application/rdf+xml
-   Content-Profile: <http://example.com/shapes/shape-2>
-   Link: rel="self";
-           type="application/rdf+xml";
-           profile="<http://example.com/shapes/shape-2>",
-         rel="alternate";
-           type="application/rdf+xml";
-           profile="<http://example.com/shapes/shape-3>"
+     HTTP/1.1 200 OK
+     Content-Type: application/json
+     Content-Profile: <urn:example:schema:e-commerce-payment>
+     Link: rel="self";
+             type="application/json";
+             profile="urn:example:schema:e-commerce-payment",
+           rel="alternate";
+             type="application/xml";
+             profile="urn:example:schema:e-commerce-payment;",
+           rel="alternate";
+             type="application/json";
+             profile="urn:example:schema:e-commerce-accounting"
 
                                  Figure 4
 
-   A User Agent PUTs a turtle document conforming to the RDF Shape
-   http://example.com/shapes/shape-1.  The server answers that it can
-   only process documents conforming to http://example.com/shapes/shape-
-   2.
 
-   Request:
-   PUT /some-resource HTTP/1.1
-   Content-Profile: <http://example.com/shapes/shape-1>
 
-   Response:
-   HTTP/1.1 406 Not acceptable
-   Content-Type: application/xhtml+xml
-   Accept-Profile: <http://example.com/shapes/shape-2>
 
-                                 Figure 5
+
+
+
+
+
+
+
+
+
 
 
 
@@ -618,29 +618,80 @@ Svensson & Verborgh    Expires September 10, 2019              [Page 11]
 Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 
-   A User Agent requests an XML document where the elements in namespace
-   urn:example:namespaces:ns1 must conform to XML schema
-   http://example.com/schema/schema-1 and the elements in namespace
-   urn:example:namespaces:ns2 must conform to XML schema
-   http://example.com/schema/schema-2.  The server answers that it can
-   supply the document as requested.
+   A User Agent requests an RDF document conforming to one of two RDF
+   Shapes.  It uses q-values to express a preference for shape-1.  The
+   server, however, prefers to deliver in shape-2, and the response also
+   happens to conform to shape-3.
 
    Request:
-   GET /some-resource HTTP/1.1
-   Accept-Profile: <urn:example:namespaces:ns1
-                    http://example.com/schema/schema-1
-                    urn:example:namespaces:ns2
-                    http://example.com/schema/schema-2>
+     GET /document HTTP/1.1
+     Accept: text/turtle, application/rdf+xml
+     Accept-Profile: <http://example.com/shapes/shape-1>;q=0.8,
+                     <http://example.com/shapes/shape-2>;q=0.5
 
    Response:
-   HTTP/1.1 200 OK
-   Content-Type: application/xml
-   Content-Profile: <urn:example:namespaces:ns1
-                    http://example.com/schema/schema-1
-                    urn:example:namespaces:ns2
-                    http://example.com/schema/schema-2>
+     HTTP/1.1 200 OK
+     Content-Type: text/turtle
+     Content-Profile: <http://example.com/shapes/shape-2>,
+                      <http://example.com/shapes/shape-3>
+     Link: rel="self";
+             type="text/turtle";
+             profile="http://example.com/shapes/shape-2
+                      http://example.com/shapes/shape-3",
+           rel="alternate";
+             type="text/turtle";
+             profile="http://example.com/shapes/shape-4"
+
+                                 Figure 5
+
+   A User Agent requests an RDF document conforming to one of two RDF
+   Shapes.  The server, however, does not support these profiles.
+
+   Request:
+     GET /document HTTP/1.1
+     Accept: text/turtle, application/rdf+xml
+     Accept-Profile: <http://example.com/shapes/shape-1>;q=0.8,
+                     <http://example.com/shapes/shape-2>;q=0.5
+
+   Response:
+     HTTP/1.1 406 Not Acceptable
+     Content-Type: text/html
+     Link: rel="alternate";
+             type="text/turtle";
+             profile="http://example.com/shapes/shape-4"
 
                                  Figure 6
+
+
+
+
+
+
+
+
+Svensson & Verborgh    Expires September 10, 2019              [Page 12]
+
+Internet-Draft        Negotiating Profiles in HTTP            March 2019
+
+
+   A User Agent PUTs an RDF document conforming to the RDF Shape
+   identified by http://example.com/shapes/shape-1.  The server answers
+   that it can only process documents conforming to
+   http://example.com/shapes/shape-2.  The User Agent knows the problem
+   is caused by the profile, because the "Accept-Profile" header is
+   listed.
+
+   Request:
+     PUT /document HTTP/1.1
+     Content-Type: text/turtle
+     Content-Profile: <http://example.com/shapes/shape-1>
+
+   Response:
+     HTTP/1.1 415 Unsupported Media Type
+     Content-Type: text/html
+     Accept-Profile: <http://example.com/shapes/shape-2>
+
+                                 Figure 7
 
 5.  IANA Considerations
 
@@ -667,16 +718,17 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
    Status: Informational
 
-
-
-Svensson & Verborgh    Expires September 10, 2019              [Page 12]
-
-Internet-Draft        Negotiating Profiles in HTTP            March 2019
-
-
    Author/Change controller: IETF
 
    Specification document(s): RFC XXXX
+
+
+
+
+Svensson & Verborgh    Expires September 10, 2019              [Page 13]
+
+Internet-Draft        Negotiating Profiles in HTTP            March 2019
+
 
 5.2.  Content-Profile HTTP Header Registration
 
@@ -721,19 +773,18 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2019
               DOI 10.17487/RFC5234, January 2008,
               <https://www.rfc-editor.org/info/rfc5234>.
 
-
-
-
-
-Svensson & Verborgh    Expires September 10, 2019              [Page 13]
-
-Internet-Draft        Negotiating Profiles in HTTP            March 2019
-
-
    [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Message Syntax and Routing",
               RFC 7230, DOI 10.17487/RFC7230, June 2014,
               <https://www.rfc-editor.org/info/rfc7230>.
+
+
+
+
+Svensson & Verborgh    Expires September 10, 2019              [Page 14]
+
+Internet-Draft        Negotiating Profiles in HTTP            March 2019
+
 
    [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
@@ -775,17 +826,6 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2019
               RFC 3870, DOI 10.17487/RFC3870, September 2004,
               <https://www.rfc-editor.org/info/rfc3870>.
 
-
-
-
-
-
-
-Svensson & Verborgh    Expires September 10, 2019              [Page 14]
-
-Internet-Draft        Negotiating Profiles in HTTP            March 2019
-
-
    [RFC6839]  Hansen, T. and A. Melnikov, "Additional Media Type
               Structured Syntax Suffixes", RFC 6839,
               DOI 10.17487/RFC6839, January 2013,
@@ -794,6 +834,13 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2019
    [RFC6906]  Wilde, E., "The 'profile' Link Relation Type", RFC 6906,
               DOI 10.17487/RFC6906, March 2013,
               <https://www.rfc-editor.org/info/rfc6906>.
+
+
+
+Svensson & Verborgh    Expires September 10, 2019              [Page 15]
+
+Internet-Draft        Negotiating Profiles in HTTP            March 2019
+
 
    [RFC7240]  Snell, J., "Prefer Header for HTTP", RFC 7240,
               DOI 10.17487/RFC7240, June 2014,
@@ -835,13 +882,6 @@ Authors' Addresses
    Email: l.svensson@dnb.de
 
 
-
-
-Svensson & Verborgh    Expires September 10, 2019              [Page 15]
-
-Internet-Draft        Negotiating Profiles in HTTP            March 2019
-
-
    Ruben Verborgh
    Ghent University - imec
    Sint-Pietersnieuwstraat 41
@@ -850,46 +890,6 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
    Phone: +32 9 331 49 10
    Email: ruben.verborgh@ugent.be
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
