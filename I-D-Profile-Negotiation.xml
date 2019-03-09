@@ -104,7 +104,7 @@
 		<abstract>
 			<t>This document defines two new HTTP headers
 				"Content-Profile" and "Accept-Profile"
-				that enable User Agents and hosts to indicate and negotiate
+				that enable User Agents and servers to indicate and negotiate
 				the profile used for representing a specific resource.
 				In this context, a profile is a description of
 				the structural and/or semantic constraints of a group of documents
@@ -121,80 +121,96 @@
 
 	<middle>
 		<section title="Introduction">
-			<t>This document defines two new HTTP headers that enable User Agents (UAs) and
-				hosts to indicate and negotiate the profile used to represent a specific resource.
+			<t>This document defines two new HTTP headers
+				that enable User Agents (UAs) and servers to indicate and negotiate
+				the profile used for representing a specific resource.
 				On the Web, resources are identified with HTTP(S) URIs.
-				In many cases, it can be desired to have multiple representations of a
-				resource to accomodate different UAs or use cases.
-				When a UA issues a GET request for a
-				specific URI, the UA and the server negotiate which of the
-				available representations best suit the UA's needs and capabilities. 
-				Typically a UA specifies preferences by setting appropriate HTTP
-				headers, e. g. Accept for media type, Accept-Language for content language
-				or Accept-Charset for character encoding.</t>
+				It can be useful for a server
+				to provide multiple representations of a resource
+				to accomodate different UAs or use cases.
+				When a UA issues a GET request for a specific URI,
+				the UA and the server negotiate which of the
+				available representations best suit the UA's needs and capabilities.
+				Typically, a UA specifies preferences by setting appropriate HTTP
+				headers, e.g., "Accept" for media type, "Accept-Language" for content language,
+				or "Accept-Charset" for character encoding.</t>
 			<section title="Motivation">
 				<t>In many cases, there are several ways to describe a resource
-					within the scope of the media type.
+					within the scope of a media type.
 					In the case of XML documents, for instance, the same content can be encoded
-					using one of several DTDs or XML Schemas, whereas in RDF there is a wide
-					choice of RDF vocabularies (classes and properties) available to describe
-					resources of the same type.
-					When a UA initiates a request, e.g., a GET request to retrieve
+					using one of several DTDs or XML Schemas.
+					JSON documents similarly leave open a wide range of options
+					regarding which tree structure, keys, and value types to use.
+					In RDF, there is a wide choice of vocabularies available
+					to describe resources of the same kind.
+					However, when a UA initiates a request, e.g., a GET request to retrieve
 					or a PUT request to create or replace a resource, neither the UA nor the
 					server have any possibility to exchange information on how the transmitted
-					resource will be structured precisely. This document proposes a solution by
-					defining the HTTP headers Accept-Profile and Content-Profile.</t>
+					resource is or needs to be formatted precisely beyond the media type.
+					This document therefore proposes a solution by
+					defining the HTTP headers "Content-Profile" and "Accept-Profile".</t>
 			</section>
 			<section title="Terminology">
-				<t>In the context of this proposal, a "profile" is a document that expresses
-					the structural and/or semantic constraints of other documents. Examples
-					of "profile" in this context include, but are not limited to, Dublin Core 
-					application profiles - formally expressed in 
-					<xref target="DSP">Description Set Profiles (DSP)</xref>
-					-, <xref target="XSD">XML Schema documents</xref> and RDF Shapes expressed in 
-					<xref target="SHACL">SHACL</xref>. How those profiles are used by consuming applications is beyond the
-					scope of this proposal, but typical use cases are validation of data
-					received from another system and the automated creation of objects from
-					received data as in <xref target="XMLBEANS">Java XMLBeans</xref>. The
-					choice of the term "profile"was derived from the term "Application Profile"
+				<t>In the context of this proposal, a profile is a description of
+					the structural and/or semantic constraints of a group of documents.
+					Examples of a profile in this context include, but are not limited to,
+					Dublin Core application profiles
+					(formally expressed in <xref target="DSP">Description Set Profiles (DSP)</xref>),
+					<xref target="XSD">XML Schema documents</xref>,
+					and RDF Shapes expressed in <xref target="SHACL">SHACL</xref>.
+					Profiles can, but do not need to, be independent of a media type.
+					The definition and usage of profiles in applications
+					is beyond the scope of this proposal;
+					our only constraint is that a profile can be identified by a URI.
+					Typical use cases include validation,
+					and building clients that rely on additonal assumptions
+					in a representation received from another system.
+					These assumptions, such as the presence of a certain structure or certain fields,
+					are currently often implicitly made, or documented out of band,
+					whereas profiles can explicitly capture them.
+					The choice of the term "profile" was derived from the term "Application Profile",
 					which the Dublin Core community defines as "schemas which consist of data
 					elements drawn from one or more namespaces, combined together by implementors,
 					and optimised for a particular local application" <xref target="rachelandheery">[Rachel &amp; Heery]</xref>.
 				</t>
 			</section>
 			<section title="High-level overview of solution">
-				<t>The proposed solution introduces two new HTTP header fields: "Accept-Profile" and "Content-Profile".
-					The typical use of those fields is for an agent	to include an "Accept-Profile" header field in an HTTP request
-					to indicate to the origin server which profile or profiles the returned payload should conform to
-					in order for the agent to be able to process it correctly.
+				<t>The proposed solution introduces two new HTTP header fields:
+					"Content-Profile" and "Accept-Profile".
+					With "Content-Profile", a sender of a message can indicate
+					the profile(s) to which it knows the enclosed representation conforms.
+					With "Accept-Profile", a potential recipient of a message can indicate
+					its preference for receiving representations that conform to (a) certain profile(s).
 					An agent can specify several profiles and use quality indicators (q-values) to indicate preferences.</t>
-				<t>An origin that supports content negotiation by profile
-				  will then list one or more profiles in the "Content-Profile" header in its response
-				  specifying which profile or profiles the returned payload conforms to.
+				<t>A server that supports profiles can then list
+					one or more profiles in the "Content-Profile" header in its response
+				  specifying the profile or profiles the returned payload conforms to.
 					The specified list of profiles may not be exhaustive
-					since the returned content can conform to profiles that the origin server is not aware of.
-					If there are multiple representations of the same resource available
+					since the returned content can conform to profiles that the server is not aware of.
+					If multiple representations of the same resource are available,
 					and those conform to different profiles,
-					an origin server can use a "Link" header field together with the "profile" attribute
+					the server can use a "Link" header field together with the "profile" attribute
 					to point an agent to those other representations.</t>
-				<t>Similarily, an agent sending information to an origin server,
-					e. g. by using PUT or POST, can also include a "Content-Profile" header field in the HTTP request
+				<t>Similarily, an agent sending information to a server,
+					e.g., by using PUT or POST, can include a "Content-Profile" header field in the HTTP request
 					to state which profile or profiles the request payload conforms to.
-					The targeted origin server can include an "Accept-Profile" header field in its response
+					Prior to that interaction,
+					the target server can include an "Accept-Profile" header field in a response
 					to indicate which profiles the resource is willing to accept in payloads from
 					PUT/POST/PATCH requests.</t>
-				<t>Note that this information is specific to the associated request;
+				<t>Note that this information is specific to the current request;
 					the set of supported profiles might be different for other resources on the same server
-					and could change over time or depend on other aspects of the request (such as the request method).</t>
+					and/or could change over time.</t>
 				<t>The absence of an "Accept-Profile" header field in an HTTP response
-					SHOULD be taken as an indication that the origin server does not implement profile negotiation.
-					It MUST NOT be seen as an indication that the origin can handle payloads
+					SHOULD be taken as an indication that the server
+					does not support profiles for the given resource.
+					It MUST NOT be seen as an indication that the server can handle payloads
 					conforming to any profile.</t>
-				<t>An origin that fails a request due to an unsupported profile SHOULD respond with a 415 status
+				<t>A server that fails a request due to an unsupported profile SHOULD respond with a 415 status
 					and SHOULD include an "Accept-Profile" header in its response,
 					allowing clients to distinguish between issues related to profiles and media types.
 					In order to avoid confusion with issues related to media types,
-					origins that fail a request with a 415 status for reasons unrelated to profiles
+					servers that fail a request with a 415 status for reasons unrelated to profiles
 					MUST NOT include the "Accept-Profile" header field.
 				</t>
 			</section>
