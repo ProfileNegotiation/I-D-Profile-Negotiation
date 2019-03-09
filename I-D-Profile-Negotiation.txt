@@ -86,15 +86,15 @@ Table of Contents
    4.  Content Negotiation . . . . . . . . . . . . . . . . . . . . .  10
      4.1.  Mechanisms  . . . . . . . . . . . . . . . . . . . . . . .  10
      4.2.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .  10
-   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  13
-     5.1.  Accept-Profile HTTP Header Registration . . . . . . . . .  13
-     5.2.  Content-Profile HTTP Header Registration  . . . . . . . .  14
-   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  14
-   7.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  14
-   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  14
-     8.1.  Normative References  . . . . . . . . . . . . . . . . . .  14
-     8.2.  Informative References  . . . . . . . . . . . . . . . . .  15
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  16
+   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  14
+     5.1.  Accept-Profile HTTP Header Registration . . . . . . . . .  14
+     5.2.  Content-Profile HTTP Header Registration  . . . . . . . .  15
+   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  15
+   7.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  15
+   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  15
+     8.1.  Normative References  . . . . . . . . . . . . . . . . . .  15
+     8.2.  Informative References  . . . . . . . . . . . . . . . . .  16
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  17
 
 1.  Introduction
 
@@ -510,20 +510,65 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 4.1.  Mechanisms
 
+   User Agents and servers supporting profiles can agree on mutually
+   acceptable profiles for the payload through the content negotiation
+   processes described in Section 3.4 of RFC 7231 [RFC7231].  The
+   present document does not define or alter content negotiation, but
+   rather adds an additional dimension to the content negotiation
+   process.  Both proactive negotiation and reactive negotiation for
+   profiles can be supported by servers.
+
+   Although servers are free to implement negotiation as they see fit,
+   if the User Agent sends an "Accept-Profile" header, they SHOULD
+   consider representations not conforming to any of the listed profiles
+   as non-interpretable by the client.  This means that a representation
+   that conforms to a listed profile, but has a low preference score on
+   other dimensions, SHOULD be considered as more desired than a
+   representation with a higher preference score on other dimensions but
+   that does not conform to any listed profile.  If no "Accept-Profile"
+   header preference is given, the profile dimension SHOULD be ignored
+   for negotiation purposes.  Nonetheless, in all cases, the server's
+   response SHOULD contain a "Content-Profile" header listing the URIs
+   of all profiles to which it knows the representation conforms.
+
 4.2.  Examples
 
-   The following examples highlight the exchange of profile information
+   The following examples show possible exchanges of profile information
    between a User Agent and a server.  For clarity, the examples only
    contain minimal information, i.e., only the relevant headers are
    included and message bodies are ignored.
 
-   A User Agent requests a JSON representation.  The server returns a
-   JSON representation, and indicates that it conforms to additional
-   structural constraints as specified in a profile identified by
-   "urn:example:schema:e-commerce-payment".  Based on this information,
-   the client can choose to use a JSON parser, and can rely on
-   additional assumptions about the structure and semantics of the
-   resulting JSON tree.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Svensson & Verborgh    Expires September 10, 2019              [Page 10]
+
+Internet-Draft        Negotiating Profiles in HTTP            March 2019
+
+
+   In this first example, a User Agent requests a JSON representation.
+   The server returns a JSON representation, and indicates that it
+   conforms to additional structural constraints as specified in a
+   profile identified by "urn:example:schema:e-commerce-payment".  Based
+   on this information, the client can choose to use a JSON parser, and
+   can rely on additional assumptions about the structure and semantics
+   of the resulting JSON tree.
 
    Request:
 
@@ -557,13 +602,24 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 
 
-Svensson & Verborgh    Expires September 10, 2019              [Page 10]
+
+
+
+
+
+
+
+
+
+
+
+Svensson & Verborgh    Expires September 10, 2019              [Page 11]
 
 Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 
-   A User Agent requests a JSON representation conforming to additional
-   constraints, as specified in a profile identified by
+   Another User Agent requests a JSON representation conforming to
+   additional constraints, as specified in a profile identified by
    "urn:example:schema:e-commerce-payment".  The server has such a
    representation of the resource available, as well as an XML
    representation conforming to the same profile, and another JSON
@@ -613,7 +669,7 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 
 
-Svensson & Verborgh    Expires September 10, 2019              [Page 11]
+Svensson & Verborgh    Expires September 10, 2019              [Page 12]
 
 Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
@@ -669,7 +725,7 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 
 
-Svensson & Verborgh    Expires September 10, 2019              [Page 12]
+Svensson & Verborgh    Expires September 10, 2019              [Page 13]
 
 Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
@@ -725,7 +781,7 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 
 
-Svensson & Verborgh    Expires September 10, 2019              [Page 13]
+Svensson & Verborgh    Expires September 10, 2019              [Page 14]
 
 Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
@@ -781,7 +837,7 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 
 
-Svensson & Verborgh    Expires September 10, 2019              [Page 14]
+Svensson & Verborgh    Expires September 10, 2019              [Page 15]
 
 Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
@@ -837,7 +893,7 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
 
 
-Svensson & Verborgh    Expires September 10, 2019              [Page 15]
+Svensson & Verborgh    Expires September 10, 2019              [Page 16]
 
 Internet-Draft        Negotiating Profiles in HTTP            March 2019
 
@@ -893,4 +949,4 @@ Authors' Addresses
 
 
 
-Svensson & Verborgh    Expires September 10, 2019              [Page 16]
+Svensson & Verborgh    Expires September 10, 2019              [Page 17]

@@ -608,13 +608,15 @@ profile-value = "&lt;" URI-reference "&gt;" [weight]
 <a href="#rfc.section.4">4.</a> Content Negotiation</h1>
 <h1 id="rfc.section.4.1">
 <a href="#rfc.section.4.1">4.1.</a> Mechanisms</h1>
+<p id="rfc.section.4.1.p.1">User Agents and servers supporting profiles can agree on mutually acceptable profiles for the payload through the content negotiation processes described in <a href="#RFC7231" class="xref">Section 3.4 of RFC 7231</a>.  The present document does not define or alter content negotiation, but rather adds an additional dimension to the content negotiation process.  Both proactive negotiation and reactive negotiation for profiles can be supported by servers.</p>
+<p id="rfc.section.4.1.p.2">Although servers are free to implement negotiation as they see fit, if the User Agent sends an "Accept-Profile" header, they SHOULD consider representations not conforming to any of the listed profiles as non-interpretable by the client.  This means that a representation that conforms to a listed profile, but has a low preference score on other dimensions, SHOULD be considered as more desired than a representation with a higher preference score on other dimensions but that does not conform to any listed profile.  If no "Accept-Profile" header preference is given, the profile dimension SHOULD be ignored for negotiation purposes.  Nonetheless, in all cases, the server's response SHOULD contain a "Content-Profile" header listing the URIs of all profiles to which it knows the representation conforms.</p>
 <h1 id="rfc.section.4.2">
 <a href="#rfc.section.4.2">4.2.</a> Examples</h1>
 <div id="rfc.figure.3"></div>
 <div id="example_server_indicates_profiles"></div>
-<p id="rfc.section.4.2.p.1">The following examples highlight the exchange of profile information between a User Agent and a server. For clarity, the examples only contain minimal information, i.e., only the relevant headers are included and message bodies are ignored.  </p>
+<p id="rfc.section.4.2.p.1">The following examples show possible exchanges of profile information between a User Agent and a server. For clarity, the examples only contain minimal information, i.e., only the relevant headers are included and message bodies are ignored.  </p>
 
-<p>A User Agent requests a JSON representation.  The server returns a JSON representation, and indicates that it conforms to additional structural constraints as specified in a profile identified by "urn:example:schema:e-commerce-payment".  Based on this information, the client can choose to use a JSON parser, and can rely on additional assumptions about the structure and semantics of the resulting JSON tree.  </p>
+<p>In this first example, a User Agent requests a JSON representation.  The server returns a JSON representation, and indicates that it conforms to additional structural constraints as specified in a profile identified by "urn:example:schema:e-commerce-payment".  Based on this information, the client can choose to use a JSON parser, and can rely on additional assumptions about the structure and semantics of the resulting JSON tree.  </p>
 <pre>
 Request:
 
@@ -631,7 +633,7 @@ Response:
 <p class="figure">Figure 3</p>
 <div id="rfc.figure.4"></div>
 <div id="example_both_support_profiles"></div>
-<p>A User Agent requests a JSON representation conforming to additional constraints, as specified in a profile identified by "urn:example:schema:e-commerce-payment".  The server has such a representation of the resource available, as well as an XML representation conforming to the same profile, and another JSON representation conforming to a different profile.  </p>
+<p>Another User Agent requests a JSON representation conforming to additional constraints, as specified in a profile identified by "urn:example:schema:e-commerce-payment".  The server has such a representation of the resource available, as well as an XML representation conforming to the same profile, and another JSON representation conforming to a different profile.  </p>
 <pre>
 Request:
   GET /document HTTP/1.1
