@@ -515,7 +515,10 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2019
    processes described in Section 3.4 of RFC 7231 [RFC7231].  The
    present document does not define or alter content negotiation, but
    rather adds an additional dimension to the content negotiation
-   process.  Both proactive negotiation and reactive negotiation for
+   process.  Agents can indicate their preferences for certain profiles
+   by specifying an "Accept-Profile" header on requests, and servers
+   indicate their choice by specifying a "Content-Profile" header on
+   responses.  Both proactive negotiation and reactive negotiation for
    profiles can be supported by servers.
 
    Although servers are free to implement negotiation as they see fit,
@@ -537,9 +540,6 @@ Internet-Draft        Negotiating Profiles in HTTP            March 2019
    between a User Agent and a server.  For clarity, the examples only
    contain minimal information, i.e., only the relevant headers are
    included and message bodies are ignored.
-
-
-
 
 
 

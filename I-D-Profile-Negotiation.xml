@@ -507,6 +507,10 @@ profile-value = "&lt;" URI-reference "&gt;" [weight]
 					<xref target="RFC7231">Section 3.4 of RFC 7231</xref>.
 					The present document does not define or alter content negotiation,
 					but rather adds an additional dimension to the content negotiation process.
+					Agents can indicate their preferences for certain profiles
+					by specifying an "Accept-Profile" header on requests,
+					and servers indicate their choice
+					by specifying a "Content-Profile" header on responses.
 					Both proactive negotiation and reactive negotiation for profiles
 					can be supported by servers.</t>
 				<t>Although servers are free to implement negotiation as they see fit,
