@@ -164,7 +164,7 @@
 					Profiles can, but do not need to, be independent of a media type.
 					The definition and usage of profiles in applications
 					is beyond the scope of this proposal;
-					our only constraint is that profiles are identified by URIs.
+					our only constraint is that a profiles is identified by a URI.
 					Further assumptions about profiles, e. g.
 					hierarchies of profiles, inheritance or transitivity,
 					are out of this specification's scope.</t>
@@ -209,7 +209,7 @@
 					and/or could change over time.</t>
 				<t>The absence of an "Accept-Profile" header field in an HTTP response
 					SHOULD be taken as an indication that the server
-					does not support profiles for the given resource.
+					does not support profile-based content-negotiation for the given resource.
 					It MUST NOT be seen as an indication that the server can handle payloads
 					conforming to any profile.</t>
 				<t>A server that fails a request due to receiving a payload with an unsupported profile
