@@ -5,8 +5,8 @@
 Internet Engineering Task Force                              L. Svensson
 Internet-Draft                               Deutsche Nationalbibliothek
 Intended status: Standards Track                             R. Verborgh
-Expires: September 14, 2019                      Ghent University - imec
-                                                          March 13, 2019
+Expires: October 3, 2019                         Ghent University - imec
+                                                           April 1, 2019
 
 
               Indicating and Negotiating Profiles in HTTP
@@ -22,10 +22,10 @@ Abstract
    syntactical interpretation provided by more generic MIME types.
    Examples of profiles include Dublin Core Application Profiles, XML
    Schemata, and RDF Shape Expressions.  This document further defines
-   and registers the "profile" parameter for the HTTP "Link" header and
-   suggests a best practice for the use of the new headers together with
-   the "Link" header for the purposes of performing content negotiation
-   and pointing clients to alternate representations.
+   the "profile" attribute for the HTTP "Link" header and suggests a
+   best practice for the use of the new headers together with the "Link"
+   header for the purposes of performing content negotiation and
+   pointing clients to alternate representations.
 
 Status of This Memo
 
@@ -42,7 +42,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on September 14, 2019.
+   This Internet-Draft will expire on October 3, 2019.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Svensson & Verborgh    Expires September 14, 2019               [Page 1]
+Svensson & Verborgh      Expires October 3, 2019                [Page 1]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
 
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -73,27 +73,28 @@ Table of Contents
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
      1.1.  Motivation  . . . . . . . . . . . . . . . . . . . . . . .   3
      1.2.  Terminology . . . . . . . . . . . . . . . . . . . . . . .   3
-     1.3.  High-level overview of solution . . . . . . . . . . . . .   3
-     1.4.  Notational Conventions  . . . . . . . . . . . . . . . . .   4
+     1.3.  High-level overview of solution . . . . . . . . . . . . .   4
+     1.4.  Notational Conventions  . . . . . . . . . . . . . . . . .   5
    2.  Related HTTP Headers  . . . . . . . . . . . . . . . . . . . .   5
      2.1.  Content-Type  . . . . . . . . . . . . . . . . . . . . . .   5
      2.2.  Accept  . . . . . . . . . . . . . . . . . . . . . . . . .   6
      2.3.  Content-Location  . . . . . . . . . . . . . . . . . . . .   6
-     2.4.  Link  . . . . . . . . . . . . . . . . . . . . . . . . . .   6
+     2.4.  Link  . . . . . . . . . . . . . . . . . . . . . . . . . .   7
    3.  New HTTP Headers  . . . . . . . . . . . . . . . . . . . . . .   7
      3.1.  Content-Profile Header Syntax . . . . . . . . . . . . . .   8
-     3.2.  Accept-Profile Header Syntax  . . . . . . . . . . . . . .   8
+     3.2.  Accept-Profile Header Syntax  . . . . . . . . . . . . . .   9
    4.  Content Negotiation . . . . . . . . . . . . . . . . . . . . .  10
      4.1.  Mechanisms  . . . . . . . . . . . . . . . . . . . . . . .  10
-     4.2.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .  10
+     4.2.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .  11
    5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  14
      5.1.  Accept-Profile HTTP Header Registration . . . . . . . . .  14
      5.2.  Content-Profile HTTP Header Registration  . . . . . . . .  15
-   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  15
-   7.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  15
-   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  15
-     8.1.  Normative References  . . . . . . . . . . . . . . . . . .  15
-     8.2.  Informative References  . . . . . . . . . . . . . . . . .  16
+   6.  Definition of the Link header target attribute "profile"  . .  15
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  15
+   8.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  16
+   9.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  16
+     9.1.  Normative References  . . . . . . . . . . . . . . . . . .  16
+     9.2.  Informative References  . . . . . . . . . . . . . . . . .  16
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  17
 
 1.  Introduction
@@ -105,15 +106,15 @@ Table of Contents
    provide multiple representations of a resource to accommodate
    different User Agents or use cases.  When a User Agent issues a GET
    request for a specific URI, the User Agent and the server negotiate
-   which of the available representations best suit the User Agent's
 
 
 
-Svensson & Verborgh    Expires September 14, 2019               [Page 2]
+Svensson & Verborgh      Expires October 3, 2019                [Page 2]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
 
 
+   which of the available representations best suit the User Agent's
    needs and capabilities.  Typically, a User Agent specifies
    preferences by setting appropriate HTTP headers, e.g., "Accept" for
    media type, "Accept-Language" for content language, or "Accept-
@@ -141,35 +142,39 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
    structural and/or semantic constraints of a group of documents.
    Examples of a profile in this context include, but are not limited
    to, Dublin Core application profiles (formally expressed in
-   Description Set Profiles (DSP) [DSP]), XML Schema documents [XSD],
-   and RDF Shapes expressed in SHACL [SHACL].  Profiles can, but do not
-   need to, be independent of a media type.  The definition and usage of
-   profiles in applications is beyond the scope of this proposal; our
-   only constraint is that a profile can be identified by a URI.
-   Typical use cases include validation, and building clients that rely
-   on additional assumptions in a representation received from another
-   system.  These assumptions, such as the presence of a certain
-   structure or certain fields, are currently often implicitly made, or
-   documented out of band, whereas profiles can explicitly capture them.
-   The choice of the term "profile" was derived from the term
-   "Application Profile", which the Dublin Core community defines as
-   "schemas which consist of data elements drawn from one or more
-   namespaces, combined together by implementers, and optimised for a
-   particular local application" [Rachel & Heery] [rachelandheery].
+   Description Set Profiles (DSP) [DSP]), XML Schema documents
+   [W3C.REC-xmlschema11-1-20120405], and RDF Shapes expressed in SHACL
+   [W3C.REC-shacl-20170720].  Profiles can, but do not need to, be
+   independent of a media type.  The definition and usage of profiles in
+   applications is beyond the scope of this proposal; our only
+   constraint is that a profiles is identified by a URI.  Further
+   assumptions about profiles, e. g.  hierarchies of profiles,
+   inheritance or transitivity, are out of this specification's scope.
+
+   Typical use cases for profiles include validation, and building
+   clients that rely on additional assumptions in a representation
+   received from another system.  These assumptions, such as the
+   presence of a certain structure or certain fields, are currently
+   often implicitly made, or documented out of band, whereas profiles
+   can explicitly capture them.  The choice of the term "profile" was
+   derived from the term "Application Profile", which the Dublin Core
+   community defines as "schemas which consist of data elements drawn
+   from one or more namespaces, combined together by implementers, and
+   optimised for a particular local application" [HeeryAndPatel].
+
+
+
+
+Svensson & Verborgh      Expires October 3, 2019                [Page 3]
+
+Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+
 
 1.3.  High-level overview of solution
 
    The proposed solution introduces two new HTTP header fields:
    "Content-Profile" and "Accept-Profile".  With "Content-Profile", a
    sender of a message can indicate the profile(s) to which it knows the
-
-
-
-Svensson & Verborgh    Expires September 14, 2019               [Page 3]
-
-Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
-
-
    enclosed representation conforms.  With "Accept-Profile", a potential
    recipient of a message can indicate its preference for receiving
    representations that conform to (a) certain profile(s).  An agent can
@@ -200,9 +205,9 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
 
    The absence of an "Accept-Profile" header field in an HTTP response
    SHOULD be taken as an indication that the server does not support
-   profiles for the given resource.  It MUST NOT be seen as an
-   indication that the server can handle payloads conforming to any
-   profile.
+   profile-based content-negotiation for the given resource.  It MUST
+   NOT be seen as an indication that the server can handle payloads
+   conforming to any profile.
 
    A server that fails a request due to receiving a payload with an
    unsupported profile SHOULD respond with a 415 status and SHOULD
@@ -212,19 +217,20 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
    servers that fail a request with a 415 status for reasons unrelated
    to profiles MUST NOT include the "Accept-Profile" header field.
 
+
+
+
+
+Svensson & Verborgh      Expires October 3, 2019                [Page 4]
+
+Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+
+
 1.4.  Notational Conventions
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
    document are to be interpreted as described in RFC 2119 [RFC2119].
-
-
-
-
-Svensson & Verborgh    Expires September 14, 2019               [Page 4]
-
-Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
-
 
 2.  Related HTTP Headers
 
@@ -252,8 +258,8 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
    field in addition to a MIME type to indicate a media-type-specific
    profile the representation conforms to.  Such profiles are often
    defined within the specification of document formats.  For instance,
-   Activity Streams 2.0 [AS2] defines the following equivalent media
-   types:
+   Activity Streams 2.0 [W3C.REC-activitystreams-core-20170523] defines
+   the following equivalent media types:
 
    application/activity+json
 
@@ -268,19 +274,20 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
    the "application/json" and "application/ld+json" MIME types.  Clients
    without built-in support for "application/activity+json" only have
    the "+json" suffix [RFC6839] as a non-binding suggestion that the
+
+
+
+Svensson & Verborgh      Expires October 3, 2019                [Page 5]
+
+Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+
+
    content conforms to "application/json", and such an indicator does
    not exist for JSON-LD and most other media types.  As such, those
    clients are not informed about their possible ability to parse a
    message body as JSON or JSON-LD.  Clients that do have support for
    "application/activity+json" will likely need to involve JSON and
    JSON-LD parsers regardless.
-
-
-
-Svensson & Verborgh    Expires September 14, 2019               [Page 5]
-
-Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
-
 
    The need to mint specific media types for profiles becomes a
    combinatorial issue when profiles can apply to multiple media types,
@@ -323,6 +330,14 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
    This then indicates that this specific representation is available
    directly, without content negotiation, from /some/resource.as.jsonld.
 
+
+
+
+Svensson & Verborgh      Expires October 3, 2019                [Page 6]
+
+Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+
+
 2.4.  Link
 
    The "Link" header [RFC8288] allows the sender of a message to model
@@ -330,14 +345,6 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
    Such relations are expressed as a link to a target with a relation
    type and, optionally, target attributes.  Of particular interest for
    content negotiation are the self and alternate relation types, whose
-
-
-
-Svensson & Verborgh    Expires September 14, 2019               [Page 6]
-
-Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
-
-
    targets identify respectively the current representation and other
    existing representations.  The "Link" header can thereby serve as a
    mechanism for discovering supported representations and profiles.
@@ -379,20 +386,16 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
    parties involved agree on a profile definition, the profile can be
    identified with e.g. a URN or an info-URI.  When a protocol-based URI
    is used, such as an FTP- or an HTTP-URI, however, it is RECOMMENDED
+
+
+
+Svensson & Verborgh      Expires October 3, 2019                [Page 7]
+
+Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+
+
    that it dereference to a document containing that profile's
    definition.
-
-
-
-
-
-
-
-
-Svensson & Verborgh    Expires September 14, 2019               [Page 7]
-
-Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
-
 
 3.1.  Content-Profile Header Syntax
 
@@ -436,20 +439,23 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
 
                                  Figure 1
 
+
+
+
+
+
+
+Svensson & Verborgh      Expires October 3, 2019                [Page 8]
+
+Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+
+
 3.2.  Accept-Profile Header Syntax
 
    The "Accept-Profile" header field is used to specify one or more
    content profiles the issuing agent can accept for processing.  Each
    profile is identified by a URI reference inside angle brackets ("<>")
    that MUST be an absolute URI.  If multiple profiles are specified,
-
-
-
-Svensson & Verborgh    Expires September 14, 2019               [Page 8]
-
-Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
-
-
    quality values as defined in Section 5.3.1 of RFC 7230 [RFC7230] can
    be used to assign a relative "weight" to the preference.  Exactly how
    that weight is used to determine the best representation is beyond
@@ -467,6 +473,12 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
    negotiation process, if the server knows that the representation
    conforms to one of more profiles, it SHOULD list then in the
    "Content-Profile" header of the response.
+
+   The absence of an "Accept-Profile" header field in an HTTP response
+   SHOULD be taken as an indication that the server does not support
+   profiles for the given resource.  It MUST NOT be seen as an
+   indication that the server can handle payloads conforming to any
+   profile.
 
    An agent that wants to indicate that several profiles are acceptable,
    can either submit one Accept-Profile field for every profile that is
@@ -486,6 +498,14 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
    The definitions of "URI-reference" and "weight" are imported from RFC
    7230 [RFC7230] and RFC 7231 [RFC7231], respectively.
 
+
+
+
+Svensson & Verborgh      Expires October 3, 2019                [Page 9]
+
+Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+
+
                        Accept-Profile header syntax
 
    Accept-Profile = "Accept-Profile" ":"
@@ -493,18 +513,6 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
    profile-value = "<" URI-reference ">" [weight]
 
                                  Figure 2
-
-
-
-
-
-
-
-
-Svensson & Verborgh    Expires September 14, 2019               [Page 9]
-
-Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
-
 
 4.  Content Negotiation
 
@@ -534,33 +542,32 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
    response SHOULD contain a "Content-Profile" header listing the URIs
    of all profiles to which it knows the representation conforms.
 
+   A server that fails a request due to receiving a payload with an
+   unsupported profile SHOULD respond with a 415 status and SHOULD
+   include an "Accept-Profile" header in its response, allowing clients
+   to distinguish between issues related to profiles and media types.
+   In order to avoid confusion with issues related to media types,
+   servers that fail a request with a 415 status for reasons unrelated
+   to profiles MUST NOT include the "Accept-Profile" header field.
+
+
+
+
+
+
+
+
+Svensson & Verborgh      Expires October 3, 2019               [Page 10]
+
+Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+
+
 4.2.  Examples
 
    The following examples show possible exchanges of profile information
    between a User Agent and a server.  For clarity, the examples only
    contain minimal information, i.e., only the relevant headers are
    included and message bodies are ignored.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Svensson & Verborgh    Expires September 14, 2019              [Page 10]
-
-Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
-
 
    In this first example, a User Agent requests a JSON representation.
    The server returns a JSON representation, and indicates that it
@@ -606,16 +613,9 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
 
 
 
-
-
-
-
-
-
-
-Svensson & Verborgh    Expires September 14, 2019              [Page 11]
+Svensson & Verborgh      Expires October 3, 2019               [Page 11]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
 
 
    Another User Agent requests a JSON representation conforming to
@@ -669,9 +669,9 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
 
 
 
-Svensson & Verborgh    Expires September 14, 2019              [Page 12]
+Svensson & Verborgh      Expires October 3, 2019               [Page 12]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
 
 
    A User Agent requests an RDF document conforming to one of two RDF
@@ -725,9 +725,9 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
 
 
 
-Svensson & Verborgh    Expires September 14, 2019              [Page 13]
+Svensson & Verborgh      Expires October 3, 2019               [Page 13]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
 
 
    A User Agent PUTs an RDF document conforming to the RDF Shape
@@ -757,16 +757,16 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
    Procedures for Message Header Fields" RFC 3864 [RFC3864].  [TO BE
    REMOVED: This registration should take place at the following
    location: http://www.iana.org/assignments/message-headers/message-
-   headers.xhtml] Further, it defines a parameter for the "Link" header.
-   There is no registry for "link-param" except for the values listed in
-   RFC 8288 [RFC8288] so the parameter "profile" will be seen as a link-
-   extension.
+   headers.xhtml] Further, it defines an attribute for the "Link"
+   header.  There is no registry for "link-param" except for the values
+   listed in RFC 8288 [RFC8288] so the attribute "profile" will be seen
+   as a link-extension.
 
 5.1.  Accept-Profile HTTP Header Registration
 
    The Accept-Profile header should be added to the permanent registry
    of message header fields (see RFC 3864 [RFC3864]), taking into
-   account the guidelines given by HTTP/1.1 RFC 7231 [RFC7231]".
+   account the guidelines given by HTTP/1.1 RFC 7231 [RFC7231].
 
    Header Field Name: Accept-Profile
 
@@ -781,16 +781,16 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
 
 
 
-Svensson & Verborgh    Expires September 14, 2019              [Page 14]
+Svensson & Verborgh      Expires October 3, 2019               [Page 14]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
 
 
 5.2.  Content-Profile HTTP Header Registration
 
    The Content-Profile header should be added to the permanent registry
    of message header fields (see RFC 3864 [RFC3864]), taking into
-   account the guidelines given by HTTP/1.1 RFC 7231 [RFC7231]".
+   account the guidelines given by HTTP/1.1 RFC 7231 [RFC7231].
 
    Header Field Name: Content-Profile
 
@@ -802,27 +802,63 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
 
    Specification document(s): RFC XXXX
 
-6.  Security Considerations
+6.  Definition of the Link header target attribute "profile"
 
-   The Accept-Profile and Content-Profile headers may expose information
-   that a User Agent or an origin server would prefer to not publish.
-   In such a case, a server can simply stop exposing the header, in
-   which case HTTP interactions would be back to the level of standard
-   HTTP (i.e., with no indication what profiles the User Agent or the
-   server prefer and/or can handle).
+   When used in a Link header field [RFC8288], the "profile" attribute
+   is a hint indicating which profile the resource representation
+   retrieved by dereferencing the link conforms to.  Note that this is
+   only a hint; for example it does not override the "Content-Profile"
+   header field of a HTTP response obtained by actually following the
+   link.  Multiple "profile" attributes on a single link value indicate
+   that the resource representation conforms to multiple profiles.
 
-7.  Acknowledgements
+   The ABNF for the profile attribute's value is:
+
+   absolute-URI
+
+   where "absolute-URI" is defined as in section 4.3 of RFC 3986
+   [RFC3986].
+
+7.  Security Considerations
+
+   The use of HTTP to negotiate and transport profile information
+   implies that all privacy and security issues that are relevant for
+   that protocol are also relevant for profile negotiation.  E. g.,
+   information such as user agent, accept-headers, IP address etc.  can
+   potentially be used as identifying information, and particularly, the
+   IP address adds information about geolocation and institutional
+   membership.  Further, offering a list of acceptable profiles at the
+   beginning of a negotiation process can reveal information about the
+   user's interests that could be used to add such information to a user
+   profile.  If this is undesirable, a client and/or a server can stop
+   exposing the header, in which case HTTP interactions would be back to
+   the level of standard HTTP (i.e., with no indication what profiles
+   the User Agent or the server prefer and/or can handle).
+
+
+
+Svensson & Verborgh      Expires October 3, 2019               [Page 15]
+
+Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+
+
+8.  Acknowledgements
 
    This is the place to have YOUR NAME prominently displayed!
 
-8.  References
+9.  References
 
-8.1.  Normative References
+9.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
+
+   [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
+              Resource Identifier (URI): Generic Syntax", STD 66,
+              RFC 3986, DOI 10.17487/RFC3986, January 2005,
+              <https://www.rfc-editor.org/info/rfc3986>.
 
    [RFC5234]  Crocker, D., Ed. and P. Overell, "Augmented BNF for Syntax
               Specifications: ABNF", STD 68, RFC 5234,
@@ -834,53 +870,33 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
               RFC 7230, DOI 10.17487/RFC7230, June 2014,
               <https://www.rfc-editor.org/info/rfc7230>.
 
-
-
-
-Svensson & Verborgh    Expires September 14, 2019              [Page 15]
-
-Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
-
-
    [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
               DOI 10.17487/RFC7231, June 2014,
               <https://www.rfc-editor.org/info/rfc7231>.
 
-8.2.  Informative References
-
-   [AS2]      Snell, J. and E. Prodromou, "Activity Streams 2.0", 2017,
-              <https://www.w3.org/TR/activitystreams-core/>.
+9.2.  Informative References
 
    [DSP]      Nilsson, M., "Description Set Profiles: A constraint
               language for Dublin Core Application Profiles", 2008,
               <http://dublincore.org/documents/dc-dsp/>.
 
-   [IANAMEDIAREG]
-              IANA, "Media Types", 2015,
-              <http://www.iana.org/assignments/media-types/>.
-
-   [JSONLD]   Sporny, M., Kellogg, G., and M. Lanthaler, "JSON-LD 1.0: A
-              JSON-based Serialization for Linked Data", 2015,
-              <http://www.w3.org/TR/json-ld/>.
-
-   [rachelandheery]
+   [HeeryAndPatel]
               Heery, R. and M. Patel, "Application Profiles: Mixing and
               Matching Metadata Schemas", 2000,
               <http://www.ariadne.ac.uk/issue25/app-profiles>.
-
-   [RFC3236]  Baker, M. and P. Stark, "The 'application/xhtml+xml' Media
-              Type", RFC 3236, DOI 10.17487/RFC3236, January 2002,
-              <https://www.rfc-editor.org/info/rfc3236>.
 
    [RFC3864]  Klyne, G., Nottingham, M., and J. Mogul, "Registration
               Procedures for Message Header Fields", BCP 90, RFC 3864,
               DOI 10.17487/RFC3864, September 2004,
               <https://www.rfc-editor.org/info/rfc3864>.
 
-   [RFC3870]  Swartz, A., "application/rdf+xml Media Type Registration",
-              RFC 3870, DOI 10.17487/RFC3870, September 2004,
-              <https://www.rfc-editor.org/info/rfc3870>.
+
+
+Svensson & Verborgh      Expires October 3, 2019               [Page 16]
+
+Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+
 
    [RFC6839]  Hansen, T. and A. Melnikov, "Additional Media Type
               Structured Syntax Suffixes", RFC 6839,
@@ -891,40 +907,29 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
               DOI 10.17487/RFC6906, March 2013,
               <https://www.rfc-editor.org/info/rfc6906>.
 
-
-
-Svensson & Verborgh    Expires September 14, 2019              [Page 16]
-
-Internet-Draft Indicating and Negotiating Profiles in HTTP    March 2019
-
-
-   [RFC7240]  Snell, J., "Prefer Header for HTTP", RFC 7240,
-              DOI 10.17487/RFC7240, June 2014,
-              <https://www.rfc-editor.org/info/rfc7240>.
-
    [RFC8288]  Nottingham, M., "Web Linking", RFC 8288,
               DOI 10.17487/RFC8288, October 2017,
               <https://www.rfc-editor.org/info/rfc8288>.
 
-   [SHACL]    Knublauch, H. and A. Ryman, "Shapes Constraint Language
-              (SHACL): W3C First Public Working Draft 08 October 2015",
-              2014, <http://www.w3.org/TR/shacl/>.
+   [W3C.REC-activitystreams-core-20170523]
+              Snell, J. and E. Prodromou, "Activity Streams 2.0", World
+              Wide Web Consortium Recommendation REC-activitystreams-
+              core-20170523, May 2017, <https://www.w3.org/TR/2017/
+              REC-activitystreams-core-20170523>.
 
-   [TURTLE]   Prud'hommeaux, E. and G. Carothers, "RDF 1.1 Turtle",
-              2014, <http://www.w3.org/TR/turtle/>.
+   [W3C.REC-shacl-20170720]
+              Knublauch, H. and D. Kontokostas, "Shapes Constraint
+              Language (SHACL)", World Wide Web Consortium
+              Recommendation REC-shacl-20170720, July 2017,
+              <https://www.w3.org/TR/2017/REC-shacl-20170720>.
 
-   [XMLBEANS]
-              Apache Software Foundation, "XMLBeans", 2014,
-              <https://xmlbeans.apache.org/>.
-
-   [XMLSCHEMA]
-              Gao, S., Sperberg-McQueen, C., and H. Thompson, "W3C XML
-              Schema Definition Language (XSD) 1.1 Part 1: Structures",
-              2012, <https://www.w3.org/TR/xmlschema11-1/>.
-
-   [XSD]      Thompson, H., Beech, D., Maloney, M., and N. Mendelsohn,
-              "XML Schema Part 1: Structures Second Edition", 2004,
-              <http://www.w3.org/TR/xmlschema-1/>.
+   [W3C.REC-xmlschema11-1-20120405]
+              Gao, S., Sperberg-McQueen, M., Thompson, H., Mendelsohn,
+              N., Beech, D., and M. Maloney, "W3C XML Schema Definition
+              Language (XSD) 1.1 Part 1: Structures", World Wide Web
+              Consortium Recommendation REC-xmlschema11-1-20120405,
+              April 2012,
+              <http://www.w3.org/TR/2012/REC-xmlschema11-1-20120405>.
 
 Authors' Addresses
 
@@ -938,6 +943,17 @@ Authors' Addresses
    Email: l.svensson@dnb.de
 
 
+
+
+
+
+
+
+Svensson & Verborgh      Expires October 3, 2019               [Page 17]
+
+Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+
+
    Ruben Verborgh
    Ghent University - imec
    Sint-Pietersnieuwstraat 41
@@ -949,4 +965,44 @@ Authors' Addresses
 
 
 
-Svensson & Verborgh    Expires September 14, 2019              [Page 17]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Svensson & Verborgh      Expires October 3, 2019               [Page 18]
