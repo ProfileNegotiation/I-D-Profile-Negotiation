@@ -13,6 +13,7 @@
 <!ENTITY RFC3864 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.3864.xml">
 <!ENTITY RFC3870 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.3870.xml">
 <!ENTITY RFC3986 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.3986.xml">
+<!ENTITY RFC4452 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4452.xml">
 <!ENTITY RFC5234 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.5234.xml">
 <!ENTITY RFC8288 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8288.xml">
 <!ENTITY RFC6839 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6839.xml">
@@ -20,6 +21,8 @@
 <!ENTITY RFC7230 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7230.xml">
 <!ENTITY RFC7231 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7231.xml">
 <!ENTITY RFC7240 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7240.xml">
+<!ENTITY RFC8141 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8141.xml">
+<!ENTITY RFC8141 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8288.xml">
 <!ENTITY SHACL SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml-w3c/reference.W3C.REC-shacl-20170720.xml">
 <!ENTITY XSD SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml-w3c/reference.W3C.REC-xmlschema11-1-20120405.xml">
 ]>
@@ -406,7 +409,8 @@ Content-Location: /some/resource.as.jsonld
 				As long as the URI	is only used to denote the profile,
 				it does not need to point to an	actual document but can be considered opaque.
 				If the parties involved agree on a profile definition,
-				the profile can be identified with e.g. a URN or an info-URI.
+				the profile can be identified with e.g. a <xref target="RFC8141">URN</xref>
+				or an <xref target="RFC4452">info-URI</xref>.
 				When a protocol-based URI is used, such as an FTP- or an HTTP-URI, however,
 				it is RECOMMENDED that it dereference to a document
 				containing that profile's definition.
@@ -778,8 +782,10 @@ absolute-URI
 		<references title="Informative References">
 			&AS2;
 			&RFC3864;
+			&RFC4452;
 			&RFC6839;
 			&RFC6906;
+			&RFC8141;
 			&RFC8288;
 			&SHACL;
 			&XSD;
