@@ -402,12 +402,12 @@
 <link href="#rfc.authors" rel="Chapter">
 
 
-  <meta name="generator" content="xml2rfc version 2.22.2 - https://tools.ietf.org/tools/xml2rfc" />
+  <meta name="generator" content="xml2rfc version 2.22.3 - https://tools.ietf.org/tools/xml2rfc" />
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
   <meta name="dct.creator" content="Svensson, L. and R. Verborgh" />
   <meta name="dct.identifier" content="urn:ietf:id:draft-svensson-content-profile-00" />
-  <meta name="dct.issued" scheme="ISO8601" content="2019-01" />
+  <meta name="dct.issued" scheme="ISO8601" content="2019-29" />
   <meta name="dct.abstract" content="This document defines two new HTTP headers &quot;Content-Profile&quot; and &quot;Accept-Profile&quot; that enable User Agents and servers to indicate and negotiate the profile used for representing a specific resource.  In this context, a profile is a description of the structural and/or semantic constraints of a group of documents in addition to the syntactical interpretation provided by more generic MIME types.  Examples of profiles include Dublin Core Application Profiles, XML Schemata, and RDF Shape Expressions.  This document further defines the &quot;profile&quot; attribute for the HTTP &quot;Link&quot; header and suggests a best practice for the use of the new headers together with the &quot;Link&quot; header for the purposes of performing content negotiation and pointing clients to alternate representations." />
   <meta name="description" content="This document defines two new HTTP headers &quot;Content-Profile&quot; and &quot;Accept-Profile&quot; that enable User Agents and servers to indicate and negotiate the profile used for representing a specific resource.  In this context, a profile is a description of the structural and/or semantic constraints of a group of documents in addition to the syntactical interpretation provided by more generic MIME types.  Examples of profiles include Dublin Core Application Profiles, XML Schemata, and RDF Shape Expressions.  This document further defines the &quot;profile&quot; attribute for the HTTP &quot;Link&quot; header and suggests a best practice for the use of the new headers together with the &quot;Link&quot; header for the purposes of performing content negotiation and pointing clients to alternate representations." />
 
@@ -431,12 +431,12 @@
 <td class="right">R. Verborgh</td>
 </tr>
 <tr>
-<td class="left">Expires: October 3, 2019</td>
+<td class="left">Expires: November 30, 2019</td>
 <td class="right">Ghent University &#8211; imec</td>
 </tr>
 <tr>
 <td class="left"></td>
-<td class="right">April 1, 2019</td>
+<td class="right">May 29, 2019</td>
 </tr>
 
     	
@@ -452,7 +452,7 @@
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on October 3, 2019.</p>
+<p>This Internet-Draft will expire on November 30, 2019.</p>
 <h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
 <p>Copyright (c) 2019 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
 <p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
@@ -577,7 +577,7 @@ Content-Location: /some/resource.as.jsonld
 <h1 id="rfc.section.3">
 <a href="#rfc.section.3">3.</a> New HTTP Headers</h1>
 <p id="rfc.section.3.p.1">The "Content-Profile" and "Accept-Profile" header fields can be sent by both the User Agent and the server.  The "Content-Profile" header tells the other Agent which profile or profiles the payload of the message conforms to, whereas the "Accept-Profile" header is used to specify one or more profiles the Agent can accept.  For example, a User Agent issuing a request for a resource can specify through the "Accept" header that it accepts representations with either text/turtle or application/ld+json as MIME type, and through the "Accept-Profile" header that it prefers people to be described using the FOAF vocabulary, but that the BBC Core ontology is also acceptable.  When the server answers, it would set the "Content-Type" and "Content-Profile" header fields appropriately.  Likewise, a User Agent sending an XML document with a specific structure to a server would set	the "Content-Type" and the "Content-Profile" header fields.  If the server cannot process the specified profile, it would answer with an HTTP 415 status code and possibly a list of acceptable profiles.</p>
-<p id="rfc.section.3.p.2">The "Accept-Profile" and "Content-Profile" header fields do not contain the actual profile but instead point to it using its URI.  As long as the URI	is only used to denote the profile, it does not need to point to an	actual document but can be considered opaque.  If the parties involved agree on a profile definition, the profile can be identified with e.g. a URN or an info-URI.  When a protocol-based URI is used, such as an FTP- or an HTTP-URI, however, it is RECOMMENDED that it dereference to a document containing that profile's definition.  </p>
+<p id="rfc.section.3.p.2">The "Accept-Profile" and "Content-Profile" header fields do not contain the actual profile but instead point to it using its URI.  As long as the URI	is only used to denote the profile, it does not need to point to an	actual document but can be considered opaque.  If the parties involved agree on a profile definition, the profile can be identified with e.g. a <a href="#RFC8141" class="xref">URN</a> or an <a href="#RFC4452" class="xref">info-URI</a>.  When a protocol-based URI is used, such as an FTP- or an HTTP-URI, however, it is RECOMMENDED that it dereference to a document containing that profile's definition.  </p>
 <h1 id="rfc.section.3.1">
 <a href="#rfc.section.3.1">3.1.</a> Content-Profile Header Syntax</h1>
 <p id="rfc.section.3.1.p.1">The "Content-Profile" header field is used to specify one or more profiles the payload in the message conforms to.  Each profile is identified by a URI reference inside angle brackets ("&lt;&gt;") that MUST be an absolute URI.  If a server does not use the "Content-Profile" header to specify which profile(s) the returned content conforms to, the User Agent SHOULD NOT make any assumptions about the representation beyond what is specified by the media type indicated in the "Content-Type" header.</p>
@@ -808,6 +808,11 @@ absolute-URI
 <a>Klyne, G.</a>, <a>Nottingham, M.</a> and <a>J. Mogul</a>, "<a href="https://tools.ietf.org/html/rfc3864">Registration Procedures for Message Header Fields</a>", BCP 90, RFC 3864, DOI 10.17487/RFC3864, September 2004.</td>
 </tr>
 <tr>
+<td class="reference"><b id="RFC4452">[RFC4452]</b></td>
+<td class="top">
+<a>Van de Sompel, H.</a>, <a>Hammond, T.</a>, <a>Neylon, E.</a> and <a>S. Weibel</a>, "<a href="https://tools.ietf.org/html/rfc4452">The "info" URI Scheme for Information Assets with Identifiers in Public Namespaces</a>", RFC 4452, DOI 10.17487/RFC4452, April 2006.</td>
+</tr>
+<tr>
 <td class="reference"><b id="RFC6839">[RFC6839]</b></td>
 <td class="top">
 <a>Hansen, T.</a> and <a>A. Melnikov</a>, "<a href="https://tools.ietf.org/html/rfc6839">Additional Media Type Structured Syntax Suffixes</a>", RFC 6839, DOI 10.17487/RFC6839, January 2013.</td>
@@ -816,6 +821,11 @@ absolute-URI
 <td class="reference"><b id="RFC6906">[RFC6906]</b></td>
 <td class="top">
 <a>Wilde, E.</a>, "<a href="https://tools.ietf.org/html/rfc6906">The 'profile' Link Relation Type</a>", RFC 6906, DOI 10.17487/RFC6906, March 2013.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC8141">[RFC8141]</b></td>
+<td class="top">
+<a>Saint-Andre, P.</a> and <a>J. Klensin</a>, "<a href="https://tools.ietf.org/html/rfc8141">Uniform Resource Names (URNs)</a>", RFC 8141, DOI 10.17487/RFC8141, April 2017.</td>
 </tr>
 <tr>
 <td class="reference"><b id="RFC8288">[RFC8288]</b></td>

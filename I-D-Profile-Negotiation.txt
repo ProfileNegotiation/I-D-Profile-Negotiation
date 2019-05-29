@@ -5,8 +5,8 @@
 Internet Engineering Task Force                              L. Svensson
 Internet-Draft                               Deutsche Nationalbibliothek
 Intended status: Standards Track                             R. Verborgh
-Expires: October 3, 2019                         Ghent University - imec
-                                                           April 1, 2019
+Expires: November 30, 2019                       Ghent University - imec
+                                                            May 29, 2019
 
 
               Indicating and Negotiating Profiles in HTTP
@@ -42,7 +42,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on October 3, 2019.
+   This Internet-Draft will expire on November 30, 2019.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Svensson & Verborgh      Expires October 3, 2019                [Page 1]
+Svensson & Verborgh     Expires November 30, 2019               [Page 1]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP      May 2019
 
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Svensson & Verborgh      Expires October 3, 2019                [Page 2]
+Svensson & Verborgh     Expires November 30, 2019               [Page 2]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP      May 2019
 
 
    which of the available representations best suit the User Agent's
@@ -165,9 +165,9 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
 
 
 
-Svensson & Verborgh      Expires October 3, 2019                [Page 3]
+Svensson & Verborgh     Expires November 30, 2019               [Page 3]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP      May 2019
 
 
 1.3.  High-level overview of solution
@@ -221,9 +221,9 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
 
 
 
-Svensson & Verborgh      Expires October 3, 2019                [Page 4]
+Svensson & Verborgh     Expires November 30, 2019               [Page 4]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP      May 2019
 
 
 1.4.  Notational Conventions
@@ -277,9 +277,9 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
 
 
 
-Svensson & Verborgh      Expires October 3, 2019                [Page 5]
+Svensson & Verborgh     Expires November 30, 2019               [Page 5]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP      May 2019
 
 
    content conforms to "application/json", and such an indicator does
@@ -333,9 +333,9 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
 
 
 
-Svensson & Verborgh      Expires October 3, 2019                [Page 6]
+Svensson & Verborgh     Expires November 30, 2019               [Page 6]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP      May 2019
 
 
 2.4.  Link
@@ -384,18 +384,18 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
    long as the URI is only used to denote the profile, it does not need
    to point to an actual document but can be considered opaque.  If the
    parties involved agree on a profile definition, the profile can be
-   identified with e.g. a URN or an info-URI.  When a protocol-based URI
-   is used, such as an FTP- or an HTTP-URI, however, it is RECOMMENDED
+   identified with e.g. a URN [RFC8141] or an info-URI [RFC4452].  When
+   a protocol-based URI is used, such as an FTP- or an HTTP-URI,
 
 
 
-Svensson & Verborgh      Expires October 3, 2019                [Page 7]
+Svensson & Verborgh     Expires November 30, 2019               [Page 7]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP      May 2019
 
 
-   that it dereference to a document containing that profile's
-   definition.
+   however, it is RECOMMENDED that it dereference to a document
+   containing that profile's definition.
 
 3.1.  Content-Profile Header Syntax
 
@@ -445,9 +445,9 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
 
 
 
-Svensson & Verborgh      Expires October 3, 2019                [Page 8]
+Svensson & Verborgh     Expires November 30, 2019               [Page 8]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP      May 2019
 
 
 3.2.  Accept-Profile Header Syntax
@@ -501,9 +501,9 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
 
 
 
-Svensson & Verborgh      Expires October 3, 2019                [Page 9]
+Svensson & Verborgh     Expires November 30, 2019               [Page 9]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP      May 2019
 
 
                        Accept-Profile header syntax
@@ -557,9 +557,9 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
 
 
 
-Svensson & Verborgh      Expires October 3, 2019               [Page 10]
+Svensson & Verborgh     Expires November 30, 2019              [Page 10]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP      May 2019
 
 
 4.2.  Examples
@@ -613,9 +613,9 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
 
 
 
-Svensson & Verborgh      Expires October 3, 2019               [Page 11]
+Svensson & Verborgh     Expires November 30, 2019              [Page 11]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP      May 2019
 
 
    Another User Agent requests a JSON representation conforming to
@@ -669,9 +669,9 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
 
 
 
-Svensson & Verborgh      Expires October 3, 2019               [Page 12]
+Svensson & Verborgh     Expires November 30, 2019              [Page 12]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP      May 2019
 
 
    A User Agent requests an RDF document conforming to one of two RDF
@@ -725,9 +725,9 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
 
 
 
-Svensson & Verborgh      Expires October 3, 2019               [Page 13]
+Svensson & Verborgh     Expires November 30, 2019              [Page 13]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP      May 2019
 
 
    A User Agent PUTs an RDF document conforming to the RDF Shape
@@ -781,9 +781,9 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
 
 
 
-Svensson & Verborgh      Expires October 3, 2019               [Page 14]
+Svensson & Verborgh     Expires November 30, 2019              [Page 14]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP      May 2019
 
 
 5.2.  Content-Profile HTTP Header Registration
@@ -837,9 +837,9 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
 
 
 
-Svensson & Verborgh      Expires October 3, 2019               [Page 15]
+Svensson & Verborgh     Expires November 30, 2019              [Page 15]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP      May 2019
 
 
 8.  Acknowledgements
@@ -893,10 +893,16 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
 
 
 
-Svensson & Verborgh      Expires October 3, 2019               [Page 16]
+Svensson & Verborgh     Expires November 30, 2019              [Page 16]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP      May 2019
 
+
+   [RFC4452]  Van de Sompel, H., Hammond, T., Neylon, E., and S. Weibel,
+              "The "info" URI Scheme for Information Assets with
+              Identifiers in Public Namespaces", RFC 4452,
+              DOI 10.17487/RFC4452, April 2006,
+              <https://www.rfc-editor.org/info/rfc4452>.
 
    [RFC6839]  Hansen, T. and A. Melnikov, "Additional Media Type
               Structured Syntax Suffixes", RFC 6839,
@@ -906,6 +912,10 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
    [RFC6906]  Wilde, E., "The 'profile' Link Relation Type", RFC 6906,
               DOI 10.17487/RFC6906, March 2013,
               <https://www.rfc-editor.org/info/rfc6906>.
+
+   [RFC8141]  Saint-Andre, P. and J. Klensin, "Uniform Resource Names
+              (URNs)", RFC 8141, DOI 10.17487/RFC8141, April 2017,
+              <https://www.rfc-editor.org/info/rfc8141>.
 
    [RFC8288]  Nottingham, M., "Web Linking", RFC 8288,
               DOI 10.17487/RFC8288, October 2017,
@@ -933,6 +943,17 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
 
 Authors' Addresses
 
+
+
+
+
+
+
+Svensson & Verborgh     Expires November 30, 2019              [Page 17]
+
+Internet-Draft Indicating and Negotiating Profiles in HTTP      May 2019
+
+
    Lars G. Svensson
    Deutsche Nationalbibliothek
    Adickesallee 1
@@ -941,17 +962,6 @@ Authors' Addresses
 
    Phone: +49 69 1525 1752
    Email: l.svensson@dnb.de
-
-
-
-
-
-
-
-
-Svensson & Verborgh      Expires October 3, 2019               [Page 17]
-
-Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
 
 
    Ruben Verborgh
@@ -995,14 +1005,4 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP    April 2019
 
 
 
-
-
-
-
-
-
-
-
-
-
-Svensson & Verborgh      Expires October 3, 2019               [Page 18]
+Svensson & Verborgh     Expires November 30, 2019              [Page 18]
