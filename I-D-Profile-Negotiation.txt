@@ -438,7 +438,7 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 3.2.  Accept-Profile Header Syntax
 
    The "Accept-Profile" header field specifies one or more content
-   profiles the issuing agent accepts for processing.  If a "Content-
+   profiles the issuing agent accepts for processing.  If an "Accept-
    Profile" field is present, it MUST contain a comma-separated list of
    profile URIs.  Each profile MUST be identified by an absolute URI
    reference inside angle brackets ("<>").  Quality values as defined in

@@ -458,7 +458,7 @@ Content-Profile = "Content-Profile" ":"
 			<section title="Accept-Profile Header Syntax">
 				<t>The "Accept-Profile" header field specifies one or more
 					content profiles the issuing agent accepts for processing.
-					If a "Content-Profile" field is present,
+					If an "Accept-Profile" field is present,
 					it MUST contain a comma-separated list of profile URIs.
 					Each profile MUST be identified by an absolute URI reference inside angle brackets ("&lt;&gt;").
 					Quality values as defined in <xref target="RFC7230">Section 5.3.1 of RFC 7230</xref>
