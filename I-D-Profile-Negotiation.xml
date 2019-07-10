@@ -386,13 +386,13 @@ Content-Location: /some/resource.as.jsonld
 		</section>
 
 		<section title="New HTTP Headers">
-			<t>The "Content-Profile" and "Accept-Profile" header fields can be sent by both
+			<t>The "Content-Profile" and "Accept-Profile" header fields MAY be sent by both
 				the User Agent and the server.
-				The "Content-Profile" header tells the other Agent
-				which profile or profiles the payload of the message conforms to,
-				whereas the "Accept-Profile" header is used to specify
-				one or more profiles the Agent can accept.
-				For example, a User Agent issuing a request for a resource can specify
+				The "Content-Profile" header contains a non-exhaustive list
+				of profiles the payload of the message conforms to,
+				whereas the "Accept-Profile" header specifies
+				one or more profiles the Agent accepts.
+				For example, a User Agent issuing a request for a resource could specify
 				through the "Accept" header that it accepts representations with either
 				text/turtle or application/ld+json as MIME type,
 				and through the "Accept-Profile" header that
@@ -401,31 +401,30 @@ Content-Location: /some/resource.as.jsonld
 				When the server answers, it would set the "Content-Type"
 				and "Content-Profile" header fields appropriately.
 				Likewise, a User Agent sending an XML document with a specific structure to a server
-				would set	the "Content-Type" and the "Content-Profile" header fields.
+				could set	the "Content-Type" and the "Content-Profile" header fields.
 				If the server cannot process the specified profile,
 				it would answer with an HTTP 415 status code and possibly a list of acceptable profiles.</t>
-			<t>The "Accept-Profile" and "Content-Profile" header fields
-				do not contain the actual profile but instead point to it using its URI.
-				As long as the URI	is only used to denote the profile,
-				it does not need to point to an	actual document but can be considered opaque.
-				If the parties involved agree on a profile definition,
-				the profile can be identified with e.g. a <xref target="RFC8141">URN</xref>
+			<t>The "Accept-Profile" and "Content-Profile" header
+				MUST use a URI to refer to a profile.
+				That URI MAY point to an actual document,
+				or if the parties involved agree on a profile definition,
+				MAY be e.g. a <xref target="RFC8141">URN</xref>
 				or an <xref target="RFC4452">info-URI</xref>.
 				When a protocol-based URI is used, such as an FTP- or an HTTP-URI, however,
-				it is RECOMMENDED that it dereference to a document
-				containing that profile's definition.
+				it SHOULD dereference to a document containing that profile's definition.
 			</t>
 			<section title="Content-Profile Header Syntax">
-				<t>The "Content-Profile" header field is used to specify
+				<t>The "Content-Profile" header field specifies
 					one or more profiles the payload in the message conforms to.
-					Each profile is identified by a URI reference inside angle brackets ("&lt;&gt;")
-					that MUST be an absolute URI.
-					If a server does not use the "Content-Profile" header to
-					specify which profile(s) the returned content conforms to,
+					In absence of a "Content-Profile" header,
 					the User Agent SHOULD NOT make any assumptions about the representation
-					beyond what is specified by the media type indicated in the "Content-Type" header.</t>
-				<t>The "Content-Profile" field MAY contain a comma-separated list of profile URIs.
-					In that case, the recipient SHOULD interpret this as an indication that
+					beyond what is specified by the media type indicated in the "Content-Type" header.
+				</t>
+				<t>
+					If a "Content-Profile" field is present,
+					it MUST contain a comma-separated list of profile URIs.
+					Each profile MUST be identified by an absolute URI reference inside angle brackets ("&lt;&gt;").
+					The recipient SHOULD interpret this list as an indication that
 					the payload of the message conforms to all of the profiles
 					identified by the supplied profile URIs.
 				  Differences in ordering of the items in this list,
@@ -457,13 +456,13 @@ Content-Profile = "Content-Profile" ":"
 				</figure>
 			</section>
 			<section title="Accept-Profile Header Syntax">
-				<t>The "Accept-Profile" header field is used to specify one or more
-					content profiles the issuing agent can accept for processing.
-					Each profile is identified by a URI reference inside angle brackets ("&lt;&gt;")
-					that MUST be an absolute URI.
-					If multiple profiles are specified,
-					quality values as defined in <xref target="RFC7230">Section 5.3.1 of RFC 7230</xref>
-					can be used to assign a relative "weight" to the preference.
+				<t>The "Accept-Profile" header field specifies one or more
+					content profiles the issuing agent accepts for processing.
+					If a "Content-Profile" field is present,
+					it MUST contain a comma-separated list of profile URIs.
+					Each profile MUST be identified by an absolute URI reference inside angle brackets ("&lt;&gt;").
+					Quality values as defined in <xref target="RFC7230">Section 5.3.1 of RFC 7230</xref>
+					MAY be used to assign a relative "weight" to the preference.
 					Exactly how that weight is used to determine the best representation
 					is beyond the scope of this specification.</t>
 				<t>A request without "Accept-Profile" header field
@@ -483,7 +482,7 @@ Content-Profile = "Content-Profile" ":"
 					SHOULD be taken as an indication
 					that the server does not support profiles for the given resource.
 					It MUST NOT be seen as an indication
-					that the server can handle payloads conforming to any profile.</t>
+					that the server handles payloads conforming to any profile.</t>
 				<t>An agent that wants to indicate that several profiles are acceptable,
 					can either submit one Accept-Profile field for every profile that is acceptable
 					(possibly specifying q-values for each profile URI)
