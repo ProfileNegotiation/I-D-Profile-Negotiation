@@ -112,8 +112,8 @@
 				that enable User Agents and servers to indicate and negotiate
 				the profile used for representing a specific resource.
 				In this context, a profile is a description of
-				structural and/or semantic constraints documents can conform to
-				in addition to the syntactical interpretation provided by more generic MIME types.
+				structural and/or semantic constraints on representations of documents
+				in addition to the syntactical interpretation provided by their MIME type.
 				Examples of profiles include Dublin Core Application Profiles, XML Schemata, and
 				RDF Shape Expressions.
 				This document further defines the "profile" attribute
@@ -156,8 +156,9 @@
 					defining the HTTP headers "Content-Profile" and "Accept-Profile".</t>
 			</section>
 			<section title="Terminology">
-				<t>In the context of this proposal, a profile is a description of
-					the structural and/or semantic constraints of a group of documents.
+				<t>In this context, a profile is a description of
+				  structural and/or semantic constraints on representations of documents
+				  in addition to the syntactical interpretation provided by their MIME type.
 					Examples of a profile in this context include, but are not limited to,
 					Dublin Core application profiles
 					(formally expressed in <xref target="DSP">Description Set Profiles (DSP)</xref>),

@@ -18,12 +18,12 @@ Abstract
    "Accept-Profile" that enable User Agents and servers to indicate and
    negotiate the profile used for representing a specific resource.  In
    this context, a profile is a description of structural and/or
-   semantic constraints documents can conform to in addition to the
-   syntactical interpretation provided by more generic MIME types.
-   Examples of profiles include Dublin Core Application Profiles, XML
-   Schemata, and RDF Shape Expressions.  This document further defines
-   the "profile" attribute for the HTTP "Link" header and suggests a
-   best practice for the use of the new headers together with the "Link"
+   semantic constraints on representations of documents in addition to
+   the syntactical interpretation provided by their MIME type.  Examples
+   of profiles include Dublin Core Application Profiles, XML Schemata,
+   and RDF Shape Expressions.  This document further defines the
+   "profile" attribute for the HTTP "Link" header and suggests a best
+   practice for the use of the new headers together with the "Link"
    header for the purposes of performing content negotiation and
    pointing clients to alternate representations.
 
@@ -138,11 +138,12 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
 1.2.  Terminology
 
-   In the context of this proposal, a profile is a description of the
-   structural and/or semantic constraints of a group of documents.
-   Examples of a profile in this context include, but are not limited
-   to, Dublin Core application profiles (formally expressed in
-   Description Set Profiles (DSP) [DSP]), XML Schema documents
+   In this context, a profile is a description of structural and/or
+   semantic constraints on representations of documents in addition to
+   the syntactical interpretation provided by their MIME type.  Examples
+   of a profile in this context include, but are not limited to, Dublin
+   Core application profiles (formally expressed in Description Set
+   Profiles (DSP) [DSP]), XML Schema documents
    [W3C.REC-xmlschema11-1-20120405], and RDF Shapes expressed in SHACL
    [W3C.REC-shacl-20170720].  Profiles can, but do not need to, be
    independent of a media type.  The definition and usage of profiles in
@@ -161,7 +162,6 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
    community defines as "schemas which consist of data elements drawn
    from one or more namespaces, combined together by implementers, and
    optimised for a particular local application" [HeeryAndPatel].
-
 
 
 
