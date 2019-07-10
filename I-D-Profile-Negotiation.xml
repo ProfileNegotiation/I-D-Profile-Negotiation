@@ -112,7 +112,7 @@
 				that enable User Agents and servers to indicate and negotiate
 				the profile used for representing a specific resource.
 				In this context, a profile is a description of
-				the structural and/or semantic constraints of a group of documents
+				structural and/or semantic constraints documents can conform to
 				in addition to the syntactical interpretation provided by more generic MIME types.
 				Examples of profiles include Dublin Core Application Profiles, XML Schemata, and
 				RDF Shape Expressions.
