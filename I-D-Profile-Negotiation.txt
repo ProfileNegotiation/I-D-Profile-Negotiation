@@ -5,8 +5,8 @@
 Internet Engineering Task Force                              L. Svensson
 Internet-Draft                               Deutsche Nationalbibliothek
 Intended status: Standards Track                             R. Verborgh
-Expires: January 11, 2020                        Ghent University - imec
-                                                           July 10, 2019
+Expires: January 12, 2020                        Ghent University - imec
+                                                           July 11, 2019
 
 
               Indicating and Negotiating Profiles in HTTP
@@ -42,7 +42,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on January 11, 2020.
+   This Internet-Draft will expire on January 12, 2020.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Svensson & Verborgh     Expires January 11, 2020                [Page 1]
+Svensson & Verborgh     Expires January 12, 2020                [Page 1]
 
 Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Svensson & Verborgh     Expires January 11, 2020                [Page 2]
+Svensson & Verborgh     Expires January 12, 2020                [Page 2]
 
 Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
@@ -148,7 +148,7 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
    [W3C.REC-shacl-20170720].  Profiles can, but do not need to, be
    independent of a media type.  The definition and usage of profiles in
    applications is beyond the scope of this proposal; our only
-   constraint is that a profiles is identified by a URI.  Further
+   constraint is that a profile is identified by a URI.  Further
    assumptions about profiles, e. g.  hierarchies of profiles,
    inheritance or transitivity, are out of this specification's scope.
 
@@ -165,7 +165,7 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
 
 
-Svensson & Verborgh     Expires January 11, 2020                [Page 3]
+Svensson & Verborgh     Expires January 12, 2020                [Page 3]
 
 Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
@@ -221,7 +221,7 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
 
 
-Svensson & Verborgh     Expires January 11, 2020                [Page 4]
+Svensson & Verborgh     Expires January 12, 2020                [Page 4]
 
 Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
@@ -277,7 +277,7 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
 
 
-Svensson & Verborgh     Expires January 11, 2020                [Page 5]
+Svensson & Verborgh     Expires January 12, 2020                [Page 5]
 
 Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
@@ -333,7 +333,7 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
 
 
-Svensson & Verborgh     Expires January 11, 2020                [Page 6]
+Svensson & Verborgh     Expires January 12, 2020                [Page 6]
 
 Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
@@ -389,7 +389,7 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
 
 
-Svensson & Verborgh     Expires January 11, 2020                [Page 7]
+Svensson & Verborgh     Expires January 12, 2020                [Page 7]
 
 Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
@@ -445,7 +445,7 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
 
 
-Svensson & Verborgh     Expires January 11, 2020                [Page 8]
+Svensson & Verborgh     Expires January 12, 2020                [Page 8]
 
 Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
@@ -465,7 +465,7 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
    server does not support profile-based content negotiation, the latter
    behavior SHOULD also be followed.  Regardless of the outcomes of the
    negotiation process, if the server knows that the representation
-   conforms to one of more profiles, it SHOULD list then in the
+   conforms to one or more profiles, it SHOULD list them in the
    "Content-Profile" header of the response.
 
    The absence of an "Accept-Profile" header field in an HTTP response
@@ -501,7 +501,7 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
 
 
-Svensson & Verborgh     Expires January 11, 2020                [Page 9]
+Svensson & Verborgh     Expires January 12, 2020                [Page 9]
 
 Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
@@ -557,7 +557,7 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
 
 
-Svensson & Verborgh     Expires January 11, 2020               [Page 10]
+Svensson & Verborgh     Expires January 12, 2020               [Page 10]
 
 Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
@@ -613,7 +613,7 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
 
 
-Svensson & Verborgh     Expires January 11, 2020               [Page 11]
+Svensson & Verborgh     Expires January 12, 2020               [Page 11]
 
 Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
@@ -669,7 +669,7 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
 
 
-Svensson & Verborgh     Expires January 11, 2020               [Page 12]
+Svensson & Verborgh     Expires January 12, 2020               [Page 12]
 
 Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
@@ -725,7 +725,7 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
 
 
-Svensson & Verborgh     Expires January 11, 2020               [Page 13]
+Svensson & Verborgh     Expires January 12, 2020               [Page 13]
 
 Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
@@ -781,7 +781,7 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
 
 
-Svensson & Verborgh     Expires January 11, 2020               [Page 14]
+Svensson & Verborgh     Expires January 12, 2020               [Page 14]
 
 Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
@@ -837,7 +837,7 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
 
 
-Svensson & Verborgh     Expires January 11, 2020               [Page 15]
+Svensson & Verborgh     Expires January 12, 2020               [Page 15]
 
 Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
@@ -893,7 +893,7 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
 
 
-Svensson & Verborgh     Expires January 11, 2020               [Page 16]
+Svensson & Verborgh     Expires January 12, 2020               [Page 16]
 
 Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
@@ -949,7 +949,7 @@ Authors' Addresses
 
 
 
-Svensson & Verborgh     Expires January 11, 2020               [Page 17]
+Svensson & Verborgh     Expires January 12, 2020               [Page 17]
 
 Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
@@ -1005,4 +1005,4 @@ Internet-Draft Indicating and Negotiating Profiles in HTTP     July 2019
 
 
 
-Svensson & Verborgh     Expires January 11, 2020               [Page 18]
+Svensson & Verborgh     Expires January 12, 2020               [Page 18]
