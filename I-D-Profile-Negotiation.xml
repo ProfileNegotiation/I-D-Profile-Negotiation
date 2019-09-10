@@ -605,7 +605,7 @@ Response:
           profile="urn:example:schema:e-commerce-payment",
         rel="alternate";
           type="application/xml";
-          profile="urn:example:schema:e-commerce-payment;",
+          profile="urn:example:schema:e-commerce-payment",
         rel="alternate";
           type="application/json";
           profile="urn:example:schema:e-commerce-accounting"
