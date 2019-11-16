@@ -450,8 +450,9 @@ Content-Location: /some/resource.as.jsonld
 				<preamble>Profile header syntax</preamble>
 <artwork align="left" type="abnf">
 Content-Profile = "Content-Profile" ":"
-                OWS "&lt;" URI-reference "&gt;"
-                *(OWS "," OWS "&lt;" URI-reference "&gt;") OWS
+                    OWS "&lt;" profile-value "&gt;"
+                    *(OWS "," OWS "&lt;" profile-value "&gt;") OWS
+profile-value = "&lt;" URI-reference "&gt;" | profile-value-ext
 </artwork>
 				</figure>
 			</section>
@@ -507,8 +508,8 @@ Content-Profile = "Content-Profile" ":"
 				<preamble>Accept-Profile header syntax</preamble>
 <artwork align="left" type="abnf">
 Accept-Profile = "Accept-Profile" ":"
-               OWS (profile-value) *(OWS "," OWS profile-value) OWS
-profile-value = "&lt;" URI-reference "&gt;" [weight]
+                   OWS (accept-value) *(OWS "," OWS accept-value) OWS
+accept-value = "&lt;" URI-reference "&gt;" [weight] | accept-value-ext
 </artwork>
 				</figure>
 			</section>
