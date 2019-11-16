@@ -445,7 +445,7 @@ Content-Location: /some/resource.as.jsonld
 					header field, using the grammar defined in <xref target="RFC5234">RFC 5234</xref> and the rules
 					defined in <xref target="RFC7230">Section 3.2 of RFC 7230</xref>.
 					The definition of "URI-reference" is imported from
-					<xref target="RFC7230">RFC 7230</xref>.</t>
+					<xref target="RFC3986">RFC 3986</xref>.</t>
 				<figure align="center" anchor="abnf_content_profile">
 				<preamble>Profile header syntax</preamble>
 <artwork align="left" type="abnf">
@@ -742,11 +742,12 @@ Response:
 				Multiple "profile" attributes on a single link value
 				indicate that the resource representation conforms to multiple profiles.</t>
 			<figure align="left">
-				<preamble>The ABNF for the profile attribute's value is:</preamble>
+				<preamble>The ABNF for the profile attribute is:</preamble>
 <artwork align="left">
-absolute-URI
+profile-param: "profile" "=" profile-param-value
+profile-param-value: DQUOTE absolute-URI *(RWS absolute-URI) DQUOTE
 </artwork>
-				<postamble>where "absolute-URI" is defined as in section 4.3 of <xref target="RFC3986">RFC 3986</xref>.</postamble>
+                <postamble>where "absolute-URI" is defined as in <xref target="RFC3986">Section 4.3 of RFC 3986</xref>.</postamble>
 			</figure>
 		</section>
 		<section anchor="Security" title="Security Considerations">
