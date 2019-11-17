@@ -91,6 +91,14 @@
 			</address>
 		</author>
 
+		<author initials="H." surname="Van de Sompel" fullname="Herbert Van de Sompel">
+			<organization>Data Archiving and Networked Services</organization>
+				<address>
+						<email>herbert.van.de.sompel@dans.knaw.nl</email>
+						<uri>https://orcid.org/0000-0002-0715-6126</uri>
+				</address>
+		</author>
+
 		<date year="2019" />
 
 		<!-- Meta-data Declarations -->
