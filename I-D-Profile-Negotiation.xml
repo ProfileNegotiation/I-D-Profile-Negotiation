@@ -59,8 +59,7 @@
 
 		<title>Indicating and Negotiating Profiles in HTTP</title>
 
-		<author fullname="Lars G. Svensson" initials="L.G.S."
-				surname="Svensson">
+		<author fullname="Lars G. Svensson" initials="L.G." surname="Svensson">
 			<organization>Deutsche Nationalbibliothek</organization>
 			<address>
 				<postal>
@@ -75,8 +74,7 @@
 			</address>
 		</author>
 
-		<author fullname="Ruben Verborgh" initials="R.V."
-				surname="Verborgh">
+		<author fullname="Ruben Verborgh" initials="R." surname="Verborgh">
 			<organization>Ghent University &#8211; imec</organization>
 			<address>
 				<postal>
@@ -88,6 +86,7 @@
 				</postal>
 				<phone>+32 9 331 49 10</phone>
 				<email>ruben.verborgh@ugent.be</email>
+				<uri>https://ruben.verborgh.org/</uri>
 			</address>
 		</author>
 
