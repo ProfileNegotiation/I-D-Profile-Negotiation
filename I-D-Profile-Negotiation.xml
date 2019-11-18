@@ -114,53 +114,52 @@
 		<keyword>HTTP, Header, Content Negotiation</keyword>
 
 		<abstract>
-			<t>This document defines two new HTTP headers
-				"Content-Profile" and "Accept-Profile"
-				that enable User Agents and servers to indicate and negotiate
-				the profile used for representing a specific resource.
+			<t>This document defines two new HTTP headers: "Accept-Profile" and "Content-Profile".
+				Accept-Profile can be used by user agents to request a preferred profile for representing
+				a resource from a server. Content-Profile is used by servers to express the profile
+				that was applied to represent a resource.
 				In this context, a profile is a description of
 				structural and/or semantic constraints on representations of resources
 				in addition to the syntactical interpretation provided by their MIME type.
 				Examples of profiles include Dublin Core Application Profiles, XML Schemata, and
 				RDF Shape Expressions.
-				This document further defines the "profile" attribute
-				for the HTTP "Link" header and suggests a best practice for
-				the use of the new headers together with the "Link" header
-				for the purposes of performing content negotiation
-				and pointing clients to alternate representations.</t>
+				This document further defines the "profile" attribute for HTTP Links and suggests
+				a best practice for the use of the new headers in conjunction with the HTTP "Link"
+				header as a means to point clients to representations that adhere to profiles other
+				than the one used for the current representation.</t>
 		</abstract>
 	</front>
 
 	<middle>
 		<section title="Introduction">
-			<t>This document defines two new HTTP headers
-				that enable User Agents and servers to indicate and negotiate
-				the profile used for representing a specific resource.
-				On the Web, resources are identified with HTTP(S) URIs.
-				It can be useful for a server
-				to provide multiple representations of a resource
-				to accommodate different User Agents or use cases.
-				When a User Agent issues a GET request for a specific URI,
-				the User Agent and the server negotiate which of the
-				available representations best suit the User Agent's needs and capabilities.
-				Typically, a User Agent specifies preferences by setting appropriate HTTP
-				headers, e.g., "Accept" for media type, "Accept-Language" for content language,
-				or "Accept-Charset" for character encoding.</t>
+			<t>On the Web, resources are identified by HTTP(S) URIs. User agents retrieve a representation
+				of a resource by issuing a GET request on its URI. To accomodate different user agents and use cases,
+				a server can support multiple representations for a same resource. Content negotiation is an approach
+				that allows a user agent to express a preference for certain representations when issuing a GET request.
+				For example, a user agent can specify a preferences for a media type by using the "Accept" header
+				with an associated value, and for langauge by using the "Accept-Language" header with a value.
+				A server responds to such a request by using matching HTTP headers and associated values to convey the nature of the
+				representation it delivers, e.g. "Content-Type" and "Content-Language", respectively, as well as an
+				indication of the dimensions in which it supports content negotiation using the "Vary" header.
+				This document defines two new HTTP headers
+				that enable user agents and servers to negotiate about a
+				profile for representing a specific resource.
+			</t>
 			<section title="Motivation">
-				<t>In many cases, there are several ways to describe a resource
-					within the scope of a media type.
-					In the case of XML documents, for instance, the same content can be encoded
-					using one of several DTDs or XML Schemas.
-					JSON documents similarly leave open a wide range of options
-					regarding which tree structure, keys, and value types to use.
-					In RDF, there is a wide choice of vocabularies available
+				<t>In many cases, there are several ways to render a resource
+					within the scope of a certain media type.
+					For example, for XML documents the same content can be encoded
+					on the basis of several DTDs or XML Schemas.
+					Similarly, JSON documents offer a wide range of options
+					regarding the use of tree structure, keys, and value types.
+					And, in RDF serializations, a choice of vocabularies is available
 					to describe resources of the same kind.
-					However, when a User Agent initiates a request, e.g., a GET request to retrieve
-					or a PUT request to create or replace a resource, neither the User Agent nor the
-					server have any possibility to exchange information on how the transmitted
-					resource is or needs to be formatted precisely beyond the media type.
-					This document therefore proposes a solution by
-					defining the HTTP headers "Content-Profile" and "Accept-Profile".</t>
+					However, when a user agent initiates a GET request to retrieve a resource representation
+					or a PUT request to create/replace a resource representation, no means are available to express
+					the precise rendering of the representation beyond its media type.
+					To address this shortcoming, this document
+					defines the HTTP request header "Accept-Profile" and the corresponding HTTP response header
+					"Content-Profile".</t>
 			</section>
 			<section title="Terminology">
 				<t>In this context, a profile is a description of
@@ -324,7 +323,7 @@ application/ld+json; profile="https://www.w3.org/ns/activitystreams"
 					can be used to provide an identifier
 					for the specific representation of a resource
 					that is enclosed in the message body.
-					For example, when a User Agent issues the following request
+					For example, when a user agent issues the following request
 					for /some/resource:
 					<figure>
 <artwork align="left">
@@ -381,12 +380,12 @@ Content-Location: /some/resource.as.jsonld
 
 		<section title="New HTTP Headers">
 			<t>The "Content-Profile" and "Accept-Profile" header fields MAY be sent by both
-				the User Agent and the server.
+				the user agent and the server.
 				The "Content-Profile" header contains a non-exhaustive list
 				of profiles the payload of the message conforms to,
 				whereas the "Accept-Profile" header specifies
 				one or more profiles the Agent accepts.
-				For example, a User Agent issuing a request for a resource could specify
+				For example, a user agent issuing a request for a resource could specify
 				through the "Accept" header that it accepts representations with either
 				text/turtle or application/ld+json as MIME type,
 				and through the "Accept-Profile" header that
@@ -394,7 +393,7 @@ Content-Location: /some/resource.as.jsonld
 				but that the BBC Core ontology is also acceptable.
 				When the server answers, it would set the "Content-Type"
 				and "Content-Profile" header fields appropriately.
-				Likewise, a User Agent sending an XML document with a specific structure to a server
+				Likewise, a user agent sending an XML document with a specific structure to a server
 				could set	the "Content-Type" and the "Content-Profile" header fields.</t>
 			<t>The absence of an "Accept-Profile" header field in an HTTP response
 				SHOULD be taken as an indication that the server
@@ -423,7 +422,7 @@ Content-Location: /some/resource.as.jsonld
 				<t>The "Content-Profile" header field specifies
 					one or more profiles the payload in the message conforms to.
 					In absence of a "Content-Profile" header,
-					the User Agent SHOULD NOT make any assumptions about the representation
+					the user agent SHOULD NOT make any assumptions about the representation
 					beyond what is specified by the media type indicated in the "Content-Type" header.
 				</t>
 				<t>
@@ -468,7 +467,7 @@ profile-value = "&lt;" URI-reference "&gt;" | profile-value-ext
 				<t>A request without "Accept-Profile" header field
 					SHOULD indicate that the recipient
 					accepts content conforming to any profile.
-					If the header field is present in a User Agent request
+					If the header field is present in a user agent request
 					and the server cannot provide a representation
 					that conforms to the specified profile,
 					it SHOULD either honor the header field by responding with a 406 (Not Acceptable) status code,
@@ -515,7 +514,7 @@ accept-value = "&lt;" URI-reference "&gt;" [weight] | accept-value-ext
 		</section>
 		<section title="Content Negotiation">
 			<section title="Mechanisms">
-				<t>User Agents and servers supporting profiles
+				<t>user agents and servers supporting profiles
 					can agree on mutually acceptable profiles for the payload
 					through the content negotiation processes described in
 					<xref target="RFC7231">Section 3.4 of RFC 7231</xref>.
@@ -528,7 +527,7 @@ accept-value = "&lt;" URI-reference "&gt;" [weight] | accept-value-ext
 					Both proactive negotiation and reactive negotiation for profiles
 					can be supported by servers.</t>
 				<t>Although servers are free to implement negotiation as they see fit,
-					if the User Agent sends an "Accept-Profile" header,
+					if the user agent sends an "Accept-Profile" header,
 					they SHOULD consider representations not conforming to any of the listed profiles
 					as non-interpretable by the client.
 					This means that a representation that conforms to a listed profile,
@@ -551,14 +550,14 @@ accept-value = "&lt;" URI-reference "&gt;" [weight] | accept-value-ext
 				<t></t>
 			</section>
 			<section title="Examples">
-				<t>The following examples show possible exchanges of profile information between a User Agent
+				<t>The following examples show possible exchanges of profile information between a user agent
 				and a server. For clarity, the examples only contain minimal information, i.e.,
 				only the relevant headers are included and message bodies are ignored.
 
 					<figure align="left" anchor="example_server_indicates_profiles">
 						<preamble>
 							In this first example,
-							a User Agent requests a JSON representation.
+							a user agent requests a JSON representation.
 							The server returns a JSON representation,
 							and indicates that it conforms to additional structural constraints
 							as specified in a profile identified by "urn:example:schema:e-commerce-payment".
@@ -584,7 +583,7 @@ Response:
 
 					<figure align="left" anchor="example_both_support_profiles">
 						<preamble>
-							Another User Agent requests a JSON representation conforming to additional constraints,
+							Another user agent requests a JSON representation conforming to additional constraints,
 							as specified in a profile identified by "urn:example:schema:e-commerce-payment".
 							The server has such a representation of the resource available,
 							as well as an XML representation conforming to the same profile,
@@ -614,7 +613,7 @@ Response:
 
 					<figure align="left" anchor="example_server_prefers_other">
 						<preamble>
-							A User Agent requests an RDF document conforming to one of two RDF Shapes.
+							A user agent requests an RDF document conforming to one of two RDF Shapes.
 							It uses q-values to express a preference for shape-1.
 							The server, however, prefers to deliver in shape-2,
 							and the response also happens to conform to shape-3.
@@ -643,7 +642,7 @@ Response:
 
 					<figure align="left" anchor="example_406">
 						<preamble>
-							A User Agent requests an RDF document conforming to one of two RDF Shapes.
+							A user agent requests an RDF document conforming to one of two RDF Shapes.
 							The server, however, does not support these profiles.
 						</preamble>
 <artwork align="left">
@@ -664,11 +663,11 @@ Response:
 
 					<figure align="left" anchor="example_415">
 						<preamble>
-							A User Agent PUTs an RDF document conforming to the RDF Shape
+							A user agent PUTs an RDF document conforming to the RDF Shape
 							identified by http://example.com/shapes/shape-1.
 							The server answers that it can only process
 							documents conforming to http://example.com/shapes/shape-2.
-							The User Agent knows the problem is caused by the profile,
+							The user agent knows the problem is caused by the profile,
 							because the "Accept-Profile" header is listed.
 						</preamble>
 <artwork align="left">
@@ -762,7 +761,7 @@ profile-param-value: DQUOTE absolute-URI *(RWS absolute-URI) DQUOTE
 				If this is undesirable, a client and/or a server can stop exposing the header,
 				in which case HTTP interactions would be back to the level of standard HTTP
 				(i.e., with no indication what profiles
-				the	User Agent or the server prefer and/or can handle).</t>
+				the	user agent or the server prefer and/or can handle).</t>
 		</section>
 		<section anchor="Acknowledgements" title="Acknowledgements">
 			<t>This is the place to have YOUR NAME prominently displayed!</t>
