@@ -60,17 +60,9 @@
 		<title>Indicating and Negotiating Profiles in HTTP</title>
 
 		<author fullname="Lars G. Svensson" initials="L.G." surname="Svensson">
-			<organization>Deutsche Nationalbibliothek</organization>
 			<address>
-				<postal>
-					<street>Adickesallee 1</street>
-					<code>60322</code>
-					<city>Frankfurt</city>
-					<region/>
-					<country>Germany</country>
-				</postal>
-				<phone>+49 69 1525 1752</phone>
-				<email>l.svensson@dnb.de</email>
+				<email>lars.svensson@web.de</email>
+				<uri>https://orcid.org/0000-0002-8714-9718</uri>
 			</address>
 		</author>
 
