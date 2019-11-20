@@ -18,6 +18,7 @@ rm -r * 2> /dev/null
 cp -r $REPO_PATH/* .
 
 # Commit and push latest version
+rm .gitignore
 git add .
 git config user.name  "Travis"
 git config user.email "travis@travis-ci.org"
