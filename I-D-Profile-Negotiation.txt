@@ -3,10 +3,12 @@
 
 
 Internet Engineering Task Force                              L. Svensson
-Internet-Draft                               Deutsche Nationalbibliothek
+Internet-Draft
 Intended status: Standards Track                             R. Verborgh
-Expires: March 13, 2020                          Ghent University - imec
-                                                      September 10, 2019
+Expires: May 23, 2020                            Ghent University - imec
+                                                        H. Van de Sompel
+                                   Data Archiving and Networked Services
+                                                       November 20, 2019
 
 
               Indicating and Negotiating Profiles in HTTP
@@ -18,7 +20,7 @@ Abstract
    "Accept-Profile" that enable User Agents and servers to indicate and
    negotiate the profile used for representing a specific resource.  In
    this context, a profile is a description of structural and/or
-   semantic constraints on representations of documents in addition to
+   semantic constraints on representations of resources in addition to
    the syntactical interpretation provided by their MIME type.  Examples
    of profiles include Dublin Core Application Profiles, XML Schemata,
    and RDF Shape Expressions.  This document further defines the
@@ -42,21 +44,24 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on March 13, 2020.
+   This Internet-Draft will expire on May 23, 2020.
+
+
+
+
+
+
+
+
+Svensson, et al.          Expires May 23, 2020                  [Page 1]
+
+Internet-Draft Indicating and Negotiating Profiles in HTTP November 2019
+
 
 Copyright Notice
 
    Copyright (c) 2019 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
-
-
-
-
-
-Svensson & Verborgh      Expires March 13, 2020                 [Page 1]
-
-Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
-
 
    This document is subject to BCP 78 and the IETF Trust's Legal
    Provisions Relating to IETF Documents
@@ -70,7 +75,7 @@ Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
 
 Table of Contents
 
-   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   3
      1.1.  Motivation  . . . . . . . . . . . . . . . . . . . . . . .   3
      1.2.  Terminology . . . . . . . . . . . . . . . . . . . . . . .   3
      1.3.  High-level overview of solution . . . . . . . . . . . . .   4
@@ -82,7 +87,7 @@ Table of Contents
      2.4.  Link  . . . . . . . . . . . . . . . . . . . . . . . . . .   7
    3.  New HTTP Headers  . . . . . . . . . . . . . . . . . . . . . .   7
      3.1.  Content-Profile Header Syntax . . . . . . . . . . . . . .   8
-     3.2.  Accept-Profile Header Syntax  . . . . . . . . . . . . . .   8
+     3.2.  Accept-Profile Header Syntax  . . . . . . . . . . . . . .   9
    4.  Content Negotiation . . . . . . . . . . . . . . . . . . . . .  10
      4.1.  Mechanisms  . . . . . . . . . . . . . . . . . . . . . . .  10
      4.2.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .  11
@@ -95,7 +100,19 @@ Table of Contents
    9.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  16
      9.1.  Normative References  . . . . . . . . . . . . . . . . . .  16
      9.2.  Informative References  . . . . . . . . . . . . . . . . .  16
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  17
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  18
+
+
+
+
+
+
+
+
+Svensson, et al.          Expires May 23, 2020                  [Page 2]
+
+Internet-Draft Indicating and Negotiating Profiles in HTTP November 2019
+
 
 1.  Introduction
 
@@ -106,14 +123,6 @@ Table of Contents
    provide multiple representations of a resource to accommodate
    different User Agents or use cases.  When a User Agent issues a GET
    request for a specific URI, the User Agent and the server negotiate
-
-
-
-Svensson & Verborgh      Expires March 13, 2020                 [Page 2]
-
-Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
-
-
    which of the available representations best suit the User Agent's
    needs and capabilities.  Typically, a User Agent specifies
    preferences by setting appropriate HTTP headers, e.g., "Accept" for
@@ -139,7 +148,7 @@ Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
 1.2.  Terminology
 
    In this context, a profile is a description of structural and/or
-   semantic constraints on representations of documents in addition to
+   semantic constraints on representations of resources in addition to
    the syntactical interpretation provided by their MIME type.  Examples
    of a profile in this context include, but are not limited to, Dublin
    Core application profiles (formally expressed in Description Set
@@ -149,8 +158,17 @@ Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
    independent of a media type.  The definition and usage of profiles in
    applications is beyond the scope of this proposal; our only
    constraint is that a profile is identified by a URI.  Further
-   assumptions about profiles, e. g.  hierarchies of profiles,
+   assumptions about profiles, e.g., hierarchies of profiles,
    inheritance or transitivity, are out of this specification's scope.
+
+
+
+
+
+Svensson, et al.          Expires May 23, 2020                  [Page 3]
+
+Internet-Draft Indicating and Negotiating Profiles in HTTP November 2019
+
 
    Typical use cases for profiles include validation, and building
    clients that rely on additional assumptions in a representation
@@ -162,13 +180,6 @@ Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
    community defines as "schemas which consist of data elements drawn
    from one or more namespaces, combined together by implementers, and
    optimised for a particular local application" [HeeryAndPatel].
-
-
-
-Svensson & Verborgh      Expires March 13, 2020                 [Page 3]
-
-Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
-
 
 1.3.  High-level overview of solution
 
@@ -182,8 +193,8 @@ Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
    indicate preferences.
 
    A server that supports profiles can then list one or more profiles in
-   the "Content-Profile" header in its response specifying the profile
-   or profiles the returned payload conforms to.  The specified list of
+   the "Content-Profile" header in its response, specifying the
+   profile(s) the returned payload conforms to.  The specified list of
    profiles may not be exhaustive since the returned content can conform
    to profiles that the server is not aware of.  If multiple
    representations of the same resource are available, and those conform
@@ -203,27 +214,16 @@ Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
    set of supported profiles might be different for other resources on
    the same server and/or could change over time.
 
-   The absence of an "Accept-Profile" header field in an HTTP response
-   SHOULD be taken as an indication that the server does not support
-   profile-based content-negotiation for the given resource.  It MUST
-   NOT be seen as an indication that the server can handle payloads
-   conforming to any profile.
-
-   A server that fails a request due to receiving a payload with an
-   unsupported profile SHOULD respond with a 415 status and SHOULD
-   include an "Accept-Profile" header in its response, allowing clients
-   to distinguish between issues related to profiles and media types.
-   In order to avoid confusion with issues related to media types,
-   servers that fail a request with a 415 status for reasons unrelated
-   to profiles MUST NOT include the "Accept-Profile" header field.
 
 
 
 
 
-Svensson & Verborgh      Expires March 13, 2020                 [Page 4]
+
+
+Svensson, et al.          Expires May 23, 2020                  [Page 4]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP November 2019
 
 
 1.4.  Notational Conventions
@@ -277,9 +277,9 @@ Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
 
 
 
-Svensson & Verborgh      Expires March 13, 2020                 [Page 5]
+Svensson, et al.          Expires May 23, 2020                  [Page 5]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP November 2019
 
 
    content conforms to "application/json", and such an indicator does
@@ -333,9 +333,9 @@ Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
 
 
 
-Svensson & Verborgh      Expires March 13, 2020                 [Page 6]
+Svensson, et al.          Expires May 23, 2020                  [Page 6]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP November 2019
 
 
 2.4.  Link
@@ -375,24 +375,37 @@ Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
    it would set the "Content-Type" and "Content-Profile" header fields
    appropriately.  Likewise, a User Agent sending an XML document with a
    specific structure to a server could set the "Content-Type" and the
-   "Content-Profile" header fields.  If the server cannot process the
-   specified profile, it would answer with an HTTP 415 status code and
-   possibly a list of acceptable profiles.
+   "Content-Profile" header fields.
+
+   The absence of an "Accept-Profile" header field in an HTTP response
+   SHOULD be taken as an indication that the server does not support
+   profile-based content-negotiation for the given resource.  It MUST
+   NOT be seen as an indication that the server can handle payloads
+   conforming to any profile.
+
+   A server that fails a request due to receiving a payload with an
+   unsupported profile SHOULD respond with a 415 status code and SHOULD
+   include an "Accept-Profile" header in its response, allowing clients
+
+
+
+Svensson, et al.          Expires May 23, 2020                  [Page 7]
+
+Internet-Draft Indicating and Negotiating Profiles in HTTP November 2019
+
+
+   to distinguish between issues related to profiles and media types.
+   It MAY list acceptable profiles in the message body.  In order to
+   avoid confusion with issues related to media types, servers that fail
+   a request with a 415 status for reasons unrelated to profiles MUST
+   NOT include the "Accept-Profile" header field.
 
    The "Accept-Profile" and "Content-Profile" header MUST use a URI to
    refer to a profile.  That URI MAY point to an actual document, or if
-   the parties involved agree on a profile definition, MAY be e.g. a URN
-   [RFC8141] or an info-URI [RFC4452].  When a protocol-based URI is
+   the parties involved agree on a profile definition, MAY be e.g., a
+   URN [RFC8141] or an info-URI [RFC4452].  When a protocol-based URI is
    used, such as an FTP- or an HTTP-URI, however, it SHOULD dereference
    to a document containing that profile's definition.
-
-
-
-
-Svensson & Verborgh      Expires March 13, 2020                 [Page 7]
-
-Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
-
 
 3.1.  Content-Profile Header Syntax
 
@@ -410,30 +423,32 @@ Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
    the supplied profile URIs.  Differences in ordering of the items in
    this list, or the presence of duplicates, MUST NOT be interpreted as
    semantically significant.  Instead of sending a comma-separated list
-   of profile URIs in one "Content-Profile" header field, and agent MAY
+   of profile URIs in one "Content-Profile" header field, an agent MAY
    choose to send each profile URI in its own "Content-Profile" header
    field without changing its meaning, as specified in Section 3.2.2 of
    RFC 7230 [RFC7230].
 
-   If a User Agent uses the "Content-Profile" header field to indicate
-   the profile the payload conforms to (e.g., in an HTTP POST or PUT
-   request) and the server can only process content in other profiles,
-   the server SHOULD respond with a 415 status code together with an
-   "Accept-Profile" header field (including q-values) to indicate which
-   profiles it supports.
-
    Figure 1 describes the syntax (Augmented Backus-Naur Form) of the
    header field, using the grammar defined in RFC 5234 [RFC5234] and the
    rules defined in Section 3.2 of RFC 7230 [RFC7230].  The definition
-   of "URI-reference" is imported from RFC 7230 [RFC7230].
+   of "URI-reference" is imported from RFC 3986 [RFC3986].
 
                            Profile header syntax
 
    Content-Profile = "Content-Profile" ":"
-                   OWS "<" URI-reference ">"
-                   *(OWS "," OWS "<" URI-reference ">") OWS
+                       OWS "<" profile-value ">"
+                       *(OWS "," OWS "<" profile-value ">") OWS
+   profile-value = "<" URI-reference ">" | profile-value-ext
 
                                  Figure 1
+
+
+
+
+Svensson, et al.          Expires May 23, 2020                  [Page 8]
+
+Internet-Draft Indicating and Negotiating Profiles in HTTP November 2019
+
 
 3.2.  Accept-Profile Header Syntax
 
@@ -442,14 +457,6 @@ Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
    Profile" field is present, it MUST contain a comma-separated list of
    profile URIs.  Each profile MUST be identified by an absolute URI
    reference inside angle brackets ("<>").  Quality values as defined in
-
-
-
-Svensson & Verborgh      Expires March 13, 2020                 [Page 8]
-
-Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
-
-
    Section 5.3.1 of RFC 7230 [RFC7230] MAY be used to assign a relative
    "weight" to the preference.  Exactly how that weight is used to
    determine the best representation is beyond the scope of this
@@ -494,23 +501,16 @@ Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
 
 
 
-
-
-
-
-
-
-
-Svensson & Verborgh      Expires March 13, 2020                 [Page 9]
+Svensson, et al.          Expires May 23, 2020                  [Page 9]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP November 2019
 
 
                        Accept-Profile header syntax
 
    Accept-Profile = "Accept-Profile" ":"
-                  OWS (profile-value) *(OWS "," OWS profile-value) OWS
-   profile-value = "<" URI-reference ">" [weight]
+                      OWS (accept-value) *(OWS "," OWS accept-value) OWS
+   accept-value = "<" URI-reference ">" [weight] | accept-value-ext
 
                                  Figure 2
 
@@ -557,9 +557,9 @@ Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
 
 
 
-Svensson & Verborgh      Expires March 13, 2020                [Page 10]
+Svensson, et al.          Expires May 23, 2020                 [Page 10]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP November 2019
 
 
 4.2.  Examples
@@ -613,9 +613,9 @@ Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
 
 
 
-Svensson & Verborgh      Expires March 13, 2020                [Page 11]
+Svensson, et al.          Expires May 23, 2020                 [Page 11]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP November 2019
 
 
    Another User Agent requests a JSON representation conforming to
@@ -669,9 +669,9 @@ Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
 
 
 
-Svensson & Verborgh      Expires March 13, 2020                [Page 12]
+Svensson, et al.          Expires May 23, 2020                 [Page 12]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP November 2019
 
 
    A User Agent requests an RDF document conforming to one of two RDF
@@ -725,9 +725,9 @@ Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
 
 
 
-Svensson & Verborgh      Expires March 13, 2020                [Page 13]
+Svensson, et al.          Expires May 23, 2020                 [Page 13]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP November 2019
 
 
    A User Agent PUTs an RDF document conforming to the RDF Shape
@@ -781,9 +781,9 @@ Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
 
 
 
-Svensson & Verborgh      Expires March 13, 2020                [Page 14]
+Svensson, et al.          Expires May 23, 2020                 [Page 14]
 
-Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
+Internet-Draft Indicating and Negotiating Profiles in HTTP November 2019
 
 
 5.2.  Content-Profile HTTP Header Registration
@@ -812,11 +812,12 @@ Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
    link.  Multiple "profile" attributes on a single link value indicate
    that the resource representation conforms to multiple profiles.
 
-   The ABNF for the profile attribute's value is:
+   The ABNF for the profile attribute is:
 
-   absolute-URI
+   profile-param: "profile" "=" profile-param-value
+   profile-param-value: DQUOTE absolute-URI *(RWS absolute-URI) DQUOTE
 
-   where "absolute-URI" is defined as in section 4.3 of RFC 3986
+   where "absolute-URI" is defined as in Section 4.3 of RFC 3986
    [RFC3986].
 
 7.  Security Considerations
@@ -832,15 +833,17 @@ Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
    user's interests that could be used to add such information to a user
    profile.  If this is undesirable, a client and/or a server can stop
    exposing the header, in which case HTTP interactions would be back to
+
+
+
+
+Svensson, et al.          Expires May 23, 2020                 [Page 15]
+
+Internet-Draft Indicating and Negotiating Profiles in HTTP November 2019
+
+
    the level of standard HTTP (i.e., with no indication what profiles
    the User Agent or the server prefer and/or can handle).
-
-
-
-Svensson & Verborgh      Expires March 13, 2020                [Page 15]
-
-Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
-
 
 8.  Acknowledgements
 
@@ -886,17 +889,19 @@ Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
               Matching Metadata Schemas", 2000,
               <http://www.ariadne.ac.uk/issue25/app-profiles>.
 
+
+
+
+
+Svensson, et al.          Expires May 23, 2020                 [Page 16]
+
+Internet-Draft Indicating and Negotiating Profiles in HTTP November 2019
+
+
    [RFC3864]  Klyne, G., Nottingham, M., and J. Mogul, "Registration
               Procedures for Message Header Fields", BCP 90, RFC 3864,
               DOI 10.17487/RFC3864, September 2004,
               <https://www.rfc-editor.org/info/rfc3864>.
-
-
-
-Svensson & Verborgh      Expires March 13, 2020                [Page 16]
-
-Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
-
 
    [RFC4452]  Van de Sompel, H., Hammond, T., Neylon, E., and S. Weibel,
               "The "info" URI Scheme for Information Assets with
@@ -941,27 +946,20 @@ Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
               April 2012,
               <http://www.w3.org/TR/2012/REC-xmlschema11-1-20120405>.
 
+
+
+
+Svensson, et al.          Expires May 23, 2020                 [Page 17]
+
+Internet-Draft Indicating and Negotiating Profiles in HTTP November 2019
+
+
 Authors' Addresses
 
-
-
-
-
-
-
-Svensson & Verborgh      Expires March 13, 2020                [Page 17]
-
-Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
-
-
    Lars G. Svensson
-   Deutsche Nationalbibliothek
-   Adickesallee 1
-   Frankfurt  60322
-   Germany
 
-   Phone: +49 69 1525 1752
-   Email: l.svensson@dnb.de
+   Email: lars.svensson@web.de
+   URI:   https://orcid.org/0000-0002-8714-9718
 
 
    Ruben Verborgh
@@ -972,6 +970,14 @@ Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
 
    Phone: +32 9 331 49 10
    Email: ruben.verborgh@ugent.be
+   URI:   https://ruben.verborgh.org/
+
+
+   Herbert Van de Sompel
+   Data Archiving and Networked Services
+
+   Email: herbert.van.de.sompel@dans.knaw.nl
+   URI:   https://orcid.org/0000-0002-0715-6126
 
 
 
@@ -999,10 +1005,4 @@ Internet-Draft Indicating and Negotiating Profiles in HTTPSeptember 2019
 
 
 
-
-
-
-
-
-
-Svensson & Verborgh      Expires March 13, 2020                [Page 18]
+Svensson, et al.          Expires May 23, 2020                 [Page 18]
