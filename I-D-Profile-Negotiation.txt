@@ -5,10 +5,10 @@
 Internet Engineering Task Force                              L. Svensson
 Internet-Draft                               Deutsche Nationalbibliothek
 Intended status: Informational                               R. Verborgh
-Expires: October 23, 2020                        Ghent University - imec
+Expires: October 25, 2020                        Ghent University - imec
                                                         H. Van de Sompel
                                    Data Archiving and Networked Services
-                                                          April 21, 2020
+                                                          April 23, 2020
 
 
        Indicating, Discovering, Negotiating, and Writing Profiled
@@ -45,7 +45,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on October 23, 2020.
+   This Internet-Draft will expire on October 25, 2020.
 
 
 
@@ -53,7 +53,7 @@ Status of This Memo
 
 
 
-Svensson, et al.        Expires October 23, 2020                [Page 1]
+Svensson, et al.        Expires October 25, 2020                [Page 1]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Svensson, et al.        Expires October 23, 2020                [Page 2]
+Svensson, et al.        Expires October 25, 2020                [Page 2]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -165,7 +165,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 23, 2020                [Page 3]
+Svensson, et al.        Expires October 25, 2020                [Page 3]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -221,7 +221,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 23, 2020                [Page 4]
+Svensson, et al.        Expires October 25, 2020                [Page 4]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -243,6 +243,12 @@ Internet-Draft      Handling Profiled Representations         April 2020
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
    document are to be interpreted as described in RFC 2119 [RFC2119].
+
+   In the examples provided in this document, links in the HTTP "Link"
+   header are shown on separate lines in order to improve readability.
+   Note, however, that as per Section 3.2 of [RFC7230], line breaks are
+   not allowed in values for HTTP headers; only whitespaces and tabs are
+   supported as seperators.
 
 2.  Indicating Profiled Representations
 
@@ -271,13 +277,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-
-
-
-
-
-
-Svensson, et al.        Expires October 23, 2020                [Page 5]
+Svensson, et al.        Expires October 25, 2020                [Page 5]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -333,14 +333,14 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 23, 2020                [Page 6]
+Svensson, et al.        Expires October 25, 2020                [Page 6]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
 
    HTTP/1.1 200 OK
    Content-Type: application/xml
-   Link: <http://purl.org/dc/terms/> ; rel=profile" ,
+   Link: <http://purl.org/dc/terms/> ; rel="profile" ,
          </some/other_resource_1>
             ; rel="alternate" ; type="application/xml"
             ; formats="http://example.org/our_internal_xml_profile" ,
@@ -389,7 +389,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 23, 2020                [Page 7]
+Svensson, et al.        Expires October 25, 2020                [Page 7]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -420,7 +420,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
    In profile negotiation, a profile MUST be referred to by a URI that,
    from here onwards, is named a profile URI.  If the profile URI is
    dereferencable it SHOULD lead to a document that details the profile.
-   If the profile URI is not derferencable (e.g. a URN [RFC8141] or an
+   If the profile URI is not dereferencable (e.g. a URN [RFC8141] or an
    info-URI [RFC4452]) facilities SHOULD be available to allow user
    agents and servers to understand their meaning, e.g. community
    registries of profiles.
@@ -445,7 +445,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 23, 2020                [Page 8]
+Svensson, et al.        Expires October 25, 2020                [Page 8]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -501,7 +501,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 23, 2020                [Page 9]
+Svensson, et al.        Expires October 25, 2020                [Page 9]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -528,7 +528,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
    with <http://example.org/shapes/shape-4> as profile URI.  Note that,
    even if the user agent does not express profile preferences using the
    "Accept-Profile" header and the server's "Vary" header would be the
-   same, and the "Link" header would still include a "profile" link to
+   same, the "Link" header would still include a "profile" link to
    indicate the profile of the representation returned by the server.
 
    HTTP/1.1 200 OK
@@ -557,7 +557,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 23, 2020               [Page 10]
+Svensson, et al.        Expires October 25, 2020               [Page 10]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -613,7 +613,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 23, 2020               [Page 11]
+Svensson, et al.        Expires October 25, 2020               [Page 11]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -669,7 +669,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 23, 2020               [Page 12]
+Svensson, et al.        Expires October 25, 2020               [Page 12]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -694,7 +694,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
    HTTP/1.1 200 OK
    Content-Type: application/xml
    Link: <http://purl.org/dc/terms/>
-         ; rel=profile" ,
+         ; rel="profile" ,
          <http://example.org/bibrecord/1/BIBFRAME>
          ; rel="alternate"
          ; formats="http://id.loc.gov/ontologies/bibframe/"
@@ -725,7 +725,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 23, 2020               [Page 13]
+Svensson, et al.        Expires October 25, 2020               [Page 13]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -781,7 +781,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 23, 2020               [Page 14]
+Svensson, et al.        Expires October 25, 2020               [Page 14]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -837,7 +837,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 23, 2020               [Page 15]
+Svensson, et al.        Expires October 25, 2020               [Page 15]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -855,6 +855,9 @@ Internet-Draft      Handling Profiled Representations         April 2020
 7.  Security Considerations
 
 8.  Acknowledgments
+
+   Many thanks to our colleagues for feedback: Enno Meijers, Michael L.
+   Nelson
 
 9.  References
 
@@ -890,10 +893,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-
-
-
-Svensson, et al.        Expires October 23, 2020               [Page 16]
+Svensson, et al.        Expires October 25, 2020               [Page 16]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -949,7 +949,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 23, 2020               [Page 17]
+Svensson, et al.        Expires October 25, 2020               [Page 17]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -1005,4 +1005,4 @@ Authors' Addresses
 
 
 
-Svensson, et al.        Expires October 23, 2020               [Page 18]
+Svensson, et al.        Expires October 25, 2020               [Page 18]

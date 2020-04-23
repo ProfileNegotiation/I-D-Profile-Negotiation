@@ -395,12 +395,12 @@
 <link href="#rfc.authors" rel="Chapter">
 
 
-  <meta name="generator" content="xml2rfc version 2.43.0 - https://tools.ietf.org/tools/xml2rfc" />
+  <meta name="generator" content="xml2rfc version 2.44.0 - https://tools.ietf.org/tools/xml2rfc" />
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
   <meta name="dct.creator" content="Svensson, L., Verborgh, R., and H. Van de Sompel" />
   <meta name="dct.identifier" content="urn:ietf:id:draft-svensson-profiled-representations-00" />
-  <meta name="dct.issued" scheme="ISO8601" content="2020-04-21" />
+  <meta name="dct.issued" scheme="ISO8601" content="2020-04-23" />
   <meta name="dct.abstract" content="This document details approaches for enriching HTTP interactions with information pertaining to the profiles to which resource representations conform.  It surveys approaches that were recently introduced to indicate the profile of a resource representation, and to make representations that conform to a profile discoverable.  It introduces a generally applicable approach to negotiate for a resource representation that conforms to a profile preferred by a user agent. That approach leverages the existing content negotiation mechanism but applies it to the profile dimension to which it was previously not applied. The document also shows how a server can convey which profiled representations it is able to accept from a user agent.   " />
   <meta name="description" content="This document details approaches for enriching HTTP interactions with information pertaining to the profiles to which resource representations conform.  It surveys approaches that were recently introduced to indicate the profile of a resource representation, and to make representations that conform to a profile discoverable.  It introduces a generally applicable approach to negotiate for a resource representation that conforms to a profile preferred by a user agent. That approach leverages the existing content negotiation mechanism but applies it to the profile dimension to which it was previously not applied. The document also shows how a server can convey which profiled representations it is able to accept from a user agent.   " />
 
@@ -424,7 +424,7 @@
 <td class="right">R. Verborgh</td>
 </tr>
 <tr>
-<td class="left">Expires: October 23, 2020</td>
+<td class="left">Expires: October 25, 2020</td>
 <td class="right">Ghent University &#8211; imec</td>
 </tr>
 <tr>
@@ -437,7 +437,7 @@
 </tr>
 <tr>
 <td class="left"></td>
-<td class="right">April 21, 2020</td>
+<td class="right">April 23, 2020</td>
 </tr>
 
     	
@@ -453,7 +453,7 @@
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on October 23, 2020.</p>
+<p>This Internet-Draft will expire on October 25, 2020.</p>
 <h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
 <p>Copyright (c) 2020 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
 <p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
@@ -537,6 +537,7 @@
 <h1 id="rfc.section.1.3">
 <a href="#rfc.section.1.3">1.3.</a> Notational Conventions</h1>
 <p id="rfc.section.1.3.p.1">The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in <a href="#RFC2119" class="xref">RFC 2119</a>.</p>
+<p id="rfc.section.1.3.p.2">In the examples provided in this document, links in the HTTP "Link" header are shown on separate lines in order to improve readability.  Note, however, that as per Section 3.2 of <a href="#RFC7230" class="xref">[RFC7230]</a>, line breaks are not allowed in values for HTTP headers; only whitespaces and tabs are supported as seperators.  </p>
 <h1 id="rfc.section.2">
 <a href="#rfc.section.2">2.</a> <a href="#Indicating" id="Indicating">Indicating Profiled Representations</a>
 </h1>
@@ -544,7 +545,7 @@
 <p><a href="#request_UI1" class="xref">Figure 3</a> shows a client submitting a representation to a server, using the same approach to express the profile to which that representation complies.  <a href="#Writing" class="xref">Section 5</a> describes how a server can convey the profiles it supports for representations that are submitted by a user agent.  </p>
 <div id="rfc.figure.1"></div>
 <div id="request_SI1"></div>
-<pre>
+<pre> 
 GET /some/resource HTTP/1.1
 Host: example.org
 Connection: close
@@ -553,7 +554,7 @@ Connection: close
 <p class="figure">Figure 1: Client requests a representation</p>
 <div id="rfc.figure.2"></div>
 <div id="response_SI1"></div>
-<pre>
+<pre> 
 HTTP/1.1 200 OK
 Content-Type: application/xml ; charset=utf-8
 Link: &lt;http://purl.org/dc/terms/&gt;; rel="profile"
@@ -566,7 +567,7 @@ Connection: close
 <p class="figure">Figure 2: Server indicates the profile of the returned representation</p>
 <div id="rfc.figure.3"></div>
 <div id="request_UI1"></div>
-<pre>
+<pre> 
 PUT /some/resource HTTP/1.1
 Host: example.org
 Content-Type: application/xml ; charset=utf-8
@@ -584,16 +585,16 @@ Connection: close
 <p id="rfc.section.3.p.1">The link hints capability introduced in <a href="#I-D.nottingham-link-hint" class="xref">[I-D.nottingham-link-hint]</a>, can be leveraged by a server to make profiled representations discoverable by including a "formats" attribute on web links. <a href="#response_SI2" class="xref">Figure 4</a> shows a response to the client request of <a href="#request_SI1" class="xref">Figure 1</a> in which the server uses this technique. The "Link" header indicates the profile of the returned representation but also points at two alternative representations, each of which conforms to another profile.  </p>
 <div id="rfc.figure.4"></div>
 <div id="response_SI2"></div>
-<pre>
+<pre> 
 HTTP/1.1 200 OK
 Content-Type: application/xml
-Link: &lt;http://purl.org/dc/terms/&gt; ; rel=profile" ,
-      &lt;/some/other_resource_1&gt;
-         ; rel="alternate" ; type="application/xml"
+Link: &lt;http://purl.org/dc/terms/&gt; ; rel="profile" , 
+      &lt;/some/other_resource_1&gt; 
+         ; rel="alternate" ; type="application/xml" 
          ; formats="http://example.org/our_internal_xml_profile" ,
       &lt;/some/other_resource_2&gt;
-         ; rel="alternate"
-         ; formats="http://example.org/our_community_profile"
+         ; rel="alternate" 
+         ; formats="http://example.org/our_community_profile" 
 Content-Length: 23364
 Connection: close
 
@@ -618,7 +619,7 @@ Connection: close
 <h1 id="rfc.section.4.1">
 <a href="#rfc.section.4.1">4.1.</a> Profile Negotiation Details</h1>
 <p id="rfc.section.4.1.p.1">Profile negotiation uses the content negotiation processes described in <a href="#RFC7231" class="xref">Section 3.4 of RFC 7231</a> but applies them to the profile dimension.  Both proactive negotiation and reactive negotiation for profiles can be supported by servers.  Both are described in more detail in the remainder of this section.  </p>
-<p id="rfc.section.4.1.p.2">In profile negotiation, a profile MUST be referred to by a URI that, from here onwards, is named a profile URI.  If the profile URI is dereferencable it SHOULD lead to a document that details the profile. If the profile URI is not derferencable (e.g. a <a href="#RFC8141" class="xref">URN</a> or an <a href="#RFC4452" class="xref">info-URI</a>) facilities SHOULD be available to allow user agents and servers to understand their meaning, e.g. community registries of profiles.  </p>
+<p id="rfc.section.4.1.p.2">In profile negotiation, a profile MUST be referred to by a URI that, from here onwards, is named a profile URI.  If the profile URI is dereferencable it SHOULD lead to a document that details the profile. If the profile URI is not dereferencable (e.g. a <a href="#RFC8141" class="xref">URN</a> or an <a href="#RFC4452" class="xref">info-URI</a>) facilities SHOULD be available to allow user agents and servers to understand their meaning, e.g. community registries of profiles.  </p>
 <h1 id="rfc.section.4.1.1">
 <a href="#rfc.section.4.1.1">4.1.1.</a> <a href="#proconneg" id="proconneg">Proactive Profile Negotiation</a>
 </h1>
@@ -645,7 +646,7 @@ Connection: close
 <p id="rfc.section.4.1.1.p.8">In <a href="#Req_proconneg_1" class="xref">Figure 5</a> a user agent requests an RDF serialization from a server and expresses preference for two media types using the "Accept" header and two profiles using the "Accept-Profile" header.  It uses q-values to express a preference for the profile with profile URI &lt;http://example.org/shapes/shape-1&gt; over the one with profile URI &lt;http://example.org/shapes/shape-2&gt;.  </p>
 <div id="rfc.figure.5"></div>
 <div id="Req_proconneg_1"></div>
-<pre>
+<pre> 
 GET /document HTTP/1.1
 Host: example.org
 Accept: text/turtle, application/rdf+xml
@@ -655,20 +656,20 @@ Connection: close
 
 						</pre>
 <p class="figure">Figure 5: Client expresses a preference for two profiles</p>
-<p><a href="#Res_proconneg_1" class="xref">Figure 6</a> shows the server's response to the request of <a href="#Req_proconneg_1" class="xref">Figure 5</a>.  By means of the "Vary" header, the server expresses support for negotiation in both the media type and profile dimensions.  The "profile" link with Target IRI &lt;http://example.org/shapes/shape-2&gt; indicates that the server was able to honor the user agent's second profile preference. Another "profile" link shows that the delivered representation also conforms to a profile with profile URI &lt;http://example.org/shapes/shape-3&gt;. Furthermore, using an "alternate" link, the server indicates support for another profile with &lt;http://example.org/shapes/shape-4&gt; as profile URI. Note that, even if the user agent does not express profile preferences using the "Accept-Profile" header and the server's "Vary" header would be the same, and the "Link" header would still include a "profile" link to indicate the profile of the representation returned by the server.  </p>
+<p><a href="#Res_proconneg_1" class="xref">Figure 6</a> shows the server's response to the request of <a href="#Req_proconneg_1" class="xref">Figure 5</a>.  By means of the "Vary" header, the server expresses support for negotiation in both the media type and profile dimensions.  The "profile" link with Target IRI &lt;http://example.org/shapes/shape-2&gt; indicates that the server was able to honor the user agent's second profile preference. Another "profile" link shows that the delivered representation also conforms to a profile with profile URI &lt;http://example.org/shapes/shape-3&gt;. Furthermore, using an "alternate" link, the server indicates support for another profile with &lt;http://example.org/shapes/shape-4&gt; as profile URI. Note that, even if the user agent does not express profile preferences using the "Accept-Profile" header and the server's "Vary" header would be the same, the "Link" header would still include a "profile" link to indicate the profile of the representation returned by the server.  </p>
 <div id="rfc.figure.6"></div>
 <div id="Res_proconneg_1"></div>
-<pre>
+<pre> 
 HTTP/1.1 200 OK
 Content-Type: text/turtle
 Vary: Accept, Accept-Profile
-Link: &lt;http://example.org/shapes/shape-2&gt;
-      ; rel="profile" ,
-      &lt;http://example.org/shapes/shape-3&gt;
-      ; rel="profile" ,
-      &lt;http://example.org/document&gt;
-      ; rel="alternate"
-      ; type="text/turtle"
+Link: &lt;http://example.org/shapes/shape-2&gt; 
+      ; rel="profile" , 
+      &lt;http://example.org/shapes/shape-3&gt; 
+      ; rel="profile" , 
+      &lt;http://example.org/document&gt; 
+      ; rel="alternate" 
+      ; type="text/turtle" 
       ; formats="http://example.org/shapes/shape-4"
 Content-Length: 8724
 Connection: close
@@ -680,15 +681,15 @@ Connection: close
 <p><a href="#Res_proconneg_2" class="xref">Figure 7</a> shows the response to the request of <a href="#Req_proconneg_1" class="xref">Figure 5</a> in case the server supports profile negotiation for the resource at hand but can not return a representation that conforms to a profile preferred by the user agent.  The server has chosen to nevertheless return a representation that conforms to profile &lt;http://example.org/shapes/shape-4&gt;, which is not among the ones preferred by the user agent. The server also reveals the existence of a representation that conforms to profile &lt;http://example.org/shapes/shape-5&gt;. The server could also choose not to return a default representation in which case it would return a "406 Not Acceptable" HTTP response code and no response body. It would not provide any "profile" links but might use "alternate" links with a "formats" attribute to indicate the existence of supported profiles.  </p>
 <div id="rfc.figure.7"></div>
 <div id="Res_proconneg_2"></div>
-<pre>
+<pre> 
 HTTP/1.1 200 OK
 Content-Type: text/turtle
 Vary: Accept, Accept-Profile
-Link: &lt;http://example.org/shapes/shape-4&gt;
+Link: &lt;http://example.org/shapes/shape-4&gt; 
       ; rel="profile" ,
-      &lt;http://example.org/document&gt;
-      ; rel="alternate"
-      ; type="text/turtle"
+      &lt;http://example.org/document&gt; 
+      ; rel="alternate" 
+      ; type="text/turtle" 
       ; formats="http://example.org/shapes/shape-5"
 Content-Length: 6333
 Connection: close
@@ -700,7 +701,7 @@ Connection: close
 <p><a href="#Res_proconneg_3" class="xref">Figure 8</a> shows the response to the request of <a href="#Req_proconneg_1" class="xref">Figure 5</a> in case the server does not support profile negotiation for the resource &lt;http://example.org/document&gt;. It does support negotiation in the media type dimension and has honoured one of the user agent's preferences with that regard, as can be seen by the "Vary" and "Content-Type" headers.  </p>
 <div id="rfc.figure.8"></div>
 <div id="Res_proconneg_3"></div>
-<pre>
+<pre> 
 HTTP/1.1 200 OK
 Content-Type: text/turtle
 Vary: Accept
@@ -725,7 +726,7 @@ Connection: close
 <p><a href="#Req_reconneg_1" class="xref">Figure 9</a> shows a user agent issuing a HTTP HEAD on a resource in order determine whether profiled representations are available for it. <a href="#Res_reconneg_1" class="xref">Figure 10</a> shows the response of a server that supports reactive profile negotiation. By means of "alternate" links in the "Link" header, the server indicates support for two profiled representations for the resource at hand, and, for each, indicates the URI at which they can be accessed, as well as their respective profile URIs, media types, and supported HTTP methods. On the basis of this response, the client can decide whether any of the linked resources conform to a preferred profile, and, if so, access the respective Target IRI. <a href="#Res_reconneg_2" class="xref">Figure 11</a> shows the response to an HTTP HEAD issued on the Target IRI &lt;http://example.org/bibrecord/1/DC&gt; of the first "alternate" link.  </p>
 <div id="rfc.figure.9"></div>
 <div id="Req_reconneg_1"></div>
-<pre>
+<pre> 
 HEAD /bibrecord/1 HTTP/1.1
 Host: example.org
 Accept: application/xml
@@ -735,16 +736,16 @@ Connection: close
 <p class="figure">Figure 9: Client determines support for profiles</p>
 <div id="rfc.figure.10"></div>
 <div id="Res_reconneg_1"></div>
-<pre>
+<pre> 
 HTTP/1.1 200 OK
 Content-Type: text/plain
-Link: &lt;http://example.org/bibrecord/1/DC&gt;
-      ; rel="alternate"
-      ; type="application/xml"
+Link: &lt;http://example.org/bibrecord/1/DC&gt; 
+      ; rel="alternate" 
+      ; type="application/xml" 
       ; formats="http://purl.org/dc/terms/"
       ; allow="HEAD,GET,PATCH" ,
-      &lt;http://example.org/bibrecord/1/BIBFRAME&gt;
-      ; rel="alternate"
+      &lt;http://example.org/bibrecord/1/BIBFRAME&gt; 
+      ; rel="alternate" 
       ; formats="http://id.loc.gov/ontologies/bibframe/"
       ; allow="HEAD,GET"
 Content-Length: 200
@@ -754,13 +755,13 @@ Connection: close
 <p class="figure">Figure 10: Server supports two profiles</p>
 <div id="rfc.figure.11"></div>
 <div id="Res_reconneg_2"></div>
-<pre>
+<pre> 
 HTTP/1.1 200 OK
 Content-Type: application/xml
 Link: &lt;http://purl.org/dc/terms/&gt;
-      ; rel=profile" ,
-      &lt;http://example.org/bibrecord/1/BIBFRAME&gt;
-      ; rel="alternate"
+      ; rel="profile" ,
+      &lt;http://example.org/bibrecord/1/BIBFRAME&gt; 
+      ; rel="alternate" 
       ; formats="http://id.loc.gov/ontologies/bibframe/"
       ; allow="HEAD,GET"
 Allow: HEAD, GET, PATCH
@@ -793,12 +794,12 @@ accept-value = "&lt;" URI-reference "&gt;" [weight] | accept-value-ext
 <p id="rfc.section.5.p.5">Continuing from <a href="#Res_reconneg_2" class="xref">Figure 11</a>, <a href="#Req_write_1" class="xref">Figure 13</a> shows a user agent issuing a HTTP PATCH against resource &lt;http://example.org/bibrecord/1/DC&gt; in order to update it.  It uses the "Content-Encoding" header to convey the XML Patch media type of its message body and a link with a "profile" relation type in the "Link" header to indicate the profile to which it conforms. <a href="#Res_write_1" class="xref">Figure 14</a> shows the server's response, indicating that the patch was applied successfully; the server returns the updated representation as message body.  </p>
 <div id="rfc.figure.13"></div>
 <div id="Req_write_1"></div>
-<pre>
+<pre> 
 PATCH /bibrecord/1/DC HTTP/1.1
 Host: example.org
 Content-Encoding: application/xml-patch+xml
-Link: &lt;http://purl.org/dc/terms/&gt;
-      ; rel="profile"
+Link: &lt;http://purl.org/dc/terms/&gt; 
+      ; rel="profile" 
 Accept: application/xml
 Content-Length: 321
 Connection: close
@@ -809,14 +810,14 @@ Connection: close
 <p class="figure">Figure 13: Client submits profiled representation</p>
 <div id="rfc.figure.14"></div>
 <div id="Res_write_1"></div>
-<pre>
+<pre> 
 HTTP/1.1 200 OK
 Content-Type: application/xml
 Content-Location: http://example.org/bibrecord/1/DC
 Link: &lt;http://example.org/bibrecord/1/DC&gt;
       ; rel=profile" ,
-      &lt;http://example.org/bibrecord/1/BIBFRAME&gt;
-      ; rel="alternate"
+      &lt;http://example.org/bibrecord/1/BIBFRAME&gt; 
+      ; rel="alternate" 
       ; formats="http://id.loc.gov/ontologies/bibframe/"
       ; allow="HEAD,GET"
 Allow: HEAD, GET, PATCH
@@ -831,14 +832,14 @@ Connection: close
 <p id="rfc.section.5.p.6">If, in <a href="#Req_write_1" class="xref">Figure 13</a>, the user agent would have issued an HTTP PATCH on resource &lt;http://example.org/bibrecord/1/DC&gt; indicating that the profile URI of the patch was &lt;http://id.loc.gov/ontologies/bibframe/&gt;, the response would have a 422 HTTP status code to express that the profile is not supported by the resource at hand.  Such a response is shown in <a href="#Res_write_2" class="xref">Figure 15</a>.</p>
 <div id="rfc.figure.15"></div>
 <div id="Res_write_2"></div>
-<pre>
+<pre> 
 HTTP/1.1 422 Unprocessable Entity
 Content-Type: text/plain
-Link: &lt;http://example.org/bibrecord/1/DC&gt;
-      ; rel="alternate"
-      ; type="application/xml"
+Link: &lt;http://example.org/bibrecord/1/DC&gt; 
+      ; rel="alternate" 
+      ; type="application/xml" 
       ; formats="http://purl.org/dc/terms/"
-      ; allow="HEAD,GET,PATCH"
+      ; allow="HEAD,GET,PATCH" 
 Content-Length: 110
 Connection: close
 
@@ -862,6 +863,7 @@ Connection: close
 <a href="#rfc.section.7">7.</a> Security Considerations</h1>
 <h1 id="rfc.section.8">
 <a href="#rfc.section.8">8.</a> Acknowledgments</h1>
+<p id="rfc.section.8.p.1">Many thanks to our colleagues for feedback: Enno Meijers, Michael L. Nelson</p>
 <h1 id="rfc.references">
 <a href="#rfc.references">9.</a> References</h1>
 <h1 id="rfc.references.1">
