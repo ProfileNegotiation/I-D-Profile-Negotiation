@@ -5,10 +5,10 @@
 Internet Engineering Task Force                              L. Svensson
 Internet-Draft                               Deutsche Nationalbibliothek
 Intended status: Informational                               R. Verborgh
-Expires: October 25, 2020                        Ghent University - imec
+Expires: October 31, 2020                        Ghent University - imec
                                                         H. Van de Sompel
                                    Data Archiving and Networked Services
-                                                          April 23, 2020
+                                                          April 29, 2020
 
 
        Indicating, Discovering, Negotiating, and Writing Profiled
@@ -45,7 +45,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on October 25, 2020.
+   This Internet-Draft will expire on October 31, 2020.
 
 
 
@@ -53,7 +53,7 @@ Status of This Memo
 
 
 
-Svensson, et al.        Expires October 25, 2020                [Page 1]
+Svensson, et al.        Expires October 31, 2020                [Page 1]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Svensson, et al.        Expires October 25, 2020                [Page 2]
+Svensson, et al.        Expires October 31, 2020                [Page 2]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -165,7 +165,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 25, 2020                [Page 3]
+Svensson, et al.        Expires October 31, 2020                [Page 3]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -221,7 +221,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 25, 2020                [Page 4]
+Svensson, et al.        Expires October 31, 2020                [Page 4]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -244,6 +244,11 @@ Internet-Draft      Handling Profiled Representations         April 2020
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
    document are to be interpreted as described in RFC 2119 [RFC2119].
 
+   This specification uses the terms "link context" and "link target" as
+   defined in [RFC8288].  These terms respectively correspond with
+   "Context IRI" and "Target IRI" as used in [RFC5988].  Although
+   defined as IRIs, in common scenarios they are also URIs.
+
    In the examples provided in this document, links in the HTTP "Link"
    header are shown on separate lines in order to improve readability.
    Note, however, that as per Section 3.2 of [RFC7230], line breaks are
@@ -257,8 +262,8 @@ Internet-Draft      Handling Profiled Representations         April 2020
    in HTTP interactions.  Figure 1 shows a client requesting a
    representation from a server and Figure 2 shows the server
    responding.  The response includes a "Link" header ([RFC8288]) that
-   contains a link with the "profile" relation type.  The link's target
-   IRI <http://purl.org/dc/terms/> indicates the profile of the response
+   contains a link with the "profile" relation type.  The link target
+   <http://purl.org/dc/terms/> indicates the profile of the response
    body (not shown).
 
    Figure 3 shows a client submitting a representation to a server,
@@ -267,20 +272,22 @@ Internet-Draft      Handling Profiled Representations         April 2020
    the profiles it supports for representations that are submitted by a
    user agent.
 
+
+
+
+
+
+Svensson, et al.        Expires October 31, 2020                [Page 5]
+
+Internet-Draft      Handling Profiled Representations         April 2020
+
+
    GET /some/resource HTTP/1.1
    Host: example.org
    Connection: close
 
 
                 Figure 1: Client requests a representation
-
-
-
-
-Svensson, et al.        Expires October 25, 2020                [Page 5]
-
-Internet-Draft      Handling Profiled Representations         April 2020
-
 
    HTTP/1.1 200 OK
    Content-Type: application/xml ; charset=utf-8
@@ -326,14 +333,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-
-
-
-
-
-
-
-Svensson, et al.        Expires October 25, 2020                [Page 6]
+Svensson, et al.        Expires October 31, 2020                [Page 6]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -389,7 +389,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 25, 2020                [Page 7]
+Svensson, et al.        Expires October 31, 2020                [Page 7]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -445,7 +445,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 25, 2020                [Page 8]
+Svensson, et al.        Expires October 31, 2020                [Page 8]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -457,7 +457,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
       profile" in its response to the user agent.
 
    o  MUST include a "Link" HTTP header containing a link with the
-      "profile" relation type that has as Target IRI the profile URI of
+      "profile" relation type that has as link target the profile URI of
       the resource representation returned to the user agent.  In case
       the representation conforms to additional profiles known to the
       server, such a "profile" link SHOULD be included for each.
@@ -501,7 +501,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 25, 2020                [Page 9]
+Svensson, et al.        Expires October 31, 2020                [Page 9]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -519,7 +519,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
    Figure 6 shows the server's response to the request of Figure 5.  By
    means of the "Vary" header, the server expresses support for
    negotiation in both the media type and profile dimensions.  The
-   "profile" link with Target IRI <http://example.org/shapes/shape-2>
+   "profile" link with link target <http://example.org/shapes/shape-2>
    indicates that the server was able to honor the user agent's second
    profile preference.  Another "profile" link shows that the delivered
    representation also conforms to a profile with profile URI
@@ -557,7 +557,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 25, 2020               [Page 10]
+Svensson, et al.        Expires October 31, 2020               [Page 10]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -613,7 +613,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 25, 2020               [Page 11]
+Svensson, et al.        Expires October 31, 2020               [Page 11]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -630,12 +630,10 @@ Internet-Draft      Handling Profiled Representations         April 2020
    o  SHOULD have the "alternate" relation type.
 
    o  MUST use the "formats" link hint to convey the profile URI of the
-      profile to which the resource identified by the Target IRI of the
-      link conforms.
+      profile to which the resource that is the link target conforms.
 
    o  SHOULD use the "allow" link hint to convey the HTTP methods that
-      are supported by the resource that is identified by the Target IRI
-      of the link.
+      are supported by the resource that is the link target.
 
    Figure 9 shows a user agent issuing a HTTP HEAD on a resource in
    order determine whether profiled representations are available for
@@ -646,9 +644,10 @@ Internet-Draft      Handling Profiled Representations         April 2020
    they can be accessed, as well as their respective profile URIs, media
    types, and supported HTTP methods.  On the basis of this response,
    the client can decide whether any of the linked resources conform to
-   a preferred profile, and, if so, access the respective Target IRI.
-   Figure 11 shows the response to an HTTP HEAD issued on the Target IRI
-   <http://example.org/bibrecord/1/DC> of the first "alternate" link.
+   a preferred profile, and, if so, access the respective link target.
+   Figure 11 shows the response to an HTTP HEAD issued on the link
+   target <http://example.org/bibrecord/1/DC> of the first "alternate"
+   link.
 
    HEAD /bibrecord/1 HTTP/1.1
    Host: example.org
@@ -669,7 +668,8 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 25, 2020               [Page 12]
+
+Svensson, et al.        Expires October 31, 2020               [Page 12]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -725,7 +725,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 25, 2020               [Page 13]
+Svensson, et al.        Expires October 31, 2020               [Page 13]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -781,7 +781,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 25, 2020               [Page 14]
+Svensson, et al.        Expires October 31, 2020               [Page 14]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -837,7 +837,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 25, 2020               [Page 15]
+Svensson, et al.        Expires October 31, 2020               [Page 15]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -893,7 +893,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-Svensson, et al.        Expires October 25, 2020               [Page 16]
+Svensson, et al.        Expires October 31, 2020               [Page 16]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -915,6 +915,10 @@ Internet-Draft      Handling Profiled Representations         April 2020
               Identifiers in Public Namespaces", RFC 4452,
               DOI 10.17487/RFC4452, April 2006,
               <https://www.rfc-editor.org/info/rfc4452>.
+
+   [RFC5988]  Nottingham, M., "Web Linking", RFC 5988,
+              DOI 10.17487/RFC5988, October 2010,
+              <https://www.rfc-editor.org/info/rfc5988>.
 
    [RFC6839]  Hansen, T. and A. Melnikov, "Additional Media Type
               Structured Syntax Suffixes", RFC 6839,
@@ -945,11 +949,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
 
 
-
-
-
-
-Svensson, et al.        Expires October 25, 2020               [Page 17]
+Svensson, et al.        Expires October 31, 2020               [Page 17]
 
 Internet-Draft      Handling Profiled Representations         April 2020
 
@@ -1005,4 +1005,4 @@ Authors' Addresses
 
 
 
-Svensson, et al.        Expires October 25, 2020               [Page 18]
+Svensson, et al.        Expires October 31, 2020               [Page 18]
