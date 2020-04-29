@@ -12,6 +12,7 @@
 <!ENTITY RFC3870 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.3870.xml">
 <!ENTITY RFC4452 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4452.xml">
 <!ENTITY RFC5234 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.5234.xml">
+<!ENTITY RFC5988 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.5988.xml">
 <!ENTITY RFC6838 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6838.xml">
 <!ENTITY RFC6839 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6839.xml">
 <!ENTITY RFC6906 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6906.xml">
@@ -213,6 +214,10 @@
 					document are to be interpreted as described in <xref
 						target="RFC2119">RFC 2119</xref>.</t>
 				
+				<t>This specification uses the terms "link context" and "link target" as defined in <xref target="RFC8288"/>. 
+					These terms respectively correspond with "Context IRI" and "Target IRI" as used in <xref target="RFC5988"/>. 
+					Although defined as IRIs, in common scenarios they are also URIs.</t>
+				
 				<t>In the examples provided in this document, links in the HTTP "Link" header are shown on separate lines in order to improve readability. 
 					Note, however, that as per Section 3.2 of <xref target="RFC7230"/>, line breaks are not allowed in values for HTTP headers; only whitespaces and 
 						tabs are supported as seperators.
@@ -230,7 +235,7 @@
 					indicate the profile of a representation that is exchanged in HTTP interactions. <xref target="request_SI1"/> shows a client requesting a
 					representation from a server and <xref target="response_SI1"/> shows the server responding. The response includes a "Link" header 
 					(<xref target="RFC8288"/>) that  contains a link with the "profile" relation type. 
-					The link's target IRI &lt;http://purl.org/dc/terms/&gt; indicates the profile of 
+					The link target &lt;http://purl.org/dc/terms/&gt; indicates the profile of 
 					the response body (not shown).
 				</t>
 					<t><xref target="request_UI1"/> shows a client submitting a representation to a server, 
@@ -377,7 +382,7 @@ Connection: close
 					<t><list style="symbols">
 						<t>MUST include a "Vary" HTTP header containing the value "accept-profile" in its response to the user agent.
 						</t>
-						<t>MUST include a "Link" HTTP header containing a link with the "profile" relation type that has as Target IRI the profile URI 
+						<t>MUST include a "Link" HTTP header containing a link with the "profile" relation type that has as link target the profile URI 
 							of the resource representation returned to the user agent. In case the representation conforms to additional profiles known 
 							to the server, such a "profile" link SHOULD be included for each.
 						</t>
@@ -429,7 +434,7 @@ Connection: close
 					<t>						
 						<xref target="Res_proconneg_1"/> shows the server's response to the request of <xref target="Req_proconneg_1"/>.
 						By means of the "Vary" header, the server expresses support for negotiation in both the media type and profile dimensions. 
-						The "profile" link with Target IRI &lt;http://example.org/shapes/shape-2&gt; indicates that the server was able to honor 
+						The "profile" link with link target &lt;http://example.org/shapes/shape-2&gt; indicates that the server was able to honor 
 						the user agent's second profile preference. Another "profile" link shows that the delivered representation also conforms 
 						to a profile with profile URI &lt;http://example.org/shapes/shape-3&gt;. Furthermore, using an "alternate" link, the server indicates 
 						support for another profile with &lt;http://example.org/shapes/shape-4&gt; as profile URI. Note that, even if the user agent does not 
@@ -518,10 +523,8 @@ Connection: close
 					
 					<t><list style="symbols">
 						<t>SHOULD have the "alternate" relation type.</t>
-						<t>MUST use the "formats" link hint to convey the profile URI of the profile to which the resource identified by 
-						the Target IRI of the link conforms.</t>
-						<t>SHOULD use the "allow" link hint to convey the HTTP methods that are supported by the resource that is identified by the Target IRI 
-						of the link.</t>
+						<t>MUST use the "formats" link hint to convey the profile URI of the profile to which the resource that is the link target conforms.</t>
+						<t>SHOULD use the "allow" link hint to convey the HTTP methods that are supported by the resource that is the link target.</t>
 					</list></t>
 					
 					<t><xref target="Req_reconneg_1"/> shows a user agent issuing a HTTP HEAD on a resource in order determine whether 
@@ -530,7 +533,7 @@ Connection: close
 					    two profiled representations for the resource at hand, and, for each, indicates the URI at which they can be 
 					accessed, as well as their respective profile URIs, media types, and supported HTTP methods. On the basis of this response, 
 					the client can decide whether any of the linked resources conform to a preferred profile, and, if so, access 
-					the respective Target IRI. <xref target="Res_reconneg_2"/> shows the response to an HTTP HEAD issued on the Target IRI 
+					the respective link target. <xref target="Res_reconneg_2"/> shows the response to an HTTP HEAD issued on the link target 
 						&lt;http://example.org/bibrecord/1/DC&gt; of the first "alternate" link.
 					</t>
 
@@ -744,6 +747,7 @@ Connection: close
 			&RFC6839;
 			&RFC8141;
 			&RFC8288;
+			&RFC5988;
 			&SHACL;
 			&XSD;
 			<!--
@@ -773,4 +777,7 @@ Connection: close
 		</references>
 	</back>
 </rfc>
+
+
+
 
