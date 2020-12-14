@@ -270,8 +270,32 @@ Connection: close
 ...
 						]]>
 					</artwork>
-				</figure>				
-	
+				</figure>
+			
+				<t>In some cases organisations use separate servers to perform content negotiation and to deliver resources,
+					e. g. when static content is served through content delivery networks.
+					The servers that perform the content negotiation interact with the client requesting the resource
+					and then typically refers to the correct representation using a 303 redirect.
+					In those cases the servers that deliver the representations are not profile aware
+					and thus cannot add the appropriate "Link" headers to the response.
+					Instead the server performing the negotiation will have to supply that information.
+					This is done by adding an "anchor" attribute pointing to the representation the link header refers to.
+					<xref target="response_RI1"/> shows the response to a <xref target="request_SI1"/>
+					where the server performing the negotiation redirects the client to the resource specified in the
+					"Location" header and by using the same URI in the "anchor" attribute of the "Link" header
+					indicates that the information in the "Link" header does not apply to the this response
+					but to the resource redirected to.
+				</t>
+				<figure title="Server indicates the profile of the representation referred to in the 'Location' header" align="center" anchor="response_RI1">
+					<artwork align="left"><![CDATA[ 
+HTTP/1.1 300 See other
+Location: https://static.example.org/other/resource
+Link: <http://purl.org/dc/terms/>; rel="profile"; anchor="https://static.example.org/other/resource"
+
+...
+						]]>
+					</artwork>
+				</figure>
 			</section>
 			
 		<section title="Discovering Profiled Representations" anchor="Discovering">
