@@ -275,7 +275,7 @@ Connection: close
 				<t>In some cases organisations use separate servers to perform content negotiation and to deliver resources,
 					e. g. when static content is served through content delivery networks.
 					The servers that perform the content negotiation interact with the client requesting the resource
-					and then typically refers to the correct representation using a 303 redirect.
+					and then typically refer to the correct representation using a 303 redirect.
 					In those cases the servers that deliver the representations are not profile aware
 					and thus cannot add the appropriate "Link" headers to the response.
 					Instead the server performing the negotiation will have to supply that information.
@@ -793,7 +793,6 @@ Connection: close
 		</references>
 	</back>
 </rfc>
-
 
 
 
