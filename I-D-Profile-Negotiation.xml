@@ -14,7 +14,6 @@
 <!ENTITY RFC5234 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.5234.xml">
 <!ENTITY RFC5988 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.5988.xml">
 <!ENTITY RFC6838 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6838.xml">
-<!ENTITY RFC6839 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6839.xml">
 <!ENTITY RFC6906 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6906.xml">
 <!ENTITY RFC7230 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7230.xml">
 <!ENTITY RFC7231 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7231.xml">
@@ -761,7 +760,6 @@ Connection: close
 
 		<references title="Informative References">
 			&RFC4452;
-			&RFC6839;
 			&RFC8141;
 			&RFC8288;
 			&RFC5988;
