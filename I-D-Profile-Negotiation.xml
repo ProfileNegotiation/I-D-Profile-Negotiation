@@ -290,7 +290,8 @@ Connection: close
 					<artwork align="left"><![CDATA[ 
 HTTP/1.1 300 See other
 Location: https://static.example.org/other/resource
-Link: <http://purl.org/dc/terms/>; rel="profile"; anchor="https://static.example.org/other/resource"
+Link: <http://purl.org/dc/terms/>; rel="profile"
+        ; anchor="https://static.example.org/other/resource"
 
 ...
 						]]>
