@@ -36,7 +36,7 @@
 <?rfc sortrefs="yes" ?>
 <?rfc symrefs="yes" ?>
 
-<rfc category="info" docName="draft-svensson-profiled-representations-00" ipr="trust200902">
+<rfc category="info" docName="draft-svensson-profiled-representations-01" ipr="trust200902">
 	<!-- ***** FRONT MATTER ***** -->
 
 	<front>
@@ -83,7 +83,7 @@
 			</address>
 		</author>
 
-		<date month="February" year="2021"/>
+		<date month="March" year="2021"/>
 
 		<!-- Meta-data Declarations -->
 
