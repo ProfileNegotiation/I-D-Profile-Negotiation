@@ -6,16 +6,14 @@
 		There has to be one entity for each item to be referenced.
 		An alternate method (rfc include) is described in the references. -->
 
-<!ENTITY AS2 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml-w3c/reference.W3C.REC-activitystreams-core-20170523.xml">
 <!ENTITY RFC2119 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml">
 <!ENTITY RFC2629 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2629.xml">
 <!ENTITY RFC3236 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.3236.xml">
-<!ENTITY RFC3864 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.3864.xml">
 <!ENTITY RFC3870 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.3870.xml">
-<!ENTITY RFC3986 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.3986.xml">
 <!ENTITY RFC4452 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4452.xml">
 <!ENTITY RFC5234 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.5234.xml">
-<!ENTITY RFC6839 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6839.xml">
+<!ENTITY RFC5988 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.5988.xml">
+<!ENTITY RFC6838 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6838.xml">
 <!ENTITY RFC6906 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6906.xml">
 <!ENTITY RFC7230 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7230.xml">
 <!ENTITY RFC7231 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7231.xml">
@@ -24,6 +22,7 @@
 <!ENTITY RFC8288 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8288.xml">
 <!ENTITY SHACL SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml-w3c/reference.W3C.REC-shacl-20170720.xml">
 <!ENTITY XSD SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml-w3c/reference.W3C.REC-xmlschema11-1-20120405.xml">
+<!ENTITY I-D.nottingham-link-hint SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.nottingham-link-hint.xml">
 ]>
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 <!-- used by XSLT processors -->
@@ -31,33 +30,21 @@
 		please see http://xml.resource.org/authoring/README.html. -->
 <!-- Below are generally applicable Processing Instructions (PIs) that most I-Ds might want to use.
 		(Here they are set differently than their defaults in xml2rfc v1.32) -->
-<?rfc strict="yes" ?>
-<!-- give errors regarding ID-nits and DTD validation -->
-<!-- control the table of contents (ToC) -->
-<?rfc toc="yes"?>
-<!-- generate a ToC -->
-<?rfc tocdepth="4"?>
-<!-- the number of levels of subsections in ToC. default: 3 -->
-<!-- control references -->
-<?rfc symrefs="yes"?>
-<!-- use symbolic references tags, i.e, [RFC2119] instead of [1] -->
-<?rfc sortrefs="yes" ?>
-<!-- sort the reference entries alphabetically -->
-<!-- control vertical white space
-		(using these PIs as follows is recommended by the RFC Editor) -->
 <?rfc compact="yes" ?>
-<!-- do not start each main section on a new page -->
 <?rfc subcompact="no" ?>
-<!-- keep one blank line between list items -->
-<!-- end of list of popular I-D processing instructions -->
-<rfc category="std" docName="draft-svensson-content-profile-00" ipr="trust200902">
+<?rfc toc="yes" ?>
+<?rfc sortrefs="yes" ?>
+<?rfc symrefs="yes" ?>
+
+<rfc category="info" docName="draft-svensson-profiled-representations-01" ipr="trust200902">
 	<!-- ***** FRONT MATTER ***** -->
 
 	<front>
 		<!-- The abbreviated title is used in the page header - it is only necessary if the
 				full title is longer than 39 characters -->
 
-		<title>Indicating and Negotiating Profiles in HTTP</title>
+		<title abbrev="Handling Profiled Representations">Indicating, Discovering, Negotiating, and Writing Profiled Representations</title>
+
 
 		<author fullname="Lars G. Svensson" initials="L.G." surname="Svensson">
 			<address>
@@ -81,16 +68,22 @@
 				<uri>https://ruben.verborgh.org/</uri>
 			</address>
 		</author>
-
 		<author initials="H." surname="Van de Sompel" fullname="Herbert Van de Sompel">
 			<organization>Data Archiving and Networked Services</organization>
-				<address>
-						<email>herbert.van.de.sompel@dans.knaw.nl</email>
-						<uri>https://orcid.org/0000-0002-0715-6126</uri>
-				</address>
+			<address>
+				<postal>
+					<street>Anna van Saksenlaan 51</street>
+					<code>2593 HW</code>
+					<city>The Hague</city>
+					<region/>
+					<country>Netherlands</country>
+				</postal>
+				<email>herbert.van.de.sompel@dans.knaw.nl</email>
+				<uri>https://orcid.org/0000-0002-0715-6126</uri>
+			</address>
 		</author>
 
-		<date year="2019" />
+		<date month="March" year="2021"/>
 
 		<!-- Meta-data Declarations -->
 
@@ -103,7 +96,7 @@
 	 If this element is not present, the default is "Network Working Group",
 				which is used by the RFC Editor as a nod to the history of the IETF. -->
 
-		<keyword>HTTP, Header, Content Negotiation</keyword>
+
 
 		<abstract>
 			<t>This document defines two new HTTP headers: "Accept-Profile" and "Content-Profile".
@@ -123,6 +116,7 @@
 	</front>
 
 	<middle>
+		
 		<section title="Introduction">
 			<t>On the Web, resources are identified by HTTP(S) URIs. User agents retrieve a representation
 				of a resource by issuing a GET request on its URI. To accomodate different user agents and use cases,
@@ -154,160 +148,184 @@
 					"Content-Profile".</t>
 			</section>
 			<section title="Terminology">
-				<t>In this context, a profile is a description of
-				  structural and/or semantic constraints on representations of resources
-				  in addition to the syntactical interpretation provided by their MIME type.
-					Examples of a profile in this context include, but are not limited to,
-					Dublin Core application profiles
-					(formally expressed in <xref target="DSP">Description Set Profiles (DSP)</xref>),
-					<xref target="W3C.REC-xmlschema11-1-20120405">XML Schema documents</xref>,
-					and RDF Shapes expressed in <xref target="W3C.REC-shacl-20170720">SHACL</xref>.
-					Profiles can, but do not need to, be independent of a media type.
-					The definition and usage of profiles in applications
-					is beyond the scope of this proposal;
-					our only constraint is that a profile is identified by a URI.
-					Further assumptions about profiles, e.g.,
-					hierarchies of profiles, inheritance or transitivity,
-					are out of this specification's scope.</t>
-				<t>Typical use cases for profiles include validation,
-					and building clients that rely on additional assumptions
-					in a representation received from another system.
-					These assumptions, such as the presence of a certain structure or certain fields,
-					are currently often implicitly made, or documented out of band,
-					whereas profiles can explicitly capture them.
-					The choice of the term "profile" was derived from the term "Application Profile",
-					which the Dublin Core community defines as "schemas which consist of data
-					elements drawn from one or more namespaces, combined together by implementers,
-					and optimised for a particular local application" <xref target="HeeryAndPatel"/>.
+			
+				<t>Inspired by the term used in <xref target="RFC6906"/> to refer to this extra dimension of variability, this document uses the term "profile" to mean a description of
+				structural and/or semantic constraints on representations of resources that apply 
+				in addition to the constraints inherently indicated by their MIME type:</t>
+			<t><list style="symbols">
+				<t>Profiles can be dependent on a media type. For example, this is the case for XML, with constraints being expressed using an XML Schema. 
+					This is also the case for JSON that offers a wide range of options regarding the use of tree structure, keys, and value types.
+					In these cases, the meaning of the term "profile" intended by this document coincides with the use of the same term in <xref target="RFC6906"/>.</t>
+				<t>Profiles can be independent of media type. For example, this is the case for RDF graphs that can be rendered according to various media types,
+					while constraints can be expressed in a manner that is independent of media type, among others, using <xref target="W3C.REC-shacl-20170720">SHACL</xref>.
+					In these cases, the meaning of the term "profile" intended by this document is a slight extension of the one intended by <xref target="RFC6906"/>.</t>
+			</list></t>
+			
+			</section>
+			
+			<section title="Purpose" anchor="why">
+			
+				<t>When it comes to HTTP interactions, profiles have received little attention despite their de facto existence and 
+				the added-value they can bring for building rich applications. Such applications benefit from knowledge regarding the nature of a representation 
+				that a client obtains from a server, that a client sends to a server, and that a server is willing to accept from a client,  
+				beyond what is conveyed by the representation's MIME type. 
+				These applications are also be helped by an ability to discover representations rendered according to a profile they can handle, or, 
+				optimally, an ability to explicitly request a rendering according to a preferred profile. 
+			</t>
+				
+				<t>A common approach to handle profiles is to register them as a media type, dedicated to the combination of an actual media type 
+					and a profile of it. Media types that illustrate this approach include "application/activity+json", "application/calendar+json", and "application/calendar+xml. 
+					This approach allows conveying all necessary profile information in HTTP interactions, e.g. using the "Accept" and "Content-Encoding" HTTP headers
+					and the "type" attribute for web links. As such it supports indicating, discovering, and  content negotiating (in the media type dimension) for profiled representations. 
+					This registration-based approach may be feasible for 
+				    profiles that are expected to be very widely used but is not practical in case support for many different profiles is required. 
+				    Also, the "calendar" examples illustrate 
+				    that the registration-based approach is not ideal when a profile applies to multiple media types. 
+				    And, the "activity" example illustrates that 
+				    the approach supports indicating what the major ingredient of a profiled representation is (i.e. the ActivityStreams Vocabulary) but becomes problematic 
+				    when indications are also needed regarding additional vocabularies used in representations.
 				</t>
+				
+				<t>Another approach to handle profiles leverages the ability provided by <xref target="RFC6838"/> to register parameters when registering a media type. 
+					Some media types have used this capability to register an attribute dedicated to conveying profiles of the media type. For example, for "application/ld+json" 
+					the "profile" parameter has been registered for this purpose. The approach provides flexibility for handling many profiles, 
+					including ones that are not yet known when registering the media type.
+					It also supports indicating, discovering, and content negotiating (in the media type dimension) for profiled representations using common approaches. 
+					But the approach remains problematic because it ties profile information to a media type, depends on registering a parameter to convey profile information 
+					when registering a new media type, and, realistically, on the registration of the same parameter name (i.e. "profile" as suggested in <xref target="RFC6906"/>) 
+					for all media types for which registrants deem that conveying profile information is important. 
+					Additionaly, <xref target="RFC6838"/> discourages registering parameters for previously registered media types, making it highly questionable that a uniform attribute 
+					to convey profile information across all media types could retroactively be defined.</t>
+				
+				<t>Recognizing the importance of profiles and the problems with the aforementioned approaches to handle them, 
+					specifications have started to introduce alternative approaches to express information about 
+					resource representation profiles in HTTP interactions:</t>
+				<t><list style="symbols">
+					<t><xref target="RFC6906"/> introduces the "profile" link relation type that is generally 
+						applicable for indicating the profile of a resource representation that is sent by a client to a server or by a server to a client. 
+					</t> 
+					<t><xref target="I-D.nottingham-link-hint"/> introduces a capability to make profiled representations discoverable via web links by using the "formats" 
+						attribute to express the profile of a linked resource.
+					</t>
+				</list></t>
+					
+				<t><xref target="Indicating"/> and <xref target="Discovering"/> 
+					provide a concise overview of the approaches introduced by <xref target="RFC6906"/> and <xref target="I-D.nottingham-link-hint"/>,   
+					to respectively indicate and discover the profile of resource representations. 
+					<xref target="Negotiating"/> specifies a generally applicable approach to negotiate for representations that conform to a profile preferred by a user agent.  
+					<xref target="Writing"/> shows how servers can convey which profiled representations they are able to accept from user agents.
+
+				</t>
+
 			</section>
-			<section title="High-level overview of solution">
-				<t>The proposed solution introduces two new HTTP header fields:
-					"Content-Profile" and "Accept-Profile".
-					With "Content-Profile", a sender of a message can indicate
-					the profile(s) to which it knows the enclosed representation conforms.
-					With "Accept-Profile", a potential recipient of a message can indicate
-					its preference for receiving representations that conform to (a) certain profile(s).
-					An agent can specify several profiles and use quality indicators (q-values) to indicate preferences.</t>
-				<t>A server that supports profiles can then list
-					one or more profiles in the "Content-Profile" header in its response,
-					specifying the profile(s) the returned payload conforms to.
-					The specified list of profiles may not be exhaustive
-					since the returned content can conform to profiles that the server is not aware of.
-					If multiple representations of the same resource are available,
-					and those conform to different profiles,
-					the server can use a "Link" header field together with the "profile" attribute
-					to point an agent to those other representations.</t>
-				<t>Similarly, an agent sending information to a server,
-					e.g., by using PUT or POST, can include a "Content-Profile" header field in the HTTP request
-					to state which profile or profiles the request payload conforms to.
-					Prior to that interaction,
-					the target server can include an "Accept-Profile" header field in a response
-					to indicate which profiles the resource is willing to accept in payloads from
-					PUT/POST/PATCH requests.</t>
-				<t>Note that this information is specific to the current request;
-					the set of supported profiles might be different for other resources on the same server
-					and/or could change over time.</t>
-			</section>
+		
 			<section title="Notational Conventions">
+				
 				<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 					"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
 					document are to be interpreted as described in <xref
-							target="RFC2119">RFC 2119</xref>.</t>
+						target="RFC2119">RFC 2119</xref>.</t>
+				
+				<t>This specification uses the terms "link context" and "link target" as defined in <xref target="RFC8288"/>. 
+					These terms respectively correspond with "Context IRI" and "Target IRI" as used in <xref target="RFC5988"/>. 
+					Although defined as IRIs, in common scenarios they are also URIs.</t>
+				
+				<t>In the examples provided in this document, links in the HTTP "Link" header are shown on separate lines in order to improve readability. 
+					Note, however, that as per Section 3.2 of <xref target="RFC7230"/>, line breaks are not allowed in values for HTTP headers; only whitespaces and 
+						tabs are supported as seperators.
+				</t>
+				
 			</section>
+			
 		</section>
+		
 
-		<section title="Related HTTP Headers">
-			<section title="Content-Type">
-				<t>
-					The <xref target="RFC7231">"Content-Type" HTTP header</xref>
-					is used to indicate the media type of a representation.
-					This header allows receipients to determine appropriate processing
-					for a received message body, such as the parser they need to use.
-					A "Content-Type" field value contains a MIME type,
-					such as "text/html" or "application/json,"
-					and can optionally have parameters,
-					such as "charset".
+			
+		<section title="Indicating Profiled Representations" anchor="Indicating">
+				
+				<t>As per <xref target="RFC6906"/>, a web link with a "profile" link relation type can be used to 
+					indicate the profile of a representation that is exchanged in HTTP interactions. <xref target="request_SI1"/> shows a client requesting a
+					representation from a server and <xref target="response_SI1"/> shows the server responding. The response includes a "Link" header 
+					(<xref target="RFC8288"/>) that  contains a link with the "profile" relation type. 
+					The link target &lt;http://purl.org/dc/terms/&gt; indicates the profile of 
+					the response body (not shown).
 				</t>
-				<t>
-					In many current interactions,
-					senders of HTTP messages underspecify the MIME type of their messages.
-					They opt for common, generic media types
-					such as "text/xml" or "application/json,"
-					whereas the contents of their messages
-					actually implicitly conform to stricter assumptions.
-					These assumptions are communicated out of band
-					and then silently (if at all) implemented by recipients.
-					Because those assumptions are not specified explicitly,
-					clients cannot discover them at runtime
-					to adjust their processing accordingly.
-					Minting new media types is possible,
-					but this loses the formal relationship
-					with the generic media type,
-					which would need to be specified out of band.
-				</t>
-				<t>
-					The <xref target="RFC6906">"profile" parameter</xref>
-					can be used in the "Content-Type" field in addition to a MIME type
-					to indicate a media-type-specific profile the representation conforms to.
-					Such profiles are often defined
-					within the specification of document formats.
-					For instance, <xref target="W3C.REC-activitystreams-core-20170523">Activity Streams 2.0</xref>
-					defines the following equivalent media types:
-					<figure>
-<artwork>
-application/activity+json
+					<t><xref target="request_UI1"/> shows a client submitting a representation to a server, 
+				    using the same approach to express the profile to which that representation complies.
+						<xref target="Writing"/> describes how a server can convey the profiles it supports 
+						for representations that are submitted by a user agent.
+					</t>
+				
+				<figure title="Client requests a representation" align="center" anchor="request_SI1">
+					<artwork align="left"><![CDATA[ 
+GET /some/resource HTTP/1.1
+Host: example.org
+Connection: close
+						]]>
+					</artwork>
+				</figure>
+	
+				<figure title="Server indicates the profile of the returned representation" align="center" anchor="response_SI1">
+					<artwork align="left"><![CDATA[ 
+HTTP/1.1 200 OK
+Content-Type: application/xml ; charset=utf-8
+Link: <http://purl.org/dc/terms/>; rel="profile"
+Content-Length: 23364
+Connection: close
 
-application/ld+json; profile="https://www.w3.org/ns/activitystreams"
-</artwork>
-					</figure>
-					On the one hand,
-					this example shows the usage of the profile parameter
-					to increase the specificity of an existing media type.
-					On the other hand,
-					it reveals the limitations of MIME types:
-					"application/activity+json" by itself
-					does not inform clients without prior knowledge of this media type
-					that the message body is a JSON document and a JSON-LD document,
-					i.e., also necessarily conforms to the "application/json"
-					and "application/ld+json" MIME types.
-					Clients without built-in support for "application/activity+json"
-					only have the <xref target="RFC6839">"+json" suffix</xref>
-					as a non-binding suggestion that the content conforms to "application/json",
-					and such an indicator does not exist for JSON-LD and most other media types.
-					As such, those clients are not informed about their possible ability
-					to parse a message body as JSON or JSON-LD.
-					Clients that do have support for "application/activity+json"
-					will likely need to involve JSON and JSON-LD parsers regardless.
+...
+						]]>
+					</artwork>
+				</figure>
+				
+				<figure title="Client indicates the profile of a representation submitted to a server" align="center" anchor="request_UI1">
+					<artwork align="left"><![CDATA[ 
+PUT /some/resource HTTP/1.1
+Host: example.org
+Content-Type: application/xml ; charset=utf-8
+Link: <http://purl.org/dc/terms/>; rel="profile"
+Content-Length: 23364
+Connection: close
+
+...
+						]]>
+					</artwork>
+				</figure>
+			
+				<t>In some cases organisations use separate servers to perform content negotiation and to deliver resources,
+					e. g. when static content is served through content delivery networks.
+					The servers that perform the content negotiation interact with the client requesting the resource
+					and then typically refer to the correct representation using a 303 redirect.
+					In those cases the servers that deliver the representations are not profile aware
+					and thus cannot add the appropriate "Link" headers to the response.
+					Instead the server performing the negotiation will have to supply that information.
+					This is done by adding an "anchor" attribute pointing to the representation the link header refers to.
+					<xref target="response_RI1"/> shows the response to a <xref target="request_SI1"/>
+					where the server performing the negotiation redirects the client to the resource specified in the
+					"Location" header and by using the same URI in the "anchor" attribute of the "Link" header
+					indicates that the information in the "Link" header does not apply to this response
+					but to the resource redirected to.
 				</t>
-				<t>
-					The need to mint specific media types for profiles
-					becomes a combinatorial issue when
-					profiles can apply to multiple media types,
-					or when representations can conform to multiple profiles.
-					This document introduces a solution by considering profiles
-					as an additional, independent dimension in content negotiation.
-				</t>
+				<figure title="Server indicates the profile of the representation referred to in the 'Location' header" align="center" anchor="response_RI1">
+					<artwork align="left"><![CDATA[ 
+HTTP/1.1 300 See other
+Location: https://static.example.org/other/resource
+Link: <http://purl.org/dc/terms/>; rel="profile"
+        ; anchor="https://static.example.org/other/resource"
+
+...
+						]]>
+					</artwork>
+				</figure>
 			</section>
-
-			<section title="Accept">
-				<t>
-					The <xref target="RFC7231">"Accept" header</xref>
-					is the counterpart of the "Content-Type" header.
-					Whereas "Content-Type" indicates the option the sender has chosen
-					for representing the message body,
-					"Accept" communicates the recipient's representation preferences beforehand.
+			
+		<section title="Discovering Profiled Representations" anchor="Discovering">
+				
+				<t>The link hints capability introduced in <xref target="I-D.nottingham-link-hint"/>, can be leveraged by a server to make profiled representations discoverable by 
+					including a "formats" attribute on web links. <xref target="response_SI2"/> shows a response to the client request of 
+					<xref target="request_SI1"/> in which the server uses this technique. The "Link" header indicates the profile of the returned representation 
+					but also points at two alternative representations, each of which conforms to another profile.
 				</t>
-				<t>
-					The value of an "Accept" header field is a comma-separated list of MIME types,
-					each of which can optionally have parameters.
-					The "q" parameter is a number between 0.0 and 1.0
-					indicating the degree of preference for that MIME type.
-					Analogously to the "Content-Type" field,
-					the <xref target="RFC6906">"profile" parameter</xref>
-					can be used to indicate a preference for a media-type-specific profile.
-				</t>
-			</section>
 
 			<section title="Content-Location">
 				<t>
@@ -328,45 +346,22 @@ Accept: application/ld+json;
 					<figure>
 <artwork align="left">
 HTTP/1.1 200 OK
-Content-Type: application/ld+json;
-              profile="https://www.w3.org/ns/activitystreams"
-Content-Location: /some/resource.as.jsonld
-</artwork>
-					</figure>
-					This then indicates that this specific representation
-					is available directly, without content negotiation,
-					from /some/resource.as.jsonld.
-				</t>
-			</section>
+Content-Type: application/xml
+Link: <http://purl.org/dc/terms/> ; rel="profile" , 
+      </some/other_resource_1> 
+         ; rel="alternate" ; type="application/xml" 
+         ; formats="http://example.org/our_internal_xml_profile" ,
+      </some/other_resource_2>
+         ; rel="alternate" 
+         ; formats="http://example.org/our_community_profile" 
+Content-Length: 23364
+Connection: close
 
-			<section title="Link">
-				<t>
-					The <xref target="RFC8288">"Link" header</xref>
-					allows the sender of a message to model additional relationships
-					from the represented resource to others.
-					Such relations are expressed as a link to a target
-					with a relation type and, optionally, target attributes.
-					Of particular interest for content negotiation
-					are the self and alternate relation types,
-					whose targets identify respectively the current representation
-					and other existing representations.
-					The "Link" header can thereby serve as a mechanism
-					for discovering supported representations and profiles.
-					The <xref target="RFC6906">"profile" relation type</xref>
-					can be used to relate a representation to a profile to which it conforms.
-				</t>
-				<t>
-					The "self" relation type overlaps with the functionality
-					provided by the Content-Location field,
-					and they will likely use the same identifier.
-					The "alternate" relation essentially provides Content-Location functionality
-					for other available representations.
-					Finally, the "profile" relation type
-					mimics the "profile" parameter in the "Content-Type" field,
-					except that conformance of a representation to multiple profiles
-					could be expressed through multiple "profile" links,
-					whereas "Content-Type" only accepts one "profile" parameter.
-				</t>
+...
+]]>
+					</artwork>
+				</figure>
+
 			</section>
 		</section>
 
@@ -401,14 +396,11 @@ Content-Location: /some/resource.as.jsonld
 				servers that fail a request with a 415 status for reasons unrelated to profiles
 				MUST NOT include the "Accept-Profile" header field.
 			</t>
-			<t>The "Accept-Profile" and "Content-Profile" header
-				MUST use a URI to refer to a profile.
-				That URI MAY point to an actual document,
-				or if the parties involved agree on a profile definition,
-				MAY be e.g., a <xref target="RFC8141">URN</xref>
-				or an <xref target="RFC4452">info-URI</xref>.
-				When a protocol-based URI is used, such as an FTP- or an HTTP-URI, however,
-				it SHOULD dereference to a document containing that profile's definition.
+			
+			<t>
+			This section describes an approach that applies content negotiation in a dimension that it was previously not applied to. 
+			The profile negotiation approach introduced here is generally applicable for 
+			resource representations, irrespective of media type. These are its core aspects:
 			</t>
 			<section title="Content-Profile Header Syntax">
 				<t>The "Content-Profile" header field specifies
@@ -418,33 +410,235 @@ Content-Location: /some/resource.as.jsonld
 					beyond what is specified by the media type indicated in the "Content-Type" header.
 				</t>
 				<t>
-					If a "Content-Profile" field is present,
-					it MUST contain a comma-separated list of profile URIs.
-					Each profile MUST be identified by an absolute URI reference inside angle brackets ("&lt;&gt;").
-					The recipient SHOULD interpret this list as an indication that
-					the payload of the message conforms to all of the profiles
-					identified by the supplied profile URIs.
-				  Differences in ordering of the items in this list,
-					or the presence of duplicates,
-					MUST NOT be interpreted as semantically significant.
-				  Instead of sending a comma-separated list of profile URIs in one "Content-Profile" header field,
-					an agent MAY choose to send each profile URI in its own "Content-Profile" header field
-					without changing its meaning,
-					as specified in <xref target="RFC7230">Section 3.2.2 of RFC 7230</xref>.</t>
-				<t><xref target="abnf_content_profile"/> describes the syntax (Augmented Backus-Naur Form) of the
-					header field, using the grammar defined in <xref target="RFC5234">RFC 5234</xref> and the rules
-					defined in <xref target="RFC7230">Section 3.2 of RFC 7230</xref>.
-					The definition of "URI-reference" is imported from
-					<xref target="RFC3986">RFC 3986</xref>.</t>
-				<figure align="center" anchor="abnf_content_profile">
-				<preamble>Profile header syntax</preamble>
-<artwork align="left" type="abnf">
-Content-Profile = "Content-Profile" ":"
-                    OWS "&lt;" profile-value "&gt;"
-                    *(OWS "," OWS "&lt;" profile-value "&gt;") OWS
-profile-value = "&lt;" URI-reference "&gt;" | profile-value-ext
-</artwork>
-				</figure>
+					In profile negotiation, a profile MUST be referred to by a URI that, from here onwards, is named a profile URI. 
+					If the profile URI is dereferencable it SHOULD lead to a document that details the profile. If the profile URI 
+					is not dereferencable (e.g. a <xref target="RFC8141">URN</xref> or an <xref target="RFC4452">info-URI</xref>) 
+					facilities SHOULD be available to allow user agents and servers to understand their meaning, e.g. community registries of profiles.
+					</t>
+
+				<section title="Proactive Profile Negotiation" anchor="proconneg">
+					
+					<t>In proactive profile negotiation, the user agent uses the 
+						"Accept-Profile" HTTP header to inform the server about the agent's preference 
+						regarding profiles to be used for representing a resource in the server's response. 
+						In case a user agent wants to express a preference for a single profile, the value of the header is that 
+						profile's URI. In case a user agent wants to express a preference for multiple profiles, the value of the header is 
+						a list containing each profile's URI, seperated by commas. Alternatively, multiple "Accept-Profile" HTTP headers can be used, 
+						each conveying a single profile URI. Quality indicators (q-values) MAY be used to rank profile preferences.
+						The order in which profile URIs are conveyed or the duplicate mentioning of a same profile URI 
+						MUST NOT be interpreted as significant.
+					</t>
+					
+					<t>A server that supports proactive profile negotiation for the resource that a user agent  
+						interacts with:
+					</t>
+					<t><list style="symbols">
+						<t>MUST include a "Vary" HTTP header containing the value "accept-profile" in its response to the user agent.
+						</t>
+						<t>MUST include a "Link" HTTP header containing a link with the "profile" relation type that has as link target the profile URI 
+							of the resource representation returned to the user agent. In case the representation conforms to additional profiles known 
+							to the server, such a "profile" link SHOULD be included for each.
+						</t>
+						<t>SHOULD convey the availability of alternate profiled representations of the resource by using the 
+							link hint approach described in <xref target="reconneg"/>.
+						</t>
+					</list>	
+					</t>
+					
+					<t>These requirements for servers that support proactive profile negotiation also apply when:</t>
+						<t><list style="symbols">
+							<t>The user agent expressed a profile preference in its request by using an "Accept-Profile" header but the server
+								cannot return a representation that conforms to a preferred profile.
+							</t>
+							<t>The user agent did not express a profile preference using an "Accept-Profile" header in its request.
+							</t>
+						</list></t>
+					
+					<t>A user agent SHOULD interpret the abscence of a "Vary" HTTP header with an "accept-profile" value in a response from a server 
+						as the lack of support for profile negotiation for the resource the user agent interacts with.
+					</t>
+					
+					<t>A server SHOULD consider representations that do not conform to any of the profiles 
+						listed by a user agent in an "Accept-Profile" header 
+						as non-interpretable by the agent. As such, honoring the user agent preferences in the 
+					profile dimension SHOULD take precedence over honoring content negotiation in other dimensions.</t>
+
+					
+					<t>						
+						In <xref target="Req_proconneg_1"/> a user agent requests an RDF serialization from a server and expresses preference for two 
+						media types using the "Accept" header and two profiles using the "Accept-Profile" header. 
+						It uses q-values to express a preference for the profile with profile URI 
+						&lt;http://example.org/shapes/shape-1&gt; over the one with profile URI &lt;http://example.org/shapes/shape-2&gt;.
+					</t>
+
+
+					<figure title="Client expresses a preference for two profiles" align="left" anchor="Req_proconneg_1">
+						<artwork align="left"><![CDATA[ 
+GET /document HTTP/1.1
+Host: example.org
+Accept: text/turtle, application/rdf+xml
+Accept-Profile: "http://example.org/shapes/shape-1" ; q=0.8 ,
+                "http://example.org/shapes/shape-2" ; q=0.5
+Connection: close
+]]>
+						</artwork>
+					</figure>		
+					
+					<t>						
+						<xref target="Res_proconneg_1"/> shows the server's response to the request of <xref target="Req_proconneg_1"/>.
+						By means of the "Vary" header, the server expresses support for negotiation in both the media type and profile dimensions. 
+						The "profile" link with link target &lt;http://example.org/shapes/shape-2&gt; indicates that the server was able to honor 
+						the user agent's second profile preference. Another "profile" link shows that the delivered representation also conforms 
+						to a profile with profile URI &lt;http://example.org/shapes/shape-3&gt;. Furthermore, using an "alternate" link, the server indicates 
+						support for another profile with &lt;http://example.org/shapes/shape-4&gt; as profile URI. Note that, even if the user agent does not 
+						express profile preferences using the "Accept-Profile" header and the server's "Vary" header would be the same, the "Link" header 
+						would still include a "profile" link to indicate the profile of the representation returned by the server.
+					</t>				
+					
+					<figure title="Response honors a user agent's preference" align="left" anchor="Res_proconneg_1">
+						<artwork align="left"><![CDATA[ 
+HTTP/1.1 200 OK
+Content-Type: text/turtle
+Vary: Accept, Accept-Profile
+Link: <http://example.org/shapes/shape-2> 
+      ; rel="profile" , 
+      <http://example.org/shapes/shape-3> 
+      ; rel="profile" , 
+      <http://example.org/document> 
+      ; rel="alternate" 
+      ; type="text/turtle" 
+      ; formats="http://example.org/shapes/shape-4"
+Content-Length: 8724
+Connection: close
+
+...
+]]>
+						</artwork>
+					</figure>	
+					
+					<t>						
+						<xref target="Res_proconneg_2"/> shows the response to the request of <xref target="Req_proconneg_1"/> in case the server 
+						supports profile negotiation for the resource at hand but can not return a representation that conforms to a profile preferred by the user agent. 
+						The server has chosen to nevertheless return a representation that conforms to profile &lt;http://example.org/shapes/shape-4&gt;,  
+							which is not among the ones preferred by the user agent. The server also reveals the existence of a representation 
+							that conforms to profile &lt;http://example.org/shapes/shape-5&gt;. The server could also choose not to return a default 
+							representation in which case it would return a "406 Not Acceptable" HTTP response code and no response body. It would not 
+							provide any "profile" links but might use "alternate" links with a "formats" attribute to indicate the existence of supported profiles. 
+					</t>
+
+					<figure title="Response does not honor a user agent's preference but includes default representation" align="left" anchor="Res_proconneg_2">
+						<artwork align="left"><![CDATA[ 
+HTTP/1.1 200 OK
+Content-Type: text/turtle
+Vary: Accept, Accept-Profile
+Link: <http://example.org/shapes/shape-4> 
+      ; rel="profile" ,
+      <http://example.org/document> 
+      ; rel="alternate" 
+      ; type="text/turtle" 
+      ; formats="http://example.org/shapes/shape-5"
+Content-Length: 6333
+Connection: close
+
+...
+]]>
+						</artwork>
+					</figure>	
+
+					<t>						
+						<xref target="Res_proconneg_3"/> shows the response to the request of <xref target="Req_proconneg_1"/> in case the server 
+						does not support profile negotiation for the resource &lt;http://example.org/document&gt;. It does support negotiation in the media type 
+						dimension and has honoured one of the user agent's preferences with that regard, as can be seen by the "Vary" and "Content-Type" headers.
+					</t>
+
+					<figure title="Response indicates lack of support for proactive profile negotiation" align="left" anchor="Res_proconneg_3">
+						<artwork align="left"><![CDATA[ 
+HTTP/1.1 200 OK
+Content-Type: text/turtle
+Vary: Accept
+Content-Length: 8724
+Connection: close
+
+...
+]]>
+						</artwork>
+					</figure>						
+
+					
+					
+				</section>
+				
+				<section title="Reactive Profile Negotiation" anchor="reconneg">
+					
+					<t>In reactive profile negotiation, the user agent selects the profiled representation that best meets its preferences 
+						on the basis of a list of possible representations it obtains from the server.  A server that supports reactive 
+						profile negotiation MUST provide such a list of supported profiled representation as a set of links in the "Link" header. Each of these links:</t>
+					
+					<t><list style="symbols">
+						<t>SHOULD have the "alternate" relation type.</t>
+						<t>MUST use the "formats" link hint to convey the profile URI of the profile to which the resource that is the link target conforms.</t>
+						<t>SHOULD use the "allow" link hint to convey the HTTP methods that are supported by the resource that is the link target.</t>
+					</list></t>
+					
+					<t><xref target="Req_reconneg_1"/> shows a user agent issuing a HTTP HEAD on a resource in order to determine whether 
+						profiled representations are available for it. <xref target="Res_reconneg_1"/> shows the response of a server that 
+						supports reactive profile negotiation. By means of "alternate" links in the "Link" header, the server indicates support for 
+					    two profiled representations for the resource at hand, and, for each, indicates the URI at which they can be 
+					accessed, as well as their respective profile URIs, media types, and supported HTTP methods. On the basis of this response, 
+					the client can decide whether any of the linked resources conform to a preferred profile, and, if so, access 
+					the respective link target. <xref target="Res_reconneg_2"/> shows the response to an HTTP HEAD issued on the link target 
+						&lt;http://example.org/bibrecord/1/DC&gt; of the first "alternate" link.
+					</t>
+
+					<figure title="Client determines support for profiles" align="left" anchor="Req_reconneg_1">
+						<artwork align="left"><![CDATA[ 
+HEAD /bibrecord/1 HTTP/1.1
+Host: example.org
+Accept: application/xml
+Connection: close
+]]>
+						</artwork>
+					</figure>
+
+					<figure title="Server supports two profiles" align="left" anchor="Res_reconneg_1">
+						<artwork align="left"><![CDATA[ 
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Link: <http://example.org/bibrecord/1/DC> 
+      ; rel="alternate" 
+      ; type="application/xml" 
+      ; formats="http://purl.org/dc/terms/"
+      ; allow="HEAD,GET,PATCH" ,
+      <http://example.org/bibrecord/1/BIBFRAME> 
+      ; rel="alternate" 
+      ; formats="http://id.loc.gov/ontologies/bibframe/"
+      ; allow="HEAD,GET"
+Content-Length: 200
+Connection: close
+]]>
+						</artwork>
+					</figure>
+					
+					<figure title="Response to a client accessesing a profiled representation" align="left" anchor="Res_reconneg_2">
+						<artwork align="left"><![CDATA[ 
+HTTP/1.1 200 OK
+Content-Type: application/xml
+Link: <http://purl.org/dc/terms/>
+      ; rel="profile" ,
+      <http://example.org/bibrecord/1/BIBFRAME> 
+      ; rel="alternate" 
+      ; formats="http://id.loc.gov/ontologies/bibframe/"
+      ; allow="HEAD,GET"
+Allow: HEAD, GET, PATCH
+Accept-Patch: application/xml-patch+xml
+Content-Length: 458
+Connection: close
+]]>
+						</artwork>
+					</figure>
+					
+				</section>	
+		
 			</section>
 			<section title="Accept-Profile Header Syntax">
 				<t>The "Accept-Profile" header field specifies one or more
@@ -493,16 +687,17 @@ profile-value = "&lt;" URI-reference "&gt;" | profile-value-ext
 					The definitions of "URI-reference" and "weight" are imported from
 					<xref target="RFC7230">RFC 7230</xref> and <xref target="RFC7231">RFC 7231</xref>,
 					respectively.</t>
-
-				<figure align="center" anchor="abnf_accept_profile">
-				<preamble>Accept-Profile header syntax</preamble>
-<artwork align="left" type="abnf">
+				
+				<figure title="ABNF for the &quot;Accept-Profile&quot; HTTP header" anchor="abnf_accept_profile" align="left">
+					<artwork align="left" type="abnf"><![CDATA[
 Accept-Profile = "Accept-Profile" ":"
-                   OWS (accept-value) *(OWS "," OWS accept-value) OWS
-accept-value = "&lt;" URI-reference "&gt;" [weight] | accept-value-ext
-</artwork>
+OWS (accept-value) *(OWS "," OWS accept-value) OWS
+accept-value = "<" URI-reference ">" [weight] | accept-value-ext
+]]>
+					</artwork>
 				</figure>
 			</section>
+			
 		</section>
 		<section title="Content Negotiation">
 			<section title="Mechanisms">
@@ -674,71 +869,27 @@ Response:
   Accept-Profile: &lt;http://example.com/shapes/shape-2&gt;
 </artwork>
 					</figure>
-				</t>
-			</section>
+			
 		</section>
 
-		<section anchor="IANA" title="IANA Considerations">
-			<t>This specification defines two header field for the Hypertext
-				Transfer Protocol (HTTP) that have been registered with the Internet
-				Assigned Numbers Authority (IANA) following the "Registration
-				Procedures for Message Header Fields" <xref target="RFC3864">RFC 3864</xref>.
-				[TO BE REMOVED: This
-				registration should take place at the following location:
-				http://www.iana.org/assignments/message-headers/message-headers.xhtml]
-				Further, it defines an attribute for the "Link" header. There is no registry
-				for "link-param" except for the values listed in <xref target="RFC8288">RFC 8288</xref>
-				so the attribute "profile" will be seen as a link-extension.</t>
-			<section title="Accept-Profile HTTP Header Registration" anchor="iana_accept_profile">
-				<t>The Accept-Profile header should be added to the permanent
-					registry of message header fields (see <xref target="RFC3864">RFC 3864</xref>), taking into
-					account the guidelines given by HTTP/1.1 <xref target="RFC7231">RFC 7231</xref>.</t>
-
+		<section title="IANA Considerations">
+			
+			<t>
+				This memo requires IANA to register the Accept-Profile HTTP header defined in 
+				<xref target="accept-profile"></xref> in the appropriate IANA registry:
+			</t>
+				<t><list style="symbols">
 				<t>Header Field Name: Accept-Profile</t>
-
 				<t>Applicable Protocol: Hypertext Transfer Protocol (HTTP)</t>
-
 				<t>Status: Informational</t>
-
 				<t>Author/Change controller: IETF</t>
-
-				<t>Specification document(s): RFC XXXX</t>
-
-			</section>
-			<section title="Content-Profile HTTP Header Registration" anchor="iana_content_profile">
-				<t>The Content-Profile header should be added to the permanent
-					registry of message header fields (see <xref target="RFC3864">RFC 3864</xref>), taking into
-					account the guidelines given by HTTP/1.1 <xref target="RFC7231">RFC 7231</xref>.</t>
-
-				<t>Header Field Name: Content-Profile</t>
-
-				<t>Applicable Protocol: Hypertext Transfer Protocol (HTTP)</t>
-
-				<t>Status: Informational</t>
-
-				<t>Author/Change controller: IETF</t>
-
-				<t>Specification document(s): RFC XXXX</t>
-			</section>
-		</section>
-		<section anchor="defn-profileTarget" title="Definition of the Link header target attribute &quot;profile&quot;">
-			<t>When used in a <xref target="RFC8288">Link header field</xref>,
-				the "profile" attribute is a hint indicating which profile
-				the resource representation retrieved by dereferencing the link
-				conforms to.
-				Note that this is only a hint;
-				for example it does not override the "Content-Profile" header field
-				of a HTTP response obtained by actually following the link.
-				Multiple "profile" attributes on a single link value
-				indicate that the resource representation conforms to multiple profiles.</t>
-			<figure align="left">
-				<preamble>The ABNF for the profile attribute is:</preamble>
-<artwork align="left">
-profile-param: "profile" "=" profile-param-value
-profile-param-value: DQUOTE absolute-URI *(RWS absolute-URI) DQUOTE
-</artwork>
-                <postamble>where "absolute-URI" is defined as in <xref target="RFC3986">Section 4.3 of RFC 3986</xref>.</postamble>
-			</figure>
+				<t>Specification document(s): this document</t>
+				</list></t>
+				
+		
+			<!--
+			<section title="Content-Profile HTTP Header Registration"></section>
+			-->
 		</section>
 		<section anchor="Security" title="Security Considerations">
 			<t>The use of HTTP to negotiate and transport profile information
@@ -755,31 +906,30 @@ profile-param-value: DQUOTE absolute-URI *(RWS absolute-URI) DQUOTE
 				(i.e., with no indication what profiles
 				the	user agent or the server prefer and/or can handle).</t>
 		</section>
-		<section anchor="Acknowledgements" title="Acknowledgements">
-			<t>This is the place to have YOUR NAME prominently displayed!</t>
-		</section>
-		<!-- Possibly a 'Contributors' section ... -->
+		
+			
+		
 	</middle>
 
 	<back>
 		<references title="Normative References">
 			&RFC2119;
-			&RFC3986;
 			&RFC5234;
 			&RFC7230;
+			&RFC6838;
 			&RFC7231;
+			&I-D.nottingham-link-hint;
+			&RFC6906;
 		</references>
 
 		<references title="Informative References">
-			&AS2;
-			&RFC3864;
 			&RFC4452;
-			&RFC6839;
-			&RFC6906;
 			&RFC8141;
 			&RFC8288;
+			&RFC5988;
 			&SHACL;
 			&XSD;
+			<!--
 			<reference anchor="DSP" target="http://dublincore.org/documents/dc-dsp/">
 				<front>
 					<title>Description Set Profiles: A constraint language for Dublin Core Application Profiles</title>
@@ -787,10 +937,10 @@ profile-param-value: DQUOTE absolute-URI *(RWS absolute-URI) DQUOTE
 					<author initials="M." surname="Nilsson">
 						<organization>KTH</organization>
 					</author>
-
 					<date year="2008" />
 				</front>
 			</reference>
+			-->
 			<reference anchor="HeeryAndPatel" target="http://www.ariadne.ac.uk/issue25/app-profiles">
 				<front>
 					<title>Application Profiles: Mixing and Matching Metadata Schemas</title>
@@ -806,3 +956,6 @@ profile-param-value: DQUOTE absolute-URI *(RWS absolute-URI) DQUOTE
 		</references>
 	</back>
 </rfc>
+
+
+
