@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="US-ASCII"?>
 <!-- This template is for creating an Internet Draft using xml2rfc,
 		which is available here: http://xml.resource.org. -->
-<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!DOCTYPE rfc PUBLIC "-//IETF//DTD RFC 2629//EN"
+                           "http://xml.resource.org/authoring/rfc2629.dtd" [
 <!-- One method to get references from the online citation libraries.
 		There has to be one entity for each item to be referenced.
 		An alternate method (rfc include) is described in the references. -->
@@ -43,7 +44,7 @@
 		<!-- The abbreviated title is used in the page header - it is only necessary if the
 				full title is longer than 39 characters -->
 
-		<title abbrev="Handling Profiled Representations">Indicating, Discovering, Negotiating, and Writing Profiled Representations</title>
+		<title abbrev="Handling Profiled Representations">Indicating, Discovering, and Negotiating Profiled Representations</title>
 
 
 		<author fullname="Lars G. Svensson" initials="L.G." surname="Svensson">
@@ -146,7 +147,7 @@
 					To address this shortcoming, this document
 					defines the HTTP request header "Accept-Profile" and the corresponding HTTP response header
 					"Content-Profile".</t>
-			</section>
+			</section> <!-- End section motivation -->
 			<section title="Terminology">
 			
 				<t>Inspired by the term used in <xref target="RFC6906"/> to refer to this extra dimension of variability, this document uses the term "profile" to mean a description of
@@ -161,7 +162,7 @@
 					In these cases, the meaning of the term "profile" intended by this document is a slight extension of the one intended by <xref target="RFC6906"/>.</t>
 			</list></t>
 			
-			</section>
+			</section> <!-- End section terminology -->
 			
 			<section title="Purpose" anchor="why">
 			
@@ -212,12 +213,12 @@
 				<t><xref target="Indicating"/> and <xref target="Discovering"/> 
 					provide a concise overview of the approaches introduced by <xref target="RFC6906"/> and <xref target="I-D.nottingham-link-hint"/>,   
 					to respectively indicate and discover the profile of resource representations. 
-					<xref target="Negotiating"/> specifies a generally applicable approach to negotiate for representations that conform to a profile preferred by a user agent.  
-					<xref target="Writing"/> shows how servers can convey which profiled representations they are able to accept from user agents.
+					<xref target="Negotiating"/> specifies a generally applicable approach to negotiate for representations that conform to a profile preferred by a user agent
+					and also shows how servers can convey which profiled representations they are able to accept from user agents.
 
 				</t>
 
-			</section>
+			</section> <!-- End section Purpose -->
 		
 			<section title="Notational Conventions">
 				
@@ -235,9 +236,9 @@
 						tabs are supported as seperators.
 				</t>
 				
-			</section>
+			</section> <!-- End section notational conventions -->
 			
-		</section>
+		</section> <!-- end section Introduction -->
 		
 
 			
@@ -252,7 +253,7 @@
 				</t>
 					<t><xref target="request_UI1"/> shows a client submitting a representation to a server, 
 				    using the same approach to express the profile to which that representation complies.
-						<xref target="Writing"/> describes how a server can convey the profiles it supports 
+						<xref target="Negotiating"/> describes how a server can convey the profiles it supports 
 						for representations that are submitted by a user agent.
 					</t>
 				
@@ -317,12 +318,12 @@ Link: <http://purl.org/dc/terms/>; rel="profile"
 						]]>
 					</artwork>
 				</figure>
-			</section>
+		</section> <!-- end sdction indicating -->
 			
 		<section title="Discovering Profiled Representations" anchor="Discovering">
 				
 				<t>The link hints capability introduced in <xref target="I-D.nottingham-link-hint"/>, can be leveraged by a server to make profiled representations discoverable by 
-					including a "formats" attribute on web links. <xref target="response_SI2"/> shows a response to the client request of 
+					including a "formats" attribute on web links. <xref target="response_SI1"/> shows a response to the client request of 
 					<xref target="request_SI1"/> in which the server uses this technique. The "Link" header indicates the profile of the returned representation 
 					but also points at two alternative representations, each of which conforms to another profile.
 				</t>
@@ -335,6 +336,7 @@ Link: <http://purl.org/dc/terms/>; rel="profile"
 					that is enclosed in the message body.
 					For example, when a user agent issues the following request
 					for /some/resource:
+					</t>
 					<figure>
 <artwork align="left">
 GET /some/resource HTTP/1.1
@@ -342,9 +344,9 @@ Accept: application/ld+json;
         profile="https://www.w3.org/ns/activitystreams"
 </artwork>
 					</figure>
-					The server might reply with:
+					<t>The server might reply with:</t>
 					<figure>
-<artwork align="left">
+<artwork align="left"><![CDATA[ 
 HTTP/1.1 200 OK
 Content-Type: application/xml
 Link: <http://purl.org/dc/terms/> ; rel="profile" , 
@@ -362,8 +364,8 @@ Connection: close
 					</artwork>
 				</figure>
 
-			</section>
-		</section>
+			</section> <!-- end section content-location -->
+		</section> <!-- end section discovering -->
 
 		<section title="New HTTP Headers">
 			<t>The "Content-Profile" and "Accept-Profile" header fields MAY be sent by both
@@ -640,7 +642,7 @@ Connection: close
 				</section>	
 		
 			</section>
-			<section title="Accept-Profile Header Syntax">
+			<section title="Accept-Profile Header Syntax" anchor="accept-profile">
 				<t>The "Accept-Profile" header field specifies one or more
 					content profiles the issuing agent accepts for processing.
 					If an "Accept-Profile" field is present,
@@ -699,7 +701,7 @@ accept-value = "<" URI-reference ">" [weight] | accept-value-ext
 			</section>
 			
 		</section>
-		<section title="Content Negotiation">
+		<section title="Content Negotiation" anchor="Negotiating">
 			<section title="Mechanisms">
 				<t>user agents and servers supporting profiles
 					can agree on mutually acceptable profiles for the payload
@@ -740,7 +742,7 @@ accept-value = "<" URI-reference ">" [weight] | accept-value-ext
 				<t>The following examples show possible exchanges of profile information between a user agent
 				and a server. For clarity, the examples only contain minimal information, i.e.,
 				only the relevant headers are included and message bodies are ignored.
-
+</t>
 					<figure align="left" anchor="example_server_indicates_profiles">
 						<preamble>
 							In this first example,
@@ -869,7 +871,7 @@ Response:
   Accept-Profile: &lt;http://example.com/shapes/shape-2&gt;
 </artwork>
 					</figure>
-			
+			</section>
 		</section>
 
 		<section title="IANA Considerations">
@@ -956,6 +958,3 @@ Response:
 		</references>
 	</back>
 </rfc>
-
-
-
