@@ -1,561 +1,1515 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>Indicating, Discovering, Negotiating, and Writing Profiled Representations</title>
+<meta content="Lars G. Svensson" name="author">
+<meta content="Ruben Verborgh" name="author">
+<meta content="Herbert Van de Sompel" name="author">
+<meta content="
+       This document details approaches for enriching HTTP interactions with information pertaining to 
+ the profiles to which resource representations conform. 
+ It surveys approaches that were introduced to indicate the profile of a resource representation, 
+ and to make representations that conform to a profile discoverable. 
+ It introduces a generally applicable approach to negotiate for a resource representation that conforms to a profile preferred 
+ by a user agent. That approach leverages the existing content negotiation mechanism but applies it to the profile dimension to which 
+ it was previously not applied. The document also shows how a server can convey which profiled representations it is able to 
+ accept from a user agent.
+       
+    " name="description">
+<meta content="xml2rfc 3.17.4" name="generator">
+<meta content="draft-svensson-profiled-representations-01" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.17.4
+    Python 3.10.6
+    ConfigArgParse 1.5.5
+    google-i18n-address 3.1.0
+    intervaltree 3.1.0
+    Jinja2 3.1.2
+    lxml 4.9.3
+    platformdirs 3.9.1
+    pycountry 22.3.5
+    PyYAML 6.0.1
+    requests 2.31.0
+    setuptools 59.6.0
+    six 1.16.0
+    wcwidth 0.2.6
+    weasyprint 59.0
+-->
+<link href="/usr/src/app/tmp/6b9a8a26-9678-4c15-abd6-0680e7ebee54/I-D-Profile-Negotiation1.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">/*
 
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head profile="http://www.w3.org/2006/03/hcard http://dublincore.org/documents/2008/08/04/dc-html/">
-  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+  NOTE: Changes at the bottom of this file overrides some earlier settings.
 
-  <title>Indicating, Discovering, Negotiating, and Writing Profiled Representations</title>
+  Once the style has stabilized and has been adopted as an official RFC style,
+  this can be consolidated so that style settings occur only in one place, but
+  for now the contents of this file consists first of the initial CSS work as
+  provided to the RFC Formatter (xml2rfc) work, followed by itemized and
+  commented changes found necessary during the development of the v3
+  formatters.
 
-  <style type="text/css" title="Xml2Rfc (sans serif)">
-  /*<![CDATA[*/
-	  a {
-	  text-decoration: none;
-	  }
-      /* info code from SantaKlauss at http://www.madaboutstyle.com/tooltip2.html */
-      a.info {
-          /* This is the key. */
-          position: relative;
-          z-index: 24;
-          text-decoration: none;
-      }
-      a.info:hover {
-          z-index: 25;
-          color: #FFF; background-color: #900;
-      }
-      a.info span { display: none; }
-      a.info:hover span.info {
-          /* The span will display just on :hover state. */
-          display: block;
-          position: absolute;
-          font-size: smaller;
-          top: 2em; left: -5em; width: 15em;
-          padding: 2px; border: 1px solid #333;
-          color: #900; background-color: #EEE;
-          text-align: left;
-      }
-	  a.smpl {
-	  color: black;
-	  }
-	  a:hover {
-	  text-decoration: underline;
-	  }
-	  a:active {
-	  text-decoration: underline;
-	  }
-	  address {
-	  margin-top: 1em;
-	  margin-left: 2em;
-	  font-style: normal;
-	  }
-	  body {
-	  color: black;
-	  font-family: verdana, helvetica, arial, sans-serif;
-	  font-size: 10pt;
-	  max-width: 55em;
-	  
-	  }
-	  cite {
-	  font-style: normal;
-	  }
-	  dd {
-	  margin-right: 2em;
-	  }
-	  dl {
-	  margin-left: 2em;
-	  }
-	
-	  ul.empty {
-	  list-style-type: none;
-	  }
-	  ul.empty li {
-	  margin-top: .5em;
-	  }
-	  dl p {
-	  margin-left: 0em;
-	  }
-	  dt {
-	  margin-top: .5em;
-	  }
-	  h1 {
-	  font-size: 14pt;
-	  line-height: 21pt;
-	  page-break-after: avoid;
-	  }
-	  h1.np {
-	  page-break-before: always;
-	  }
-	  h1 a {
-	  color: #333333;
-	  }
-	  h2 {
-	  font-size: 12pt;
-	  line-height: 15pt;
-	  page-break-after: avoid;
-	  }
-	  h3, h4, h5, h6 {
-	  font-size: 10pt;
-	  page-break-after: avoid;
-	  }
-	  h2 a, h3 a, h4 a, h5 a, h6 a {
-	  color: black;
-	  }
-	  img {
-	  margin-left: 3em;
-	  }
-	  li {
-	  margin-left: 2em;
-	  margin-right: 2em;
-	  }
-	  ol {
-	  margin-left: 2em;
-	  margin-right: 2em;
-	  }
-	  ol p {
-	  margin-left: 0em;
-	  }
-	  p {
-	  margin-left: 2em;
-	  margin-right: 2em;
-	  }
-	  pre {
-	  margin-left: 3em;
-	  background-color: lightyellow;
-	  padding: .25em;
-	  }
-	  pre.text2 {
-	  border-style: dotted;
-	  border-width: 1px;
-	  background-color: #f0f0f0;
-	  width: 69em;
-	  }
-	  pre.inline {
-	  background-color: white;
-	  padding: 0em;
-	  }
-	  pre.text {
-	  border-style: dotted;
-	  border-width: 1px;
-	  background-color: #f8f8f8;
-	  width: 69em;
-	  }
-	  pre.drawing {
-	  border-style: solid;
-	  border-width: 1px;
-	  background-color: #f8f8f8;
-	  padding: 2em;
-	  }
-	  table {
-	  margin-left: 2em;
-	  }
-	  table.tt {
-	  vertical-align: top;
-	  }
-	  table.full {
-	  border-style: outset;
-	  border-width: 1px;
-	  }
-	  table.headers {
-	  border-style: outset;
-	  border-width: 1px;
-	  }
-	  table.tt td {
-	  vertical-align: top;
-	  }
-	  table.full td {
-	  border-style: inset;
-	  border-width: 1px;
-	  }
-	  table.tt th {
-	  vertical-align: top;
-	  }
-	  table.full th {
-	  border-style: inset;
-	  border-width: 1px;
-	  }
-	  table.headers th {
-	  border-style: none none inset none;
-	  border-width: 1px;
-	  }
-	  table.left {
-	  margin-right: auto;
-	  }
-	  table.right {
-	  margin-left: auto;
-	  }
-	  table.center {
-	  margin-left: auto;
-	  margin-right: auto;
-	  }
-	  caption {
-	  caption-side: bottom;
-	  font-weight: bold;
-	  font-size: 9pt;
-	  margin-top: .5em;
-	  }
-	
-	  table.header {
-	  border-spacing: 1px;
-	  width: 95%;
-	  font-size: 10pt;
-	  color: white;
-	  }
-	  td.top {
-	  vertical-align: top;
-	  }
-	  td.topnowrap {
-	  vertical-align: top;
-	  white-space: nowrap; 
-	  }
-	  table.header td {
-	  background-color: gray;
-	  width: 50%;
-	  }
-	  table.header a {
-	  color: white;
-	  }
-	  td.reference {
-	  vertical-align: top;
-	  white-space: nowrap;
-	  padding-right: 1em;
-	  }
-	  thead {
-	  display:table-header-group;
-	  }
-	  ul.toc, ul.toc ul {
-	  list-style: none;
-	  margin-left: 1.5em;
-	  margin-right: 0em;
-	  padding-left: 0em;
-	  }
-	  ul.toc li {
-	  line-height: 150%;
-	  font-weight: bold;
-	  font-size: 10pt;
-	  margin-left: 0em;
-	  margin-right: 0em;
-	  }
-	  ul.toc li li {
-	  line-height: normal;
-	  font-weight: normal;
-	  font-size: 9pt;
-	  margin-left: 0em;
-	  margin-right: 0em;
-	  }
-	  li.excluded {
-	  font-size: 0pt;
-	  }
-	  ul p {
-	  margin-left: 0em;
-	  }
-	
-	  .comment {
-	  background-color: yellow;
-	  }
-	  .center {
-	  text-align: center;
-	  }
-	  .error {
-	  color: red;
-	  font-style: italic;
-	  font-weight: bold;
-	  }
-	  .figure {
-	  font-weight: bold;
-	  text-align: center;
-	  font-size: 9pt;
-	  }
-	  .filename {
-	  color: #333333;
-	  font-weight: bold;
-	  font-size: 12pt;
-	  line-height: 21pt;
-	  text-align: center;
-	  }
-	  .fn {
-	  font-weight: bold;
-	  }
-	  .hidden {
-	  display: none;
-	  }
-	  .left {
-	  text-align: left;
-	  }
-	  .right {
-	  text-align: right;
-	  }
-	  .title {
-	  color: #990000;
-	  font-size: 18pt;
-	  line-height: 18pt;
-	  font-weight: bold;
-	  text-align: center;
-	  margin-top: 36pt;
-	  }
-	  .vcardline {
-	  display: block;
-	  }
-	  .warning {
-	  font-size: 14pt;
-	  background-color: yellow;
-	  }
-	
-	
-	  @media print {
-	  .noprint {
-		display: none;
-	  }
-	
-	  a {
-		color: black;
-		text-decoration: none;
-	  }
-	
-	  table.header {
-		width: 90%;
-	  }
-	
-	  td.header {
-		width: 50%;
-		color: black;
-		background-color: white;
-		vertical-align: top;
-		font-size: 12pt;
-	  }
-	
-	  ul.toc a::after {
-		content: leader('.') target-counter(attr(href), page);
-	  }
-	
-	  ul.ind li li a {
-		content: target-counter(attr(href), page);
-	  }
-	
-	  .print2col {
-		column-count: 2;
-		-moz-column-count: 2;
-		column-fill: auto;
-	  }
-	  }
-	
-	  @page {
-	  @top-left {
-		   content: "Internet-Draft"; 
-	  } 
-	  @top-right {
-		   content: "December 2010"; 
-	  } 
-	  @top-center {
-		   content: "Abbreviated Title";
-	  } 
-	  @bottom-left {
-		   content: "Doe"; 
-	  } 
-	  @bottom-center {
-		   content: "Expires June 2011"; 
-	  } 
-	  @bottom-right {
-		   content: "[Page " counter(page) "]"; 
-	  } 
-	  }
-	
-	  @page:first { 
-		@top-left {
-		  content: normal;
-		}
-		@top-right {
-		  content: normal;
-		}
-		@top-center {
-		  content: normal;
-		}
-	  }
-  /*]]>*/
-  </style>
+*/
 
-  <link href="#rfc.toc" rel="Contents">
-<link href="#rfc.section.1" rel="Chapter" title="1 Introduction">
-<link href="#rfc.section.1.1" rel="Chapter" title="1.1 Terminology">
-<link href="#rfc.section.1.2" rel="Chapter" title="1.2 Purpose">
-<link href="#rfc.section.1.3" rel="Chapter" title="1.3 Notational Conventions">
-<link href="#rfc.section.2" rel="Chapter" title="2 Indicating Profiled Representations">
-<link href="#rfc.section.3" rel="Chapter" title="3 Discovering Profiled Representations">
-<link href="#rfc.section.4" rel="Chapter" title="4 Negotiating for Profiled Representations">
-<link href="#rfc.section.4.1" rel="Chapter" title="4.1 Profile Negotiation Details">
-<link href="#rfc.section.4.1.1" rel="Chapter" title="4.1.1 Proactive Profile Negotiation">
-<link href="#rfc.section.4.1.2" rel="Chapter" title="4.1.2 Reactive Profile Negotiation">
-<link href="#rfc.section.4.2" rel="Chapter" title="4.2 Accept-Profile HTTP Header Syntax">
-<link href="#rfc.section.5" rel="Chapter" title="5 Writing Profiled Representations">
-<link href="#rfc.section.6" rel="Chapter" title="6 IANA Considerations">
-<link href="#rfc.section.7" rel="Chapter" title="7 Security Considerations">
-<link href="#rfc.section.8" rel="Chapter" title="8 Acknowledgments">
-<link href="#rfc.references" rel="Chapter" title="9 References">
-<link href="#rfc.references.1" rel="Chapter" title="9.1 Normative References">
-<link href="#rfc.references.2" rel="Chapter" title="9.2 Informative References">
-<link href="#rfc.authors" rel="Chapter">
+/* fonts */
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans'); /* Sans-serif */
+@import url('https://fonts.googleapis.com/css?family=Noto+Serif'); /* Serif (print) */
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono'); /* Monospace */
+
+:root {
+  --font-sans: 'Noto Sans', Arial, Helvetica, sans-serif;
+  --font-serif: 'Noto Serif', 'Times', 'Times New Roman', serif;
+  --font-mono: 'Roboto Mono', Courier, 'Courier New', monospace;
+}
+
+@viewport {
+  zoom: 1.0;
+}
+@-ms-viewport {
+  width: extend-to-zoom;
+  zoom: 1.0;
+}
+/* general and mobile first */
+html {
+}
+body {
+  max-width: 90%;
+  margin: 1.5em auto;
+  color: #222;
+  background-color: #fff;
+  font-size: 14px;
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  scroll-behavior: smooth;
+}
+.ears {
+  display: none;
+}
+
+/* headings */
+#title, h1, h2, h3, h4, h5, h6 {
+  margin: 1em 0 0.5em;
+  font-weight: bold;
+  line-height: 1.3;
+}
+#title {
+  clear: both;
+  border-bottom: 1px solid #ddd;
+  margin: 0 0 0.5em 0;
+  padding: 1em 0 0.5em;
+}
+.author {
+  padding-bottom: 4px;
+}
+h1 {
+  font-size: 26px;
+  margin: 1em 0;
+}
+h2 {
+  font-size: 22px;
+  margin-top: -20px;  /* provide offset for in-page anchors */
+  padding-top: 33px;
+}
+h3 {
+  font-size: 18px;
+  margin-top: -36px;  /* provide offset for in-page anchors */
+  padding-top: 42px;
+}
+h4 {
+  font-size: 16px;
+  margin-top: -36px;  /* provide offset for in-page anchors */
+  padding-top: 42px;
+}
+h5, h6 {
+  font-size: 14px;
+}
+#n-copyright-notice {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 1em;
+  margin-bottom: 1em;
+}
+/* general structure */
+p {
+  padding: 0;
+  margin: 0 0 1em 0;
+  text-align: left;
+}
+div, span {
+  position: relative;
+}
+div {
+  margin: 0;
+}
+.alignRight.art-text {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  padding: 1em 1em 0;
+  margin-bottom: 1.5em;
+}
+.alignRight.art-text pre {
+  padding: 0;
+}
+.alignRight {
+  margin: 1em 0;
+}
+.alignRight > *:first-child {
+  border: none;
+  margin: 0;
+  float: right;
+  clear: both;
+}
+.alignRight > *:nth-child(2) {
+  clear: both;
+  display: block;
+  border: none;
+}
+svg {
+  display: block;
+}
+svg[font-family~="serif" i], svg [font-family~="serif" i] {
+  font-family: var(--font-serif);
+}
+svg[font-family~="sans-serif" i], svg [font-family~="sans-serif" i] {
+  font-family: var(--font-sans);
+}
+svg[font-family~="monospace" i], svg [font-family~="monospace" i] {
+  font-family: var(--font-mono);
+}
+.alignCenter.art-text {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  padding: 1em 1em 0;
+  margin-bottom: 1.5em;
+}
+.alignCenter.art-text pre {
+  padding: 0;
+}
+.alignCenter {
+  margin: 1em 0;
+}
+.alignCenter > *:first-child {
+  display: table;
+  border: none;
+  margin: 0 auto;
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 1em 2em;
+}
+ol ol, ul ul, ol ul, ul ol {
+  margin-left: 1em;
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+.ulCompact li {
+  margin: 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+}
+ul.empty li, .ulEmpty li {
+  margin-top: 0.5em;
+}
+ul.ulBare, li.ulBare {
+  margin-left: 0em !important;
+}
+ul.compact, .ulCompact,
+ol.compact, .olCompact {
+  line-height: 100%;
+  margin: 0 0 0 2em;
+}
+
+/* definition lists */
+dl {
+}
+dl > dt {
+  float: left;
+  margin-right: 1em;
+}
+/* 
+dl.nohang > dt {
+  float: none;
+}
+*/
+dl > dd {
+  margin-bottom: .8em;
+  min-height: 1.3em;
+}
+dl.compact > dd, .dlCompact > dd {
+  margin-bottom: 0em;
+}
+dl > dd > dl {
+  margin-top: 0.5em;
+  margin-bottom: 0em;
+}
+
+/* links */
+a {
+  text-decoration: none;
+}
+a[href] {
+  color: #22e; /* Arlen: WCAG 2019 */
+}
+a[href]:hover {
+  background-color: #f2f2f2;
+}
+figcaption a[href],
+a[href].selfRef,
+.iref + a[href].internal {
+  color: #222;
+}
+/* XXX probably not this:
+a.selfRef:hover {
+  background-color: transparent;
+  cursor: default;
+} */
+
+/* Figures */
+tt, code, pre {
+  background-color: #f9f9f9;
+  font-family: var(--font-mono);
+}
+pre {
+  border: 1px solid #eee;
+  margin: 0;
+  padding: 1em;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0;
+}
+figure blockquote {
+  margin: 0.8em 0.4em 0.4em;
+}
+figcaption {
+  font-style: italic;
+  margin: 0 0 1em 0;
+}
+@media screen {
+  pre {
+    overflow-x: auto;
+    max-width: 100%;
+    max-width: calc(100% - 22px);
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 1.2em 2em;
+}
+blockquote {
+  background-color: #f9f9f9;
+  color: #111; /* Arlen: WCAG 2019 */
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  margin: 1em 0;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+
+/* tables */
+table {
+  width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+  border: 1px solid #eee;
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.5em 0.75em;
+}
+th {
+  text-align: left;
+  background-color: #e9e9e9;
+}
+tr:nth-child(2n+1) > td {
+  background-color: #f5f5f5;
+}
+table caption {
+  font-style: italic;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+table p {
+  /* XXX to avoid bottom margin on table row signifiers. If paragraphs should
+     be allowed within tables more generally, it would be far better to select on a class. */
+  margin: 0;
+}
+
+/* pilcrow */
+a.pilcrow {
+  color: #666; /* Arlen: AHDJ 2019 */
+  text-decoration: none;
+  visibility: hidden;
+  user-select: none;
+  -ms-user-select: none;
+  -o-user-select:none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+@media screen {
+  aside:hover > a.pilcrow,
+  p:hover > a.pilcrow,
+  blockquote:hover > a.pilcrow,
+  div:hover > a.pilcrow,
+  li:hover > a.pilcrow,
+  pre:hover > a.pilcrow {
+    visibility: visible;
+  }
+  a.pilcrow:hover {
+    background-color: transparent;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid #eee;
+}
+.bcp14 {
+  font-variant: small-caps;
+}
+
+.role {
+  font-variant: all-small-caps;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: 0.9em;
+}
+#identifiers dt {
+  width: 3em;
+  clear: left;
+}
+#identifiers dd {
+  float: left;
+  margin-bottom: 0;
+}
+/* Fix PDF info block run off issue */
+@media print {
+  #identifiers dd {
+    float: none;
+  }
+}
+#identifiers .authors .author {
+  display: inline-block;
+  margin-right: 1.5em;
+}
+#identifiers .authors .org {
+  font-style: italic;
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #666; /* Arlen: WCAG 2019 */
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+}
+.docInfo .prepared {
+  float: left;
+}
+.docInfo .prepared {
+  float: right;
+}
+
+/* table of contents */
+#toc  {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+}
+nav.toc ul {
+  margin: 0 0.5em 0 0;
+  padding: 0;
+  list-style: none;
+}
+nav.toc li {
+  line-height: 1.3em;
+  margin: 0.75em 0;
+  padding-left: 1.2em;
+  text-indent: -1.2em;
+}
+/* references */
+.references dt {
+  text-align: right;
+  font-weight: bold;
+  min-width: 7em;
+}
+.references dd {
+  margin-left: 8em;
+  overflow: auto;
+}
+
+.refInstance {
+  margin-bottom: 1.25em;
+}
+
+.references .ascii {
+  margin-bottom: 0.25em;
+}
+
+/* index */
+.index ul {
+  margin: 0 0 0 1em;
+  padding: 0;
+  list-style: none;
+}
+.index ul ul {
+  margin: 0;
+}
+.index li {
+  margin: 0;
+  text-indent: -2em;
+  padding-left: 2em;
+  padding-bottom: 5px;
+}
+.indexIndex {
+  margin: 0.5em 0 1em;
+}
+.index a {
+  font-weight: 700;
+}
+/* make the index two-column on all but the smallest screens */
+@media (min-width: 600px) {
+  .index ul {
+    -moz-column-count: 2;
+    -moz-column-gap: 20px;
+  }
+  .index ul ul {
+    -moz-column-count: 1;
+    -moz-column-gap: 0;
+  }
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  margin: 1em 0;
+}
+
+address.vcard .nameRole {
+  font-weight: 700;
+  margin-left: 0;
+}
+address.vcard .label {
+  font-family: var(--font-sans);
+  margin: 0.5em 0;
+}
+address.vcard .type {
+  display: none;
+}
+.alternative-contact {
+  margin: 1.5em 0 1em;
+}
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+
+/* temporary notes */
+.rfcEditorRemove::before {
+  position: absolute;
+  top: 0.2em;
+  right: 0.2em;
+  padding: 0.2em;
+  content: "The RFC Editor will remove this note";
+  color: #9e2a00; /* Arlen: WCAG 2019 */
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+}
+.rfcEditorRemove {
+  position: relative;
+  padding-top: 1.8em;
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+  border-radius: 3px;
+}
+.cref {
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+/* alternative layout for smaller screens */
+@media screen and (max-width: 1023px) {
+  body {
+    padding-top: 2em;
+  }
+  #title {
+    padding: 1em 0;
+  }
+  h1 {
+    font-size: 24px;
+  }
+  h2 {
+    font-size: 20px;
+    margin-top: -18px;  /* provide offset for in-page anchors */
+    padding-top: 38px;
+  }
+  #identifiers dd {
+    max-width: 60%;
+  }
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 0;
+    margin: 0;
+    background-color: inherit;
+    border-bottom: 1px solid #ccc;
+  }
+  #toc h2 {
+    margin: -1px 0 0 0;
+    padding: 4px 0 4px 6px;
+    padding-right: 1em;
+    min-width: 190px;
+    font-size: 1.1em;
+    text-align: right;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+  }
+  #toc h2::before { /* css hamburger */
+    float: right;
+    position: relative;
+    width: 1em;
+    height: 1px;
+    left: -164px;
+    margin: 6px 0 0 0;
+    background: white none repeat scroll 0 0;
+    box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+    content: "";
+  }
+  #toc nav {
+    display: none;
+    padding: 0.5em 1em 1em;
+    overflow: auto;
+    height: calc(100vh - 48px);
+    border-left: 1px solid #ddd;
+  }
+}
+
+/* alternative layout for wide screens */
+@media screen and (min-width: 1024px) {
+  body {
+    max-width: 724px;
+    margin: 42px auto;
+    padding-left: 1.5em;
+    padding-right: 29em;
+  }
+  #toc {
+    position: fixed;
+    top: 42px;
+    right: 42px;
+    width: 25%;
+    margin: 0;
+    padding: 0 1em;
+    z-index: 1;
+  }
+  #toc h2 {
+    border-top: none;
+    border-bottom: 1px solid #ddd;
+    font-size: 1em;
+    font-weight: normal;
+    margin: 0;
+    padding: 0.25em 1em 1em 0;
+  }
+  #toc nav {
+    display: block;
+    height: calc(90vh - 84px);
+    bottom: 0;
+    padding: 0.5em 0 0;
+    overflow: auto;
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc, #n-introduction {
+    page-break-before: always;
+  }
+  #toc {
+    border-top: none;
+    padding-top: 0;
+  }
+  figure, pre {
+    page-break-inside: avoid;
+  }
+  figure {
+    overflow: scroll;
+  }
+  .breakable pre {
+    break-inside: auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  h2+*, h3+*, h4+*, h5+*, h6+* {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+/* This is commented out here, as the string-set: doesn't
+   pass W3C validation currently */
+/*
+.ears thead .left {
+  string-set: ears-top-left content();
+}
+
+.ears thead .center {
+  string-set: ears-top-center content();
+}
+
+.ears thead .right {
+  string-set: ears-top-right content();
+}
+
+.ears tfoot .left {
+  string-set: ears-bottom-left content();
+}
+
+.ears tfoot .center {
+  string-set: ears-bottom-center content();
+}
+
+.ears tfoot .right {
+  string-set: ears-bottom-right content();
+}
+*/
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+  /* The following is commented out here, but set appropriately by in code, as
+     the content depends on the document */
+  /*
+  @top-left {
+    content: 'Internet-Draft';
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-left {
+    content: string(ears-top-left);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-center {
+    content: string(ears-top-center);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-right {
+    content: string(ears-top-right);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @bottom-left {
+    content: string(ears-bottom-left);
+    vertical-align: top;
+    border-top: solid 1px #ccc;
+  }
+  @bottom-center {
+    content: string(ears-bottom-center);
+    vertical-align: top;
+    border-top: solid 1px #ccc;
+  }
+  @bottom-right {
+      content: '[Page ' counter(page) ']';
+      vertical-align: top;
+      border-top: solid 1px #ccc;
+  }
+  */
+
+}
+
+/* Changes introduced to fix issues found during implementation */
+/* Make sure links are clickable even if overlapped by following H* */
+a {
+  z-index: 2;
+}
+/* Separate body from document info even without intervening H1 */
+section {
+  clear: both;
+}
 
 
-  <meta name="generator" content="xml2rfc version 2.45.2 - https://tools.ietf.org/tools/xml2rfc" />
-  <link rel="schema.dct" href="http://purl.org/dc/terms/" />
+/* Top align author divs, to avoid names without organization dropping level with org names */
+.author {
+  vertical-align: top;
+}
 
-  <meta name="dct.creator" content="Svensson, L., Verborgh, R., and H. Van de Sompel" />
-  <meta name="dct.identifier" content="urn:ietf:id:draft-svensson-profiled-representations-00" />
-  <meta name="dct.issued" scheme="ISO8601" content="2020-04-01" />
-  <meta name="dct.abstract" content="This document details approaches for enriching HTTP interactions with information pertaining to the profiles to which resource representations conform.  It surveys approaches that were recently introduced to indicate the profile of a resource representation, and to make representations that conform to a profile discoverable.  It introduces a generally applicable approach to negotiate for a resource representation that conforms to a profile preferred by a user agent. That approach leverages the existing content negotiation mechanism but applies it to the profile dimension to which it was previously not applied. The document also shows how a server can convey which profiled representations it is able to accept from a user agent.   " />
-  <meta name="description" content="This document details approaches for enriching HTTP interactions with information pertaining to the profiles to which resource representations conform.  It surveys approaches that were recently introduced to indicate the profile of a resource representation, and to make representations that conform to a profile discoverable.  It introduces a generally applicable approach to negotiate for a resource representation that conforms to a profile preferred by a user agent. That approach leverages the existing content negotiation mechanism but applies it to the profile dimension to which it was previously not applied. The document also shows how a server can convey which profiled representations it is able to accept from a user agent.   " />
+/* Leave room in document info to show Internet-Draft on one line */
+#identifiers dt {
+  width: 8em;
+}
 
+/* Don't waste quite as much whitespace between label and value in doc info */
+#identifiers dd {
+  margin-left: 1em;
+}
+
+/* Give floating toc a background color (needed when it's a div inside section */
+#toc {
+  background-color: white;
+}
+
+/* Make the collapsed ToC header render white on gray also when it's a link */
+@media screen and (max-width: 1023px) {
+  #toc h2 a,
+  #toc h2 a:link,
+  #toc h2 a:focus,
+  #toc h2 a:hover,
+  #toc a.toplink,
+  #toc a.toplink:hover {
+    color: white;
+    background-color: #444;
+    text-decoration: none;
+  }
+}
+
+/* Give the bottom of the ToC some whitespace */
+@media screen and (min-width: 1024px) {
+  #toc {
+    padding: 0 0 1em 1em;
+  }
+}
+
+/* Style section numbers with more space between number and title */
+.section-number {
+  padding-right: 0.5em;
+}
+
+/* prevent monospace from becoming overly large */
+tt, code, pre {
+  font-size: 95%;
+}
+
+/* Fix the height/width aspect for ascii art*/
+.sourcecode pre,
+.art-text pre {
+  line-height: 1.12;
+}
+
+
+/* Add styling for a link in the ToC that points to the top of the document */
+a.toplink {
+  float: right;
+  margin-right: 0.5em;
+}
+
+/* Fix the dl styling to match the RFC 7992 attributes */
+dl > dt,
+dl.dlParallel > dt {
+  float: left;
+  margin-right: 1em;
+}
+dl.dlNewline > dt {
+  float: none;
+}
+
+/* Provide styling for table cell text alignment */
+table td.text-left,
+table th.text-left {
+  text-align: left;
+}
+table td.text-center,
+table th.text-center {
+  text-align: center;
+}
+table td.text-right,
+table th.text-right {
+  text-align: right;
+}
+
+/* Make the alternative author contact information look less like just another
+   author, and group it closer with the primary author contact information */
+.alternative-contact {
+  margin: 0.5em 0 0.25em 0;
+}
+address .non-ascii {
+  margin: 0 0 0 2em;
+}
+
+/* With it being possible to set tables with alignment
+  left, center, and right, { width: 100%; } does not make sense */
+table {
+  width: auto;
+}
+
+/* Avoid reference text that sits in a block with very wide left margin,
+   because of a long floating dt label.*/
+.references dd {
+  overflow: visible;
+}
+
+/* Control caption placement */
+caption {
+  caption-side: bottom;
+}
+
+/* Limit the width of the author address vcard, so names in right-to-left
+   script don't end up on the other side of the page. */
+
+address.vcard {
+  max-width: 30em;
+  margin-right: auto;
+}
+
+/* For address alignment dependent on LTR or RTL scripts */
+address div.left {
+  text-align: left;
+}
+address div.right {
+  text-align: right;
+}
+
+/* Provide table alignment support.  We can't use the alignX classes above
+   since they do unwanted things with caption and other styling. */
+table.right {
+ margin-left: auto;
+ margin-right: 0;
+}
+table.center {
+ margin-left: auto;
+ margin-right: auto;
+}
+table.left {
+ margin-left: 0;
+ margin-right: auto;
+}
+
+/* Give the table caption label the same styling as the figcaption */
+caption a[href] {
+  color: #222;
+}
+
+@media print {
+  .toplink {
+    display: none;
+  }
+
+  /* avoid overwriting the top border line with the ToC header */
+  #toc {
+    padding-top: 1px;
+  }
+
+  /* Avoid page breaks inside dl and author address entries */
+  .vcard {
+    page-break-inside: avoid;
+  }
+
+}
+/* Tweak the bcp14 keyword presentation */
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+/* Tweak the invisible space above H* in order not to overlay links in text above */
+ h2 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 31px;
+ }
+ h3 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 24px;
+ }
+ h4 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 24px;
+ }
+/* Float artwork pilcrow to the right */
+@media screen {
+  .artwork a.pilcrow {
+    display: block;
+    line-height: 0.7;
+    margin-top: 0.15em;
+  }
+}
+/* Make pilcrows on dd visible */
+@media screen {
+  dd:hover > a.pilcrow {
+    visibility: visible;
+  }
+}
+/* Make the placement of figcaption match that of a table's caption
+   by removing the figure's added bottom margin */
+.alignLeft.art-text,
+.alignCenter.art-text,
+.alignRight.art-text {
+   margin-bottom: 0;
+}
+.alignLeft,
+.alignCenter,
+.alignRight {
+  margin: 1em 0 0 0;
+}
+/* In print, the pilcrow won't show on hover, so prevent it from taking up space,
+   possibly even requiring a new line */
+@media print {
+  a.pilcrow {
+    display: none;
+  }
+}
+/* Styling for the external metadata */
+div#external-metadata {
+  background-color: #eee;
+  padding: 0.5em;
+  margin-bottom: 0.5em;
+  display: none;
+}
+div#internal-metadata {
+  padding: 0.5em;                       /* to match the external-metadata padding */
+}
+/* Styling for title RFC Number */
+h1#rfcnum {
+  clear: both;
+  margin: 0 0 -1em;
+  padding: 1em 0 0 0;
+}
+/* Make .olPercent look the same as <ol><li> */
+dl.olPercent > dd {
+  margin-bottom: 0.25em;
+  min-height: initial;
+}
+/* Give aside some styling to set it apart */
+aside {
+  border-left: 1px solid #ddd;
+  margin: 1em 0 1em 2em;
+  padding: 0.2em 2em;
+}
+aside > dl,
+aside > ol,
+aside > ul,
+aside > table,
+aside > p {
+  margin-bottom: 0.5em;
+}
+/* Additional page break settings */
+@media print {
+  figcaption, table caption {
+    page-break-before: avoid;
+  }
+}
+/* Font size adjustments for print */
+@media print {
+  body  { font-size: 10pt;      line-height: normal; max-width: 96%; }
+  h1    { font-size: 1.72em;    padding-top: 1.5em; } /* 1*1.2*1.2*1.2 */
+  h2    { font-size: 1.44em;    padding-top: 1.5em; } /* 1*1.2*1.2 */
+  h3    { font-size: 1.2em;     padding-top: 1.5em; } /* 1*1.2 */
+  h4    { font-size: 1em;       padding-top: 1.5em; }
+  h5, h6 { font-size: 1em;      margin: initial; padding: 0.5em 0 0.3em; }
+}
+/* Sourcecode margin in print, when there's no pilcrow */
+@media print {
+  .artwork,
+  .artwork > pre,
+  .sourcecode {
+    margin-bottom: 1em;
+  }
+}
+/* Avoid narrow tables forcing too narrow table captions, which may render badly */
+table {
+  min-width: 20em;
+}
+/* ol type a */
+ol.type-a { list-style-type: lower-alpha; }
+ol.type-A { list-style-type: upper-alpha; }
+ol.type-i { list-style-type: lower-roman; }
+ol.type-I { list-style-type: lower-roman; }
+/* Apply the print table and row borders in general, on request from the RPC,
+and increase the contrast between border and odd row background slightly */
+table {
+  border: 1px solid #ddd;
+}
+td {
+  border-top: 1px solid #ddd;
+}
+tr {
+  break-inside: avoid;
+}
+tr:nth-child(2n+1) > td {
+  background-color: #f8f8f8;
+}
+/* Use style rules to govern display of the TOC. */
+@media screen and (max-width: 1023px) {
+  #toc nav { display: none; }
+  #toc.active nav { display: block; }
+}
+/* Add support for keepWithNext */
+.keepWithNext {
+  break-after: avoid-page;
+  break-after: avoid-page;
+}
+/* Add support for keepWithPrevious */
+.keepWithPrevious {
+  break-before: avoid-page;
+}
+/* Change the approach to avoiding breaks inside artwork etc. */
+figure, pre, table, .artwork, .sourcecode  {
+  break-before: auto;
+  break-after: auto;
+}
+/* Avoid breaks between <dt> and <dd> */
+dl {
+  break-before: auto;
+  break-inside: auto;
+}
+dt {
+  break-before: auto;
+  break-after: avoid-page;
+}
+dd {
+  break-before: avoid-page;
+  break-after: auto;
+  orphans: 3;
+  widows: 3
+}
+span.break, dd.break {
+  margin-bottom: 0;
+  min-height: 0;
+  break-before: auto;
+  break-inside: auto;
+  break-after: auto;
+}
+/* Undo break-before ToC */
+@media print {
+  #toc {
+    break-before: auto;
+  }
+}
+/* Text in compact lists should not get extra bottom margin space,
+   since that would makes the list not compact */
+ul.compact p, .ulCompact p,
+ol.compact p, .olCompact p {
+ margin: 0;
+}
+/* But the list as a whole needs the extra space at the end */
+section ul.compact,
+section .ulCompact,
+section ol.compact,
+section .olCompact {
+  margin-bottom: 1em;                    /* same as p not within ul.compact etc. */
+}
+/* The tt and code background above interferes with for instance table cell
+   backgrounds.  Changed to something a bit more selective. */
+tt, code {
+  background-color: transparent;
+}
+p tt, p code, li tt, li code {
+  background-color: #f8f8f8;
+}
+/* Tweak the pre margin -- 0px doesn't come out well */
+pre {
+   margin-top: 0.5px;
+}
+/* Tweak the compact list text */
+ul.compact, .ulCompact,
+ol.compact, .olCompact,
+dl.compact, .dlCompact {
+  line-height: normal;
+}
+/* Don't add top margin for nested lists */
+li > ul, li > ol, li > dl,
+dd > ul, dd > ol, dd > dl,
+dl > dd > dl {
+  margin-top: initial;
+}
+/* Elements that should not be rendered on the same line as a <dt> */
+/* This should match the element list in writer.text.TextWriter.render_dl() */
+dd > div.artwork:first-child,
+dd > aside:first-child,
+dd > figure:first-child,
+dd > ol:first-child,
+dd > div.sourcecode:first-child,
+dd > table:first-child,
+dd > ul:first-child {
+  clear: left;
+}
+/* fix for weird browser behaviour when <dd/> is empty */
+dt+dd:empty::before{
+  content: "\00a0";
+}
+/* Make paragraph spacing inside <li> smaller than in body text, to fit better within the list */
+li > p {
+  margin-bottom: 0.5em
+}
+/* Don't let p margin spill out from inside list items */
+li > p:last-of-type:only-child {
+  margin-bottom: 0;
+}
+</style>
+<link href="rfc-local.css" rel="stylesheet" type="text/css">
+<script type="application/javascript">async function addMetadata(){try{const e=document.styleSheets[0].cssRules;for(let t=0;t<e.length;t++)if(/#identifiers/.exec(e[t].selectorText)){const a=e[t].cssText.replace("#identifiers","#external-updates");document.styleSheets[0].insertRule(a,document.styleSheets[0].cssRules.length)}}catch(e){console.log(e)}const e=document.getElementById("external-metadata");if(e)try{var t,a="",o=function(e){const t=document.getElementsByTagName("meta");for(let a=0;a<t.length;a++)if(t[a].getAttribute("name")===e)return t[a].getAttribute("content");return""}("rfc.number");if(o){t="https://www.rfc-editor.org/rfc/rfc"+o+".json";try{const e=await fetch(t);a=await e.json()}catch(e){t=document.URL.indexOf("html")>=0?document.URL.replace(/html$/,"json"):document.URL+".json";const o=await fetch(t);a=await o.json()}}if(!a)return;e.style.display="block";const s="",d="https://datatracker.ietf.org/doc",n="https://datatracker.ietf.org/ipr/search",c="https://www.rfc-editor.org/info",l=a.doc_id.toLowerCase(),i=a.doc_id.slice(0,3).toLowerCase(),f=a.doc_id.slice(3).replace(/^0+/,""),u={status:"Status",obsoletes:"Obsoletes",obsoleted_by:"Obsoleted By",updates:"Updates",updated_by:"Updated By",see_also:"See Also",errata_url:"Errata"};let h="<dl style='overflow:hidden' id='external-updates'>";["status","obsoletes","obsoleted_by","updates","updated_by","see_also","errata_url"].forEach(e=>{if("status"==e){a[e]=a[e].toLowerCase();var t=a[e].split(" "),o=t.length,w="",p=1;for(let e=0;e<o;e++)p<o?w=w+r(t[e])+" ":w+=r(t[e]),p++;a[e]=w}else if("obsoletes"==e||"obsoleted_by"==e||"updates"==e||"updated_by"==e){var g,m="",b=1;g=a[e].length;for(let t=0;t<g;t++)a[e][t]&&(a[e][t]=String(a[e][t]).toLowerCase(),m=b<g?m+"<a href='"+s+"/rfc/".concat(a[e][t])+"'>"+a[e][t].slice(3)+"</a>, ":m+"<a href='"+s+"/rfc/".concat(a[e][t])+"'>"+a[e][t].slice(3)+"</a>",b++);a[e]=m}else if("see_also"==e){var y,L="",C=1;y=a[e].length;for(let t=0;t<y;t++)if(a[e][t]){a[e][t]=String(a[e][t]);var _=a[e][t].slice(0,3),v=a[e][t].slice(3).replace(/^0+/,"");L=C<y?"RFC"!=_?L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+_+" "+v+"</a>, ":L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+v+"</a>, ":"RFC"!=_?L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+_+" "+v+"</a>":L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+v+"</a>",C++}a[e]=L}else if("errata_url"==e){var R="";R=a[e]?R+"<a href='"+a[e]+"'>Errata exist</a> | <a href='"+d+"/"+l+"'>Datatracker</a>| <a href='"+n+"/?"+i+"="+f+"&submit="+i+"'>IPR</a> | <a href='"+c+"/"+l+"'>Info page</a>":"<a href='"+d+"/"+l+"'>Datatracker</a> | <a href='"+n+"/?"+i+"="+f+"&submit="+i+"'>IPR</a> | <a href='"+c+"/"+l+"'>Info page</a>",a[e]=R}""!=a[e]?"Errata"==u[e]?h+=`<dt>More info:</dt><dd>${a[e]}</dd>`:h+=`<dt>${u[e]}:</dt><dd>${a[e]}</dd>`:"Errata"==u[e]&&(h+=`<dt>More info:</dt><dd>${a[e]}</dd>`)}),h+="</dl>",e.innerHTML=h}catch(e){console.log(e)}else console.log("Could not locate metadata <div> element");function r(e){return e.charAt(0).toUpperCase()+e.slice(1)}}window.removeEventListener("load",addMetadata),window.addEventListener("load",addMetadata);</script>
 </head>
-
-<body>
-
-  <table class="header">
-    <tbody>
-    
-    	<tr>
-<td class="left">Internet Engineering Task Force</td>
-<td class="right">L. Svensson</td>
-</tr>
-<tr>
+<body class="xml2rfc">
+<script src="metadata.min.js"></script>
+<table class="ears">
+<thead><tr>
 <td class="left">Internet-Draft</td>
-<td class="right"></td>
-</tr>
-<tr>
-<td class="left">Intended status: Informational</td>
-<td class="right">R. Verborgh</td>
-</tr>
-<tr>
-<td class="left">Expires: October 3, 2020</td>
-<td class="right">Ghent University &#8211; imec</td>
-</tr>
-<tr>
-<td class="left"></td>
-<td class="right">H. Van de Sompel</td>
-</tr>
-<tr>
-<td class="left"></td>
-<td class="right">Data Archiving and Networked Services</td>
-</tr>
-<tr>
-<td class="left"></td>
-<td class="right">April 1, 2020</td>
-</tr>
-
-    	
-    </tbody>
-  </table>
-
-  <p class="title">Indicating, Discovering, Negotiating, and Writing Profiled Representations<br />
-  <span class="filename">draft-svensson-profiled-representations-00</span></p>
-  
-  <h1 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h1>
-<p>This document details approaches for enriching HTTP interactions with information pertaining to the profiles to which resource representations conform.  It surveys approaches that were recently introduced to indicate the profile of a resource representation, and to make representations that conform to a profile discoverable.  It introduces a generally applicable approach to negotiate for a resource representation that conforms to a profile preferred by a user agent. That approach leverages the existing content negotiation mechanism but applies it to the profile dimension to which it was previously not applied. The document also shows how a server can convey which profiled representations it is able to accept from a user agent.  </p>
-<h1 id="rfc.status"><a href="#rfc.status">Status of This Memo</a></h1>
-<p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
-<p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
-<p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on October 3, 2020.</p>
-<h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
-<p>Copyright (c) 2020 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
-<p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
-
-  
-  <hr class="noprint" />
-  <h1 class="np" id="rfc.toc"><a href="#rfc.toc">Table of Contents</a></h1>
-  <ul class="toc">
-
-  	<li>1.   <a href="#rfc.section.1">Introduction</a>
+<td class="center">Handling Profiled Representations</td>
+<td class="right">July 2023</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Svensson, et al.</td>
+<td class="center">Expires 28 January 2024</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">Internet Engineering Task Force</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-svensson-profiled-representations-01</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2023-07" class="published">July 2023</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Informational</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2024-01-28">28 January 2024</time></dd>
+<dt class="label-authors">Authors:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">L.G. Svensson</div>
+</div>
+<div class="author">
+      <div class="author-name">R. Verborgh</div>
+<div class="org">Ghent University – imec</div>
+</div>
+<div class="author">
+      <div class="author-name">H. Van de Sompel</div>
+<div class="org">Data Archiving and Networked Services</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">Indicating, Discovering, Negotiating, and Writing Profiled Representations</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">This document details approaches for enriching HTTP interactions with information pertaining to 
+ the profiles to which resource representations conform. 
+ It surveys approaches that were introduced to indicate the profile of a resource representation, 
+ and to make representations that conform to a profile discoverable. 
+ It introduces a generally applicable approach to negotiate for a resource representation that conforms to a profile preferred 
+ by a user agent. That approach leverages the existing content negotiation mechanism but applies it to the profile dimension to which 
+ it was previously not applied. The document also shows how a server can convey which profiled representations it is able to 
+ accept from a user agent.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 2 January 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2023 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-terminology" class="internal xref">Terminology</a></p>
 </li>
-<ul><li>1.1.   <a href="#rfc.section.1.1">Terminology</a>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2">
+                <p id="section-toc.1-1.1.2.2.1" class="keepWithNext"><a href="#section-1.2" class="auto internal xref">1.2</a>.  <a href="#name-purpose" class="internal xref">Purpose</a></p>
 </li>
-<li>1.2.   <a href="#rfc.section.1.2">Purpose</a>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.3">
+                <p id="section-toc.1-1.1.2.3.1" class="keepWithNext"><a href="#section-1.3" class="auto internal xref">1.3</a>.  <a href="#name-notational-conventions" class="internal xref">Notational Conventions</a></p>
 </li>
-<li>1.3.   <a href="#rfc.section.1.3">Notational Conventions</a>
+            </ul>
 </li>
-</ul><li>2.   <a href="#rfc.section.2">Indicating Profiled Representations</a>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-indicating-profiled-represe" class="internal xref">Indicating Profiled Representations</a></p>
 </li>
-<li>3.   <a href="#rfc.section.3">Discovering Profiled Representations</a>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-discovering-profiled-repres" class="internal xref">Discovering Profiled Representations</a></p>
 </li>
-<li>4.   <a href="#rfc.section.4">Negotiating for Profiled Representations</a>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-negotiating-for-profiled-re" class="internal xref">Negotiating for Profiled Representations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-profile-negotiation-details" class="internal xref">Profile Negotiation Details</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.1">
+                    <p id="section-toc.1-1.4.2.1.2.1.1"><a href="#section-4.1.1" class="auto internal xref">4.1.1</a>.  <a href="#name-proactive-profile-negotiati" class="internal xref">Proactive Profile Negotiation</a></p>
 </li>
-<ul><li>4.1.   <a href="#rfc.section.4.1">Profile Negotiation Details</a>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.2">
+                    <p id="section-toc.1-1.4.2.1.2.2.1"><a href="#section-4.1.2" class="auto internal xref">4.1.2</a>.  <a href="#name-reactive-profile-negotiatio" class="internal xref">Reactive Profile Negotiation</a></p>
 </li>
-<ul><li>4.1.1.   <a href="#rfc.section.4.1.1">Proactive Profile Negotiation</a>
+                </ul>
 </li>
-<li>4.1.2.   <a href="#rfc.section.4.1.2">Reactive Profile Negotiation</a>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-accept-profile-http-header-" class="internal xref">Accept-Profile HTTP Header Syntax</a></p>
 </li>
-</ul><li>4.2.   <a href="#rfc.section.4.2">Accept-Profile HTTP Header Syntax</a>
+            </ul>
 </li>
-</ul><li>5.   <a href="#rfc.section.5">Writing Profiled Representations</a>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-writing-profiled-representa" class="internal xref">Writing Profiled Representations</a></p>
 </li>
-<li>6.   <a href="#rfc.section.6">IANA Considerations</a>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
 </li>
-<li>7.   <a href="#rfc.section.7">Security Considerations</a>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
 </li>
-<li>8.   <a href="#rfc.section.8">Acknowledgments</a>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
 </li>
-<li>9.   <a href="#rfc.references">References</a>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1">
+                <p id="section-toc.1-1.9.2.1.1"><a href="#section-9.1" class="auto internal xref">9.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
 </li>
-<ul><li>9.1.   <a href="#rfc.references.1">Normative References</a>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2">
+                <p id="section-toc.1-1.9.2.2.1"><a href="#section-9.2" class="auto internal xref">9.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
 </li>
-<li>9.2.   <a href="#rfc.references.2">Informative References</a>
+            </ul>
 </li>
-</ul><li><a href="#rfc.authors">Authors' Addresses</a>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
 </li>
-
-
-  </ul>
-
-  <h1 id="rfc.section.1">
-<a href="#rfc.section.1">1.</a> Introduction</h1>
-<p id="rfc.section.1.p.1">Any given web resource can typically be represented in a variety of ways. For example, the same information could be rendered according to different media types, say, as XML or JSON. But in many cases, variations in representation other than those inherent to a given media type are also possible. For example, the same structured data could be rendered in XML according to different <a href="#W3C.REC-xmlschema11-1-20120405" class="xref">XML Schema</a>.  Or the same RDF graph could be expressed on the basis of different vocabularies.  </p>
-<p id="rfc.section.1.p.2">This dimension of variability regarding representations that goes beyond media types has been acknowledged for quite some time. For example, in 2000, the Dublin Core Metadata Initiative (DCMI) introduced "Application Profiles" to explicitly acknowledge that the same metadata can be represented in various ways and defined them as "schemas which consist of data elements drawn from one or more namespaces, combined together by implementers, and optimised for a particular local application" <a href="#HeeryAndPatel" class="xref">[HeeryAndPatel]</a>.  </p>
-<h1 id="rfc.section.1.1">
-<a href="#rfc.section.1.1">1.1.</a> Terminology</h1>
-<p id="rfc.section.1.1.p.1">Inspired by the term used in <a href="#RFC6906" class="xref">[RFC6906]</a> to refer to this extra dimension of variability, this document uses the term "profile" to mean a description of structural and/or semantic constraints on representations of resources that apply in addition to the constraints inherently indicated by their MIME type:</p>
-<p></p>
-
-<ul>
-<li>Profiles can be dependent on a media type. For example, this is the case for XML, with constraints being expressed using an XML Schema.  This is also the case for JSON that offers a wide range of options regarding the use of tree structure, keys, and value types.  In these cases, the meaning of the term "profile" intended by this document coincides with the use of the same term in <a href="#RFC6906" class="xref">[RFC6906]</a>.</li>
-<li>Profiles can be independent of media type. For example, this is the case for RDF graphs that can be rendered according to various media types, while constraints can be expressed in a manner that is independent of media type, among others, using <a href="#W3C.REC-shacl-20170720" class="xref">SHACL</a>.  In these cases, the meaning of the term "profile" intended by this document is a slight extension of the one intended by <a href="#RFC6906" class="xref">[RFC6906]</a>.</li>
-</ul>
-<h1 id="rfc.section.1.2">
-<a href="#rfc.section.1.2">1.2.</a> <a href="#why" id="why">Purpose</a>
-</h1>
-<p id="rfc.section.1.2.p.1">When it comes to HTTP interactions, profiles have received little attention despite their de facto existence and the added-value they can bring for building rich applications. Such applications benefit from knowledge regarding the nature of a representation that a client obtains from a server, that a client sends to a server, and that a server is willing to accept from a client, beyond what is conveyed by the representation's MIME type.  These applications are also be helped by an ability to discover representations rendered according to a profile they can handle, or, optimally, an ability to explicitly request a rendering according to a preferred profile.  </p>
-<p id="rfc.section.1.2.p.2">A common approach to handle profiles is to register them as a media type, dedicated to the combination of an actual media type and a profile of it. Media types that illustrate this approach include "application/activity+json", "application/calendar+json", and "application/calendar+xml.  This approach allows conveying all necessary profile information in HTTP interactions, e.g. using the "Accept" and "Content-Encoding" HTTP headers and the "type" attribute for web links. As such it supports indicating, discovering, and  content negotiating (in the media type dimension) for profiled representations.  This registraton-based approach may be feasible for profiles that are expected to be very widely used but is not practical in case support for many different profiles is required.  Also, the "calendar" examples illustrate that the registration-based approach is not ideal when a profile applies to multiple media types.  And, the "activity" example illustrates that the approach supports indicating what the major ingredient of a profiled representation is (i.e. the ActivityStreams Vocabulary) but becomes problematic when indications are also needed regarding additional vocabularies used in representations.  </p>
-<p id="rfc.section.1.2.p.3">Another approach to handle profiles leverages the ability provided by <a href="#RFC6838" class="xref">[RFC6838]</a> to register parameters when registering a media type.  Some media types have used this capability to register an attribute dedicated to conveying profiles of the media type. For example, for "application/ld+json" the "profile" parameter has been registered for this purpose. The approach provides flexibility for handling many profiles, including ones that are not yet known when registering the media type.  It also supports indicating, discovering, and content negotiating (in the media type dimension) for profiled representations using common approaches.  But the approach remains problematic because it ties profile information to a media type, depends on registering a parameter to convey profile information when registering a new media type, and, realistically, on the registration of the same parameter name (i.e. "profile" as suggested in <a href="#RFC6906" class="xref">[RFC6906]</a>) for all media types for which registrants deem that conveying profile information is important.  Additionaly, <a href="#RFC6838" class="xref">[RFC6838]</a> discourages registering parameters for previously registered media types, making it highly questionable that a uniform attribute to convey profile information across all media types could retroactively be defined.</p>
-<p id="rfc.section.1.2.p.4">Recognizing the importance of profiles and the problems with the aforementioned approaches to handle them, specifications have started to introduce alternative approaches to express information about resource representation profiles in HTTP interactions:</p>
-<p></p>
-
-<ul>
-<li>
-<a href="#RFC6906" class="xref">[RFC6906]</a> introduces the "profile" link relation type that is generally applicable for indicating the profile of a resource representation that is sent by a client to a server or by a server to a client.  </li>
-<li>
-<a href="#I-D.nottingham-link-hint" class="xref">[I-D.nottingham-link-hint]</a> introduces a capability to make profiled representations discoverable via web links by using the "formats" attribute to express the profile of a linked resource.  </li>
-</ul>
-<p><a href="#Indicating" class="xref">Section 2</a> and <a href="#Discovering" class="xref">Section 3</a> provide a concise overview of the approaches introduced by <a href="#RFC6906" class="xref">[RFC6906]</a> and <a href="#I-D.nottingham-link-hint" class="xref">[I-D.nottingham-link-hint]</a>, to respectively indicate and discover the profile of resource representations.  <a href="#Negotiating" class="xref">Section 4</a> specifies a generally applicable approach to negotiate for representations that conform to a profile preferred by a user agent.  <a href="#Writing" class="xref">Section 5</a> shows how servers can convey which profiled representations they are able to accept from user agents.  </p>
-<h1 id="rfc.section.1.3">
-<a href="#rfc.section.1.3">1.3.</a> Notational Conventions</h1>
-<p id="rfc.section.1.3.p.1">The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in <a href="#RFC2119" class="xref">RFC 2119</a>.</p>
-<p id="rfc.section.1.3.p.2">This specification uses the terms "link context" and "link target" as defined in <a href="#RFC8288" class="xref">[RFC8288]</a>.  These terms respectively correspond with "Context IRI" and "Target IRI" as used in <a href="#RFC5988" class="xref">[RFC5988]</a>.  Although defined as IRIs, in common scenarios they are also URIs.</p>
-<p id="rfc.section.1.3.p.3">In the examples provided in this document, links in the HTTP "Link" header are shown on separate lines in order to improve readability.  Note, however, that as per Section 3.2 of <a href="#RFC7230" class="xref">[RFC7230]</a>, line breaks are not allowed in values for HTTP headers; only whitespaces and tabs are supported as seperators.  </p>
-<h1 id="rfc.section.2">
-<a href="#rfc.section.2">2.</a> <a href="#Indicating" id="Indicating">Indicating Profiled Representations</a>
-</h1>
-<p id="rfc.section.2.p.1">As per <a href="#RFC6906" class="xref">[RFC6906]</a>, a web link with a "profile" link relation type can be used to indicate the profile of a representation that is exchanged in HTTP interactions. <a href="#request_SI1" class="xref">Figure 1</a> shows a client requesting a representation from a server and <a href="#response_SI1" class="xref">Figure 2</a> shows the server responding. The response includes a "Link" header (<a href="#RFC8288" class="xref">[RFC8288]</a>) that  contains a link with the "profile" relation type.  The link target &lt;http://purl.org/dc/terms/&gt; indicates the profile of the response body (not shown).  </p>
-<p><a href="#request_UI1" class="xref">Figure 3</a> shows a client submitting a representation to a server, using the same approach to express the profile to which that representation complies.  <a href="#Writing" class="xref">Section 5</a> describes how a server can convey the profiles it supports for representations that are submitted by a user agent.  </p>
-<div id="rfc.figure.1"></div>
-<div id="request_SI1"></div>
-<pre> 
+        </ul>
+</nav>
+</section>
+</div>
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<p id="section-1-1">Any given web resource can typically be represented in a variety of ways. For example, the same information could be rendered according to different media types, 
+ say, as XML or JSON. But in many cases, variations in representation other than those inherent to a given media type are also possible. For example, the 
+ same structured data could be rendered in XML according to different <span><a href="#W3C.REC-xmlschema11-1-20120405" class="internal xref">XML Schema</a> [<a href="#W3C.REC-xmlschema11-1-20120405" class="cite xref">W3C.REC-xmlschema11-1-20120405</a>]</span>. 
+ Or the same RDF graph could be expressed on the basis of different vocabularies.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">
+ This dimension of variability regarding representations that goes beyond media types has been acknowledged for quite some time. For example, in 2000, the Dublin Core 
+ Metadata Initiative (DCMI) introduced "Application Profiles" to explicitly acknowledge that the same metadata can be represented in various ways and defined them as "schemas which consist of data
+ elements drawn from one or more namespaces, combined together by implementers, and optimised for a particular local application" <span>[<a href="#HeeryAndPatel" class="cite xref">HeeryAndPatel</a>]</span>.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<section id="section-1.1">
+        <h3 id="name-terminology">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-terminology" class="section-name selfRef">Terminology</a>
+        </h3>
+<p id="section-1.1-1">Inspired by the term used in <span>[<a href="#RFC6906" class="cite xref">RFC6906</a>]</span> to refer to this extra dimension of variability, this document uses the term "profile" to mean a description of
+ structural and/or semantic constraints on representations of resources that apply 
+ in addition to the constraints inherently indicated by their MIME type:<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.1-2.1">Profiles can be dependent on a media type. For example, this is the case for XML, with constraints being expressed using an XML Schema. 
+ This is also the case for JSON that offers a wide range of options regarding the use of tree structure, keys, and value types.
+ In these cases, the meaning of the term "profile" intended by this document coincides with the use of the same term in <span>[<a href="#RFC6906" class="cite xref">RFC6906</a>]</span>.<a href="#section-1.1-2.1" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-1.1-2.2">Profiles can be independent of media type. For example, this is the case for RDF graphs that can be rendered according to various media types,
+ while constraints can be expressed in a manner that is independent of media type, among others, using <span><a href="#W3C.REC-shacl-20170720" class="internal xref">SHACL</a> [<a href="#W3C.REC-shacl-20170720" class="cite xref">W3C.REC-shacl-20170720</a>]</span>.
+ In these cases, the meaning of the term "profile" intended by this document is a slight extension of the one intended by <span>[<a href="#RFC6906" class="cite xref">RFC6906</a>]</span>.<a href="#section-1.1-2.2" class="pilcrow">¶</a>
+</li>
+        </ul>
+</section>
+<div id="why">
+<section id="section-1.2">
+        <h3 id="name-purpose">
+<a href="#section-1.2" class="section-number selfRef">1.2. </a><a href="#name-purpose" class="section-name selfRef">Purpose</a>
+        </h3>
+<p id="section-1.2-1">When it comes to HTTP interactions, profiles have received little attention despite their de facto existence and 
+ the added-value they can bring for building rich applications. Such applications benefit from knowledge regarding the nature of a representation 
+ that a client obtains from a server, that a client sends to a server, and that a server is willing to accept from a client,  
+ beyond what is conveyed by the representation's MIME type. 
+ These applications are also be helped by an ability to discover representations rendered according to a profile they can handle, or, 
+ optimally, an ability to explicitly request a rendering according to a preferred profile.<a href="#section-1.2-1" class="pilcrow">¶</a></p>
+<p id="section-1.2-2">A common approach to handle profiles is to register them as a media type, dedicated to the combination of an actual media type 
+ and a profile of it. Media types that illustrate this approach include "application/activity+json", "application/calendar+json", and "application/calendar+xml. 
+ This approach allows conveying all necessary profile information in HTTP interactions, e.g. using the "Accept" and "Content-Encoding" HTTP headers
+ and the "type" attribute for web links. As such it supports indicating, discovering, and  content negotiating (in the media type dimension) for profiled representations. 
+ This registration-based approach may be feasible for 
+     profiles that are expected to be very widely used but is not practical in case support for many different profiles is required. 
+     Also, the "calendar" examples illustrate 
+     that the registration-based approach is not ideal when a profile applies to multiple media types. 
+     And, the "activity" example illustrates that 
+     the approach supports indicating what the major ingredient of a profiled representation is (i.e. the ActivityStreams Vocabulary) but becomes problematic 
+     when indications are also needed regarding additional vocabularies used in representations.<a href="#section-1.2-2" class="pilcrow">¶</a></p>
+<p id="section-1.2-3">Another approach to handle profiles leverages the ability provided by <span>[<a href="#RFC6838" class="cite xref">RFC6838</a>]</span> to register parameters when registering a media type. 
+ Some media types have used this capability to register an attribute dedicated to conveying profiles of the media type. For example, for "application/ld+json" 
+ the "profile" parameter has been registered for this purpose. The approach provides flexibility for handling many profiles, 
+ including ones that are not yet known when registering the media type.
+ It also supports indicating, discovering, and content negotiating (in the media type dimension) for profiled representations using common approaches. 
+ But the approach remains problematic because it ties profile information to a media type, depends on registering a parameter to convey profile information 
+ when registering a new media type, and, realistically, on the registration of the same parameter name (i.e. "profile" as suggested in <span>[<a href="#RFC6906" class="cite xref">RFC6906</a>]</span>) 
+ for all media types for which registrants deem that conveying profile information is important. 
+ Additionaly, <span>[<a href="#RFC6838" class="cite xref">RFC6838</a>]</span> discourages registering parameters for previously registered media types, making it highly questionable that a uniform attribute 
+ to convey profile information across all media types could retroactively be defined.<a href="#section-1.2-3" class="pilcrow">¶</a></p>
+<p id="section-1.2-4">Recognizing the importance of profiles and the problems with the aforementioned approaches to handle them, 
+ specifications have started to introduce alternative approaches to express information about 
+ resource representation profiles in HTTP interactions:<a href="#section-1.2-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.2-5.1">
+            <span>[<a href="#RFC6906" class="cite xref">RFC6906</a>]</span> introduces the "profile" link relation type that is generally 
+ applicable for indicating the profile of a resource representation that is sent by a client to a server or by a server to a client.<a href="#section-1.2-5.1" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-1.2-5.2">
+            <span>[<a href="#I-D.nottingham-link-hint" class="cite xref">I-D.nottingham-link-hint</a>]</span> introduces a capability to make profiled representations discoverable via web links by using the "formats" 
+ attribute to express the profile of a linked resource.<a href="#section-1.2-5.2" class="pilcrow">¶</a>
+</li>
+        </ul>
+<p id="section-1.2-6"><a href="#Indicating" class="auto internal xref">Section 2</a> and <a href="#Discovering" class="auto internal xref">Section 3</a> 
+ provide a concise overview of the approaches introduced by <span>[<a href="#RFC6906" class="cite xref">RFC6906</a>]</span> and <span>[<a href="#I-D.nottingham-link-hint" class="cite xref">I-D.nottingham-link-hint</a>]</span>,   
+ to respectively indicate and discover the profile of resource representations. 
+ <a href="#Negotiating" class="auto internal xref">Section 4</a> specifies a generally applicable approach to negotiate for representations that conform to a profile preferred by a user agent.  
+ <a href="#Writing" class="auto internal xref">Section 5</a> shows how servers can convey which profiled representations they are able to accept from user agents.<a href="#section-1.2-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<section id="section-1.3">
+        <h3 id="name-notational-conventions">
+<a href="#section-1.3" class="section-number selfRef">1.3. </a><a href="#name-notational-conventions" class="section-name selfRef">Notational Conventions</a>
+        </h3>
+<p id="section-1.3-1">The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+ "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+ document are to be interpreted as described in <span><a href="#RFC2119" class="internal xref">RFC 2119</a> [<a href="#RFC2119" class="cite xref">RFC2119</a>]</span>.<a href="#section-1.3-1" class="pilcrow">¶</a></p>
+<p id="section-1.3-2">This specification uses the terms "link context" and "link target" as defined in <span>[<a href="#RFC8288" class="cite xref">RFC8288</a>]</span>. 
+ These terms respectively correspond with "Context IRI" and "Target IRI" as used in <span>[<a href="#RFC5988" class="cite xref">RFC5988</a>]</span>. 
+ Although defined as IRIs, in common scenarios they are also URIs.<a href="#section-1.3-2" class="pilcrow">¶</a></p>
+<p id="section-1.3-3">In the examples provided in this document, links in the HTTP "Link" header are shown on separate lines in order to improve readability. 
+ Note, however, that as per Section 3.2 of <span>[<a href="#RFC9112" class="cite xref">RFC9112</a>]</span>, line breaks are not allowed in values for HTTP headers; only whitespaces and 
+ tabs are supported as seperators.<a href="#section-1.3-3" class="pilcrow">¶</a></p>
+</section>
+</section>
+<div id="Indicating">
+<section id="section-2">
+      <h2 id="name-indicating-profiled-represe">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-indicating-profiled-represe" class="section-name selfRef">Indicating Profiled Representations</a>
+      </h2>
+<p id="section-2-1">As per <span>[<a href="#RFC6906" class="cite xref">RFC6906</a>]</span>, a web link with a "profile" link relation type can be used to 
+ indicate the profile of a representation that is exchanged in HTTP interactions. <a href="#request_SI1" class="auto internal xref">Figure 1</a> shows a client requesting a
+ representation from a server and <a href="#response_SI1" class="auto internal xref">Figure 2</a> shows the server responding. The response includes a "Link" header 
+ (<span>[<a href="#RFC8288" class="cite xref">RFC8288</a>]</span>) that  contains a link with the "profile" relation type. 
+ The link target &lt;http://purl.org/dc/terms/&gt; indicates the profile of 
+ the response body (not shown).<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-2"><a href="#request_UI1" class="auto internal xref">Figure 3</a> shows a client submitting a representation to a server, 
+     using the same approach to express the profile to which that representation conforms.
+ <a href="#Writing" class="auto internal xref">Section 5</a> describes how a server can convey the profiles it supports 
+ for representations that are submitted by a user agent.<a href="#section-2-2" class="pilcrow">¶</a></p>
+<span id="name-client-requests-a-represent"></span><div id="request_SI1">
+<figure id="figure-1">
+        <div class="alignLeft art-text artwork" id="section-2-3.1">
+<pre>
 GET /some/resource HTTP/1.1
 Host: example.org
 Connection: close
-						
-					</pre>
-<p class="figure">Figure 1: Client requests a representation</p>
-<div id="rfc.figure.2"></div>
-<div id="response_SI1"></div>
-<pre> 
+
+</pre>
+</div>
+<figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
+<a href="#name-client-requests-a-represent" class="selfRef">Client requests a representation</a>
+        </figcaption></figure>
+</div>
+<span id="name-server-indicates-the-profil"></span><div id="response_SI1">
+<figure id="figure-2">
+        <div class="alignLeft art-text artwork" id="section-2-4.1">
+<pre>
 HTTP/1.1 200 OK
 Content-Type: application/xml ; charset=utf-8
 Link: &lt;http://purl.org/dc/terms/&gt;; rel="profile"
@@ -563,12 +1517,17 @@ Content-Length: 23364
 Connection: close
 
 ...
-						
-					</pre>
-<p class="figure">Figure 2: Server indicates the profile of the returned representation</p>
-<div id="rfc.figure.3"></div>
-<div id="request_UI1"></div>
-<pre> 
+
+</pre>
+</div>
+<figcaption><a href="#figure-2" class="selfRef">Figure 2</a>:
+<a href="#name-server-indicates-the-profil" class="selfRef">Server indicates the profile of the returned representation</a>
+        </figcaption></figure>
+</div>
+<span id="name-client-indicates-the-profil"></span><div id="request_UI1">
+<figure id="figure-3">
+        <div class="alignLeft art-text artwork" id="section-2-5.1">
+<pre>
 PUT /some/resource HTTP/1.1
 Host: example.org
 Content-Type: application/xml ; charset=utf-8
@@ -577,77 +1536,179 @@ Content-Length: 23364
 Connection: close
 
 ...
-						
-					</pre>
-<p class="figure">Figure 3: Client indicates the profile of a representation submitted to a server</p>
-<h1 id="rfc.section.3">
-<a href="#rfc.section.3">3.</a> <a href="#Discovering" id="Discovering">Discovering Profiled Representations</a>
-</h1>
-<p id="rfc.section.3.p.1">The link hints capability introduced in <a href="#I-D.nottingham-link-hint" class="xref">[I-D.nottingham-link-hint]</a>, can be leveraged by a server to make profiled representations discoverable by including a "formats" attribute on web links. <a href="#response_SI2" class="xref">Figure 4</a> shows a response to the client request of <a href="#request_SI1" class="xref">Figure 1</a> in which the server uses this technique. The "Link" header indicates the profile of the returned representation but also points at two alternative representations, each of which conforms to another profile.  </p>
-<div id="rfc.figure.4"></div>
-<div id="response_SI2"></div>
-<pre> 
+
+</pre>
+</div>
+<figcaption><a href="#figure-3" class="selfRef">Figure 3</a>:
+<a href="#name-client-indicates-the-profil" class="selfRef">Client indicates the profile of a representation submitted to a server</a>
+        </figcaption></figure>
+</div>
+<p id="section-2-6">In some cases organisations use separate servers to perform content negotiation and to deliver resources,
+ e. g. when static content is served through content delivery networks.
+ The servers that perform the content negotiation interact with the client requesting the resource
+ and then typically refer to the correct representation using a 303 redirect.
+ In those cases the servers that deliver the representations are not profile aware
+ and thus cannot add the appropriate "Link" headers to the response.
+ Instead the server performing the negotiation will have to supply that information.
+ This is done by adding an "anchor" attribute pointing to the representation the link header refers to.
+ <a href="#response_RI1" class="auto internal xref">Figure 4</a> shows the response to a <a href="#request_SI1" class="auto internal xref">Figure 1</a>
+ where the server performing the negotiation redirects the client to the resource specified in the
+ "Location" header and by using the same URI in the "anchor" attribute of the "Link" header
+ indicates that the information in the "Link" header does not apply to this response
+ but to the resource redirected to.<a href="#section-2-6" class="pilcrow">¶</a></p>
+<span id="name-server-indicates-the-profile"></span><div id="response_RI1">
+<figure id="figure-4">
+        <div class="alignLeft art-text artwork" id="section-2-7.1">
+<pre>
+HTTP/1.1 303 See other
+Location: https://static.example.org/other/resource
+Link: &lt;http://purl.org/dc/terms/&gt;; rel="profile"
+        ; anchor="https://static.example.org/other/resource"
+
+...
+
+</pre>
+</div>
+<figcaption><a href="#figure-4" class="selfRef">Figure 4</a>:
+<a href="#name-server-indicates-the-profile" class="selfRef">Server indicates the profile of the representation referred to in the 'Location' header</a>
+        </figcaption></figure>
+</div>
+</section>
+</div>
+<div id="Discovering">
+<section id="section-3">
+      <h2 id="name-discovering-profiled-repres">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-discovering-profiled-repres" class="section-name selfRef">Discovering Profiled Representations</a>
+      </h2>
+<p id="section-3-1">The link hints capability introduced in <span>[<a href="#I-D.nottingham-link-hint" class="cite xref">I-D.nottingham-link-hint</a>]</span>, can be leveraged by a server to make profiled representations discoverable by 
+ including a "formats" attribute on web links. <a href="#response_SI2" class="auto internal xref">Figure 5</a> shows a response to the client request of 
+ <a href="#request_SI1" class="auto internal xref">Figure 1</a> in which the server uses this technique. The "Link" header indicates the profile of the returned representation 
+ but also points at two alternative representations, each of which conforms to another profile.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<span id="name-server-makes-profiled-repre"></span><div id="response_SI2">
+<figure id="figure-5">
+        <div class="alignLeft art-text artwork" id="section-3-2.1">
+<pre>
 HTTP/1.1 200 OK
 Content-Type: application/xml
-Link: &lt;http://purl.org/dc/terms/&gt; ; rel="profile" , 
-      &lt;/some/other_resource_1&gt; 
-         ; rel="alternate" ; type="application/xml" 
+Link: &lt;http://purl.org/dc/terms/&gt; ; rel="profile" ,
+      &lt;/some/other_resource_1&gt;
+         ; rel="alternate" ; type="application/xml"
          ; formats="http://example.org/our_internal_xml_profile" ,
       &lt;/some/other_resource_2&gt;
-         ; rel="alternate" 
-         ; formats="http://example.org/our_community_profile" 
+         ; rel="alternate"
+         ; formats="http://example.org/our_community_profile"
 Content-Length: 23364
 Connection: close
 
 ...
 
-					</pre>
-<p class="figure">Figure 4: Server makes profiled representations discoverable</p>
-<h1 id="rfc.section.4">
-<a href="#rfc.section.4">4.</a> <a href="#Negotiating" id="Negotiating">Negotiating for Profiled Representations</a>
-</h1>
-<p><a href="#why" class="xref">Section 1.2</a> describes two approaches for conveying profile information in HTTP interactions that make it possible to negotiate for profiled representations by applying content negotiation in the media type dimension.  It also indicates the restricted applicability of these approaches, in both cases a result of their direct dependence on the media type registration process.  </p>
-<p id="rfc.section.4.p.2">This section describes an approach that applies content negotiation in a dimension that it was previously not applied to.  The profile negotiation approach introduced here is generally applicable for resource representations, irrespective of media type. These are its core aspects: </p>
-<p></p>
-
-<ul>
-<li>In order to allow a user agent to inform a server about its preferences regarding profiles for resource representations, the "Accept-Profile" HTTP header introduced here is used. A user agent can specify several profiles and use quality indicators (q-values) to indicate preferences.  </li>
-<li>In order to allow a server to express its support for profile negotiation the "Vary" HTTP header is used, in this case, with the "Accept-Profile" value.</li>
-<li>In order to allow a server to convey the profile of a representation delivered to a user agent, rather than the introducing a server-side counterpart to the client-side "Accept-Profile" header, the existing "profile" link approach introduced by <a href="#RFC6906" class="xref">[RFC6906]</a> is used. If a representation conforms to multiple profiles, a distinct "profile" link is used per profile; the order in which these links are provided has no relevance.  </li>
-<li>In order to allow a server to convey the profiles it supports, web links with the "formats" link hint introduced in <a href="#I-D.nottingham-link-hint" class="xref">[I-D.nottingham-link-hint]</a> are used to convey the profiles of the link target resources. This approach uniformely applies to reponses to HTTP HEAD/GET/PUT/POST/PATCH.  </li>
-<li>Throughout the profile negotiation approach, a profile MUST be referred to by a URI. This is the case for the content of the "Accept-Profile" HTTP header, for the target of web links with the "profile" link relation, and for the content of the "formats" link hint for web links.  </li>
-</ul>
-<h1 id="rfc.section.4.1">
-<a href="#rfc.section.4.1">4.1.</a> Profile Negotiation Details</h1>
-<p id="rfc.section.4.1.p.1">Profile negotiation uses the content negotiation processes described in <a href="#RFC7231" class="xref">Section 3.4 of RFC 7231</a> but applies them to the profile dimension.  Both proactive negotiation and reactive negotiation for profiles can be supported by servers.  Both are described in more detail in the remainder of this section.  </p>
-<p id="rfc.section.4.1.p.2">In profile negotiation, a profile MUST be referred to by a URI that, from here onwards, is named a profile URI.  If the profile URI is dereferencable it SHOULD lead to a document that details the profile. If the profile URI is not dereferencable (e.g. a <a href="#RFC8141" class="xref">URN</a> or an <a href="#RFC4452" class="xref">info-URI</a>) facilities SHOULD be available to allow user agents and servers to understand their meaning, e.g. community registries of profiles.  </p>
-<h1 id="rfc.section.4.1.1">
-<a href="#rfc.section.4.1.1">4.1.1.</a> <a href="#proconneg" id="proconneg">Proactive Profile Negotiation</a>
-</h1>
-<p id="rfc.section.4.1.1.p.1">In proactive profile negotiation, the user agent uses the "Accept-Profile" HTTP header to inform the server about the agent's preference regarding profiles to be used for representing a resource in the server's response.  In case a user agent wants to express a preference for a single profile, the value of the header is that profile's URI. In case a user agent wants to express a preference for multiple profiles, the value of the header is a list containing each profile's URI, seperated by commas. Alternatively, multiple "Accept-Profile" HTTP headers can be used, each conveying a single profile URI. Quality indicators (q-values) MAY be used to rank profile preferences.  The order in which profile URIs are conveyed or the duplicate mentioning of a same profile URI MUST NOT be interpreted as significant.  </p>
-<p id="rfc.section.4.1.1.p.2">A server that supports proactive profile negotiation for the resource that a user agent interacts with: </p>
-<p></p>
-
-<ul>
-<li>MUST include a "Vary" HTTP header containing the value "accept-profile" in its response to the user agent.  </li>
-<li>MUST include a "Link" HTTP header containing a link with the "profile" relation type that has as link target the profile URI of the resource representation returned to the user agent. In case the representation conforms to additional profiles known to the server, such a "profile" link SHOULD be included for each.  </li>
-<li>SHOULD convey the availability of alternate profiled representations of the resource by using the link hint approach described in <a href="#reconneg" class="xref">Section 4.1.2</a>.  </li>
-</ul>
-
-<p> </p>
-<p id="rfc.section.4.1.1.p.4">These requirements for servers that support proactive profile negotiation also apply when:</p>
-<p></p>
-
-<ul>
-<li>The user agent expressed a profile preference in its request by using an "Accept-Profile" header but the server cannot return a representation that conforms to a preferred profile.  </li>
-<li>The user agent did not express a profile preference using an "Accept-Profile" header in its request.  </li>
-</ul>
-<p id="rfc.section.4.1.1.p.6">A user agent SHOULD interpret the abscence of a "Vary" HTTP header with an "accept-profile" value in a response from a server as the lack of support for profile negotiation for the resource the user agent interacts with.  </p>
-<p id="rfc.section.4.1.1.p.7">A server SHOULD consider representations that do not conform to any of the profiles listed by a user agent in an "Accept-Profile" header as non-interpretable by the agent. As such, honoring the user agent preferences in the profile dimension SHOULD take precedence over honoring content negotiation in other dimensions.</p>
-<p id="rfc.section.4.1.1.p.8">In <a href="#Req_proconneg_1" class="xref">Figure 5</a> a user agent requests an RDF serialization from a server and expresses preference for two media types using the "Accept" header and two profiles using the "Accept-Profile" header.  It uses q-values to express a preference for the profile with profile URI &lt;http://example.org/shapes/shape-1&gt; over the one with profile URI &lt;http://example.org/shapes/shape-2&gt;.  </p>
-<div id="rfc.figure.5"></div>
-<div id="Req_proconneg_1"></div>
-<pre> 
+</pre>
+</div>
+<figcaption><a href="#figure-5" class="selfRef">Figure 5</a>:
+<a href="#name-server-makes-profiled-repre" class="selfRef">Server makes profiled representations discoverable</a>
+        </figcaption></figure>
+</div>
+</section>
+</div>
+<div id="Negotiating">
+<section id="section-4">
+      <h2 id="name-negotiating-for-profiled-re">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-negotiating-for-profiled-re" class="section-name selfRef">Negotiating for Profiled Representations</a>
+      </h2>
+<p id="section-4-1"><a href="#why" class="auto internal xref">Section 1.2</a> describes two approaches for conveying profile information in HTTP interactions that make 
+ it possible to negotiate for profiled representations by applying content negotiation in the media type dimension. 
+ It also indicates the restricted applicability of these approaches, in both cases a result of their direct dependence on the 
+ media type registration process.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-4-2">
+ This section describes an approach that applies content negotiation in a dimension that it was previously not applied to. 
+ The profile negotiation approach introduced here is generally applicable for 
+ resource representations, irrespective of media type. These are its core aspects:<a href="#section-4-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4-3.1">In order to allow a user agent to inform a server about its preferences regarding profiles for resource representations, 
+ the "Accept-Profile" HTTP header introduced here is used. A user agent can specify several profiles and use quality indicators (q-values) 
+ to indicate preferences.<a href="#section-4-3.1" class="pilcrow">¶</a>
+</li>
+        <li class="normal" id="section-4-3.2">In order to allow a server to express its support for profile negotiation 
+ the "Vary" HTTP header is used, in this case, with the "Accept-Profile" value.<a href="#section-4-3.2" class="pilcrow">¶</a>
+</li>
+        <li class="normal" id="section-4-3.3">In order to allow a server to convey the profile of a representation delivered to a user agent, 
+ rather than introducing a server-side counterpart to the client-side "Accept-Profile" header, 
+ the existing 
+ "profile" link approach introduced by <span>[<a href="#RFC6906" class="cite xref">RFC6906</a>]</span> is used. If a representation conforms to multiple profiles, a distinct "profile" 
+ link is used per profile; the order in which these links are provided has no relevance.<a href="#section-4-3.3" class="pilcrow">¶</a>
+</li>
+        <li class="normal" id="section-4-3.4">In order to allow a server to convey the profiles it supports, web links 
+ with the "formats" link hint introduced in <span>[<a href="#I-D.nottingham-link-hint" class="cite xref">I-D.nottingham-link-hint</a>]</span> are used to convey the profiles of the link target 
+ resources. This approach uniformely applies to reponses to HTTP HEAD/GET/PUT/POST/PATCH.<a href="#section-4-3.4" class="pilcrow">¶</a>
+</li>
+        <li class="normal" id="section-4-3.5">Throughout the profile negotiation approach, a profile MUST be referred to by a URI. This is the case for the content of the "Accept-Profile" HTTP header, 
+ for the target of web links with the "profile" link relation, and 
+ for the content of the "formats" link hint for web links.<a href="#section-4-3.5" class="pilcrow">¶</a>
+</li>
+      </ul>
+<section id="section-4.1">
+        <h3 id="name-profile-negotiation-details">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-profile-negotiation-details" class="section-name selfRef">Profile Negotiation Details</a>
+        </h3>
+<p id="section-4.1-1">Profile negotiation uses the content negotiation processes described in
+ <span><a href="#RFC7231" class="internal xref">Section 3.4 of RFC 7231</a> [<a href="#RFC7231" class="cite xref">RFC7231</a>]</span> but applies them to the profile dimension. 
+ Both proactive negotiation and reactive negotiation for profiles can be supported by servers. 
+ Both are described in more detail in the remainder of this section.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.1-2">
+ In profile negotiation, a profile MUST be referred to by a URI that, from here onwards, is named a profile URI. 
+ If the profile URI is dereferencable it SHOULD lead to a document that details the profile. If the profile URI 
+ is not dereferencable (e.g. a <span><a href="#RFC8141" class="internal xref">URN</a> [<a href="#RFC8141" class="cite xref">RFC8141</a>]</span> or an <span><a href="#RFC4452" class="internal xref">info-URI</a> [<a href="#RFC4452" class="cite xref">RFC4452</a>]</span>) 
+ facilities SHOULD be available to allow user agents and servers to understand their meaning, e.g. community registries of profiles.<a href="#section-4.1-2" class="pilcrow">¶</a></p>
+<div id="proconneg">
+<section id="section-4.1.1">
+          <h4 id="name-proactive-profile-negotiati">
+<a href="#section-4.1.1" class="section-number selfRef">4.1.1. </a><a href="#name-proactive-profile-negotiati" class="section-name selfRef">Proactive Profile Negotiation</a>
+          </h4>
+<p id="section-4.1.1-1">In proactive profile negotiation, the user agent uses the 
+ "Accept-Profile" HTTP header to inform the server about the agent's preference 
+ regarding profiles to be used for representing a resource in the server's response. 
+ In case a user agent wants to express a preference for a single profile, the value of the header is that 
+ profile's URI. In case a user agent wants to express a preference for multiple profiles, the value of the header is 
+ a list containing each profile's URI, seperated by commas. Alternatively, multiple "Accept-Profile" HTTP headers can be used, 
+ each conveying a single profile URI. Quality indicators (q-values) MAY be used to rank profile preferences.
+ The order in which profile URIs are conveyed or the duplicate mentioning of a same profile URI 
+ MUST NOT be interpreted as significant.<a href="#section-4.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.1.1-2">A server that supports proactive profile negotiation for the resource that a user agent  
+ interacts with:<a href="#section-4.1.1-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.1-3.1">MUST include a "Vary" HTTP header containing the value "accept-profile" in its response to the user agent.<a href="#section-4.1.1-3.1" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-4.1.1-3.2">MUST include a "Link" HTTP header containing a link with the "profile" relation type that has as link target the profile URI 
+ of the resource representation returned to the user agent. In case the representation conforms to additional profiles known 
+ to the server, such a "profile" link SHOULD be included for each.<a href="#section-4.1.1-3.2" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-4.1.1-3.3">SHOULD convey the availability of alternate profiled representations of the resource by using the 
+ link hint approach described in <a href="#reconneg" class="auto internal xref">Section 4.1.2</a>.<a href="#section-4.1.1-3.3" class="pilcrow">¶</a>
+</li>
+          </ul>
+<p id="section-4.1.1-4">These requirements for servers that support proactive profile negotiation also apply when:<a href="#section-4.1.1-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.1-5.1">The user agent expressed a profile preference in its request by using an "Accept-Profile" header but the server
+ cannot return a representation that conforms to a preferred profile.<a href="#section-4.1.1-5.1" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-4.1.1-5.2">The user agent did not express a profile preference using an "Accept-Profile" header in its request.<a href="#section-4.1.1-5.2" class="pilcrow">¶</a>
+</li>
+          </ul>
+<p id="section-4.1.1-6">A user agent SHOULD interpret the abscence of a "Vary" HTTP header with an "accept-profile" value in a response from a server 
+ as the lack of support for profile negotiation for the resource the user agent interacts with.<a href="#section-4.1.1-6" class="pilcrow">¶</a></p>
+<p id="section-4.1.1-7">A server SHOULD consider representations that do not conform to any of the profiles 
+ listed by a user agent in an "Accept-Profile" header 
+ as non-interpretable by the agent. As such, honoring the user agent preferences in the 
+ profile dimension SHOULD take precedence over honoring content negotiation in other dimensions.<a href="#section-4.1.1-7" class="pilcrow">¶</a></p>
+<p id="section-4.1.1-8"> 
+ In <a href="#Req_proconneg_1" class="auto internal xref">Figure 6</a> a user agent requests an RDF serialization from a server and expresses preference for two 
+ media types using the "Accept" header and two profiles using the "Accept-Profile" header. 
+ It uses q-values to express a preference for the profile with profile URI 
+ &lt;http://example.org/shapes/shape-1&gt; over the one with profile URI &lt;http://example.org/shapes/shape-2&gt;.<a href="#section-4.1.1-8" class="pilcrow">¶</a></p>
+<span id="name-client-expresses-a-preferen"></span><div id="Req_proconneg_1">
+<figure id="figure-6">
+            <div class="alignLeft art-text artwork" id="section-4.1.1-9.1">
+<pre>
 GET /document HTTP/1.1
 Host: example.org
 Accept: text/turtle, application/rdf+xml
@@ -655,54 +1716,87 @@ Accept-Profile: "http://example.org/shapes/shape-1" ; q=0.8 ,
                 "http://example.org/shapes/shape-2" ; q=0.5
 Connection: close
 
-						</pre>
-<p class="figure">Figure 5: Client expresses a preference for two profiles</p>
-<p><a href="#Res_proconneg_1" class="xref">Figure 6</a> shows the server's response to the request of <a href="#Req_proconneg_1" class="xref">Figure 5</a>.  By means of the "Vary" header, the server expresses support for negotiation in both the media type and profile dimensions.  The "profile" link with link target &lt;http://example.org/shapes/shape-2&gt; indicates that the server was able to honor the user agent's second profile preference. Another "profile" link shows that the delivered representation also conforms to a profile with profile URI &lt;http://example.org/shapes/shape-3&gt;. Furthermore, using an "alternate" link, the server indicates support for another profile with &lt;http://example.org/shapes/shape-4&gt; as profile URI. Note that, even if the user agent does not express profile preferences using the "Accept-Profile" header and the server's "Vary" header would be the same, the "Link" header would still include a "profile" link to indicate the profile of the representation returned by the server.  </p>
-<div id="rfc.figure.6"></div>
-<div id="Res_proconneg_1"></div>
-<pre> 
+</pre>
+</div>
+<figcaption><a href="#figure-6" class="selfRef">Figure 6</a>:
+<a href="#name-client-expresses-a-preferen" class="selfRef">Client expresses a preference for two profiles</a>
+            </figcaption></figure>
+</div>
+<p id="section-4.1.1-10"> 
+ <a href="#Res_proconneg_1" class="auto internal xref">Figure 7</a> shows the server's response to the request of <a href="#Req_proconneg_1" class="auto internal xref">Figure 6</a>.
+ By means of the "Vary" header, the server expresses support for negotiation in both the media type and profile dimensions. 
+ The "profile" link with link target &lt;http://example.org/shapes/shape-2&gt; indicates that the server was able to honor 
+ the user agent's second profile preference. Another "profile" link shows that the delivered representation also conforms 
+ to a profile with profile URI &lt;http://example.org/shapes/shape-3&gt;. Furthermore, using an "alternate" link, the server indicates 
+ support for another profile with &lt;http://example.org/shapes/shape-4&gt; as profile URI. Note that, even if the user agent does not 
+ express profile preferences using the "Accept-Profile" header and the server's "Vary" header would be the same, the "Link" header 
+ would still include a "profile" link to indicate the profile of the representation returned by the server.<a href="#section-4.1.1-10" class="pilcrow">¶</a></p>
+<span id="name-response-honors-a-user-agen"></span><div id="Res_proconneg_1">
+<figure id="figure-7">
+            <div class="alignLeft art-text artwork" id="section-4.1.1-11.1">
+<pre>
 HTTP/1.1 200 OK
 Content-Type: text/turtle
 Vary: Accept, Accept-Profile
-Link: &lt;http://example.org/shapes/shape-2&gt; 
-      ; rel="profile" , 
-      &lt;http://example.org/shapes/shape-3&gt; 
-      ; rel="profile" , 
-      &lt;http://example.org/document&gt; 
-      ; rel="alternate" 
-      ; type="text/turtle" 
+Link: &lt;http://example.org/shapes/shape-2&gt;
+      ; rel="profile" ,
+      &lt;http://example.org/shapes/shape-3&gt;
+      ; rel="profile" ,
+      &lt;http://example.org/document&gt;
+      ; rel="alternate"
+      ; type="text/turtle"
       ; formats="http://example.org/shapes/shape-4"
 Content-Length: 8724
 Connection: close
 
 ...
 
-						</pre>
-<p class="figure">Figure 6: Response honors a user agent's preference</p>
-<p><a href="#Res_proconneg_2" class="xref">Figure 7</a> shows the response to the request of <a href="#Req_proconneg_1" class="xref">Figure 5</a> in case the server supports profile negotiation for the resource at hand but can not return a representation that conforms to a profile preferred by the user agent.  The server has chosen to nevertheless return a representation that conforms to profile &lt;http://example.org/shapes/shape-4&gt;, which is not among the ones preferred by the user agent. The server also reveals the existence of a representation that conforms to profile &lt;http://example.org/shapes/shape-5&gt;. The server could also choose not to return a default representation in which case it would return a "406 Not Acceptable" HTTP response code and no response body. It would not provide any "profile" links but might use "alternate" links with a "formats" attribute to indicate the existence of supported profiles.  </p>
-<div id="rfc.figure.7"></div>
-<div id="Res_proconneg_2"></div>
-<pre> 
+</pre>
+</div>
+<figcaption><a href="#figure-7" class="selfRef">Figure 7</a>:
+<a href="#name-response-honors-a-user-agen" class="selfRef">Response honors a user agent's preference</a>
+            </figcaption></figure>
+</div>
+<p id="section-4.1.1-12"> 
+ <a href="#Res_proconneg_2" class="auto internal xref">Figure 8</a> shows the response to the request of <a href="#Req_proconneg_1" class="auto internal xref">Figure 6</a> in case the server 
+ supports profile negotiation for the resource at hand but can not return a representation that conforms to a profile preferred by the user agent. 
+ The server has chosen to nevertheless return a representation that conforms to profile &lt;http://example.org/shapes/shape-4&gt;,  
+ which is not among the ones preferred by the user agent. The server also reveals the existence of a representation 
+ that conforms to profile &lt;http://example.org/shapes/shape-5&gt;. The server could also choose not to return a default 
+ representation in which case it would return a "406 Not Acceptable" HTTP response code and no response body. It would not 
+ provide any "profile" links but might use "alternate" links with a "formats" attribute to indicate the existence of supported profiles.<a href="#section-4.1.1-12" class="pilcrow">¶</a></p>
+<span id="name-response-does-not-honor-a-u"></span><div id="Res_proconneg_2">
+<figure id="figure-8">
+            <div class="alignLeft art-text artwork" id="section-4.1.1-13.1">
+<pre>
 HTTP/1.1 200 OK
 Content-Type: text/turtle
 Vary: Accept, Accept-Profile
-Link: &lt;http://example.org/shapes/shape-4&gt; 
+Link: &lt;http://example.org/shapes/shape-4&gt;
       ; rel="profile" ,
-      &lt;http://example.org/document&gt; 
-      ; rel="alternate" 
-      ; type="text/turtle" 
+      &lt;http://example.org/document&gt;
+      ; rel="alternate"
+      ; type="text/turtle"
       ; formats="http://example.org/shapes/shape-5"
 Content-Length: 6333
 Connection: close
 
 ...
 
-						</pre>
-<p class="figure">Figure 7: Response does not honor a user agent's preference but includes default representation</p>
-<p><a href="#Res_proconneg_3" class="xref">Figure 8</a> shows the response to the request of <a href="#Req_proconneg_1" class="xref">Figure 5</a> in case the server does not support profile negotiation for the resource &lt;http://example.org/document&gt;. It does support negotiation in the media type dimension and has honoured one of the user agent's preferences with that regard, as can be seen by the "Vary" and "Content-Type" headers.  </p>
-<div id="rfc.figure.8"></div>
-<div id="Res_proconneg_3"></div>
-<pre> 
+</pre>
+</div>
+<figcaption><a href="#figure-8" class="selfRef">Figure 8</a>:
+<a href="#name-response-does-not-honor-a-u" class="selfRef">Response does not honor a user agent's preference but includes default representation</a>
+            </figcaption></figure>
+</div>
+<p id="section-4.1.1-14"> 
+ <a href="#Res_proconneg_3" class="auto internal xref">Figure 9</a> shows the response to the request of <a href="#Req_proconneg_1" class="auto internal xref">Figure 6</a> in case the server 
+ does not support profile negotiation for the resource &lt;http://example.org/document&gt;. It does support negotiation in the media type 
+ dimension and has honoured one of the user agent's preferences with that regard, as can be seen by the "Vary" and "Content-Type" headers.<a href="#section-4.1.1-14" class="pilcrow">¶</a></p>
+<span id="name-response-indicates-lack-of-"></span><div id="Res_proconneg_3">
+<figure id="figure-9">
+            <div class="alignLeft art-text artwork" id="section-4.1.1-15.1">
+<pre>
 HTTP/1.1 200 OK
 Content-Type: text/turtle
 Vary: Accept
@@ -711,58 +1805,88 @@ Connection: close
 
 ...
 
-						</pre>
-<p class="figure">Figure 8: Response indicates lack of support for proactive profile negotiation</p>
-<h1 id="rfc.section.4.1.2">
-<a href="#rfc.section.4.1.2">4.1.2.</a> <a href="#reconneg" id="reconneg">Reactive Profile Negotiation</a>
-</h1>
-<p id="rfc.section.4.1.2.p.1">In reactive profile negotiation, the user agent selects the profiled representation that best meets its preferences on the basis of a list of possible representations it obtains from the server.  A server that supports reactive profile negotiation MUST provide such a list of supported profiled representation as a set of links in the "Link" header. Each of these links:</p>
-<p></p>
-
-<ul>
-<li>SHOULD have the "alternate" relation type.</li>
-<li>MUST use the "formats" link hint to convey the profile URI of the profile to which the resource that is the link target conforms.</li>
-<li>SHOULD use the "allow" link hint to convey the HTTP methods that are supported by the resource that is the link target.</li>
-</ul>
-<p><a href="#Req_reconneg_1" class="xref">Figure 9</a> shows a user agent issuing a HTTP HEAD on a resource in order determine whether profiled representations are available for it. <a href="#Res_reconneg_1" class="xref">Figure 10</a> shows the response of a server that supports reactive profile negotiation. By means of "alternate" links in the "Link" header, the server indicates support for two profiled representations for the resource at hand, and, for each, indicates the URI at which they can be accessed, as well as their respective profile URIs, media types, and supported HTTP methods. On the basis of this response, the client can decide whether any of the linked resources conform to a preferred profile, and, if so, access the respective link target. <a href="#Res_reconneg_2" class="xref">Figure 11</a> shows the response to an HTTP HEAD issued on the link target &lt;http://example.org/bibrecord/1/DC&gt; of the first "alternate" link.  </p>
-<div id="rfc.figure.9"></div>
-<div id="Req_reconneg_1"></div>
-<pre> 
+</pre>
+</div>
+<figcaption><a href="#figure-9" class="selfRef">Figure 9</a>:
+<a href="#name-response-indicates-lack-of-" class="selfRef">Response indicates lack of support for proactive profile negotiation</a>
+            </figcaption></figure>
+</div>
+</section>
+</div>
+<div id="reconneg">
+<section id="section-4.1.2">
+          <h4 id="name-reactive-profile-negotiatio">
+<a href="#section-4.1.2" class="section-number selfRef">4.1.2. </a><a href="#name-reactive-profile-negotiatio" class="section-name selfRef">Reactive Profile Negotiation</a>
+          </h4>
+<p id="section-4.1.2-1">In reactive profile negotiation, the user agent selects the profiled representation that best meets its preferences 
+ on the basis of a list of possible representations it obtains from the server.  A server that supports reactive 
+ profile negotiation MUST provide such a list of supported profiled representation as a set of links in the "Link" header. Each of these links:<a href="#section-4.1.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.2-2.1">SHOULD have the "alternate" relation type.<a href="#section-4.1.2-2.1" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-4.1.2-2.2">MUST use the "formats" link hint to convey the profile URI of the profile to which the resource that is the link target conforms.<a href="#section-4.1.2-2.2" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-4.1.2-2.3">SHOULD use the "allow" link hint to convey the HTTP methods that are supported by the resource that is the link target.<a href="#section-4.1.2-2.3" class="pilcrow">¶</a>
+</li>
+          </ul>
+<p id="section-4.1.2-3"><a href="#Req_reconneg_1" class="auto internal xref">Figure 10</a> shows a user agent issuing an HTTP HEAD on a resource in order to determine whether 
+ profiled representations are available for it. <a href="#Res_reconneg_1" class="auto internal xref">Figure 11</a> shows the response of a server that 
+ supports reactive profile negotiation. By means of "alternate" links in the "Link" header, the server indicates support for 
+     two profiled representations for the resource at hand, and, for each, indicates the URI at which they can be 
+ accessed, as well as their respective profile URIs, media types, and supported HTTP methods. On the basis of this response, 
+ the client can decide whether any of the linked resources conform to a preferred profile, and, if so, access 
+ the respective link target. <a href="#Res_reconneg_2" class="auto internal xref">Figure 12</a> shows the response to an HTTP HEAD issued on the link target 
+ &lt;http://example.org/bibrecord/1/DC&gt; of the first "alternate" link.<a href="#section-4.1.2-3" class="pilcrow">¶</a></p>
+<span id="name-client-determines-support-f"></span><div id="Req_reconneg_1">
+<figure id="figure-10">
+            <div class="alignLeft art-text artwork" id="section-4.1.2-4.1">
+<pre>
 HEAD /bibrecord/1 HTTP/1.1
 Host: example.org
 Accept: application/xml
 Connection: close
 
-						</pre>
-<p class="figure">Figure 9: Client determines support for profiles</p>
-<div id="rfc.figure.10"></div>
-<div id="Res_reconneg_1"></div>
-<pre> 
+</pre>
+</div>
+<figcaption><a href="#figure-10" class="selfRef">Figure 10</a>:
+<a href="#name-client-determines-support-f" class="selfRef">Client determines support for profiles</a>
+            </figcaption></figure>
+</div>
+<span id="name-server-supports-two-profile"></span><div id="Res_reconneg_1">
+<figure id="figure-11">
+            <div class="alignLeft art-text artwork" id="section-4.1.2-5.1">
+<pre>
 HTTP/1.1 200 OK
 Content-Type: text/plain
-Link: &lt;http://example.org/bibrecord/1/DC&gt; 
-      ; rel="alternate" 
-      ; type="application/xml" 
+Link: &lt;http://example.org/bibrecord/1/DC&gt;
+      ; rel="alternate"
+      ; type="application/xml"
       ; formats="http://purl.org/dc/terms/"
       ; allow="HEAD,GET,PATCH" ,
-      &lt;http://example.org/bibrecord/1/BIBFRAME&gt; 
-      ; rel="alternate" 
+      &lt;http://example.org/bibrecord/1/BIBFRAME&gt;
+      ; rel="alternate"
+      ; type="application/xml"
       ; formats="http://id.loc.gov/ontologies/bibframe/"
       ; allow="HEAD,GET"
 Content-Length: 200
 Connection: close
 
-						</pre>
-<p class="figure">Figure 10: Server supports two profiles</p>
-<div id="rfc.figure.11"></div>
-<div id="Res_reconneg_2"></div>
-<pre> 
+</pre>
+</div>
+<figcaption><a href="#figure-11" class="selfRef">Figure 11</a>:
+<a href="#name-server-supports-two-profile" class="selfRef">Server supports two profiles</a>
+            </figcaption></figure>
+</div>
+<span id="name-response-to-a-client-access"></span><div id="Res_reconneg_2">
+<figure id="figure-12">
+            <div class="alignLeft art-text artwork" id="section-4.1.2-6.1">
+<pre>
 HTTP/1.1 200 OK
 Content-Type: application/xml
 Link: &lt;http://purl.org/dc/terms/&gt;
       ; rel="profile" ,
-      &lt;http://example.org/bibrecord/1/BIBFRAME&gt; 
-      ; rel="alternate" 
+      &lt;http://example.org/bibrecord/1/BIBFRAME&gt;
+      ; rel="alternate"
       ; formats="http://id.loc.gov/ontologies/bibframe/"
       ; allow="HEAD,GET"
 Allow: HEAD, GET, PATCH
@@ -770,55 +1894,95 @@ Accept-Patch: application/xml-patch+xml
 Content-Length: 458
 Connection: close
 
-						</pre>
-<p class="figure">Figure 11: Response to a client accessesing a profiled representation</p>
-<h1 id="rfc.section.4.2">
-<a href="#rfc.section.4.2">4.2.</a> <a href="#accept-profile" id="accept-profile">Accept-Profile HTTP Header Syntax</a>
-</h1>
-<p><a href="#abnf_accept_profile" class="xref">Figure 12</a> describes the syntax of the "Accept-Profile" HTTP header, using the grammar defined in <a href="#RFC5234" class="xref">RFC 5234</a> and the rules defined in <a href="#RFC7230" class="xref">Section 3.2 of RFC 7230</a>.  The definitions of "URI-reference" and "weight" are imported from <a href="#RFC7230" class="xref">RFC 7230</a> and <a href="#RFC7231" class="xref">RFC 7231</a>, respectively.</p>
-<div id="rfc.figure.12"></div>
-<div id="abnf_accept_profile"></div>
+</pre>
+</div>
+<figcaption><a href="#figure-12" class="selfRef">Figure 12</a>:
+<a href="#name-response-to-a-client-access" class="selfRef">Response to a client accessesing a profiled representation</a>
+            </figcaption></figure>
+</div>
+</section>
+</div>
+</section>
+<div id="accept-profile">
+<section id="section-4.2">
+        <h3 id="name-accept-profile-http-header-">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-accept-profile-http-header-" class="section-name selfRef">Accept-Profile HTTP Header Syntax</a>
+        </h3>
+<p id="section-4.2-1"><a href="#abnf_accept_profile" class="auto internal xref">Figure 13</a> describes the syntax 
+ of the "Accept-Profile" HTTP header,
+ using the grammar defined in <span><a href="#RFC5234" class="internal xref">RFC 5234</a> [<a href="#RFC5234" class="cite xref">RFC5234</a>]</span> and the rules
+ defined in <span><a href="#RFC9110" class="internal xref">Section 5.5 of RFC 9110</a> [<a href="#RFC9110" class="cite xref">RFC9110</a>]</span>.
+ The definitions of "URI-reference" and "weight" are imported from
+ <span><a href="#RFC9110" class="internal xref">RFC 9110</a> [<a href="#RFC9110" class="cite xref">RFC9110</a>]</span>.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<span id="name-abnf-for-the-accept-profile"></span><div id="abnf_accept_profile">
+<figure id="figure-13">
+          <div class="alignLeft art-abnf art-text artwork" id="section-4.2-2.1">
 <pre>
 Accept-Profile = "Accept-Profile" ":"
 OWS (accept-value) *(OWS "," OWS accept-value) OWS
 accept-value = "&lt;" URI-reference "&gt;" [weight] | accept-value-ext
 
-					</pre>
-<p class="figure">Figure 12: ABNF for the "Accept-Profile" HTTP header</p>
-<h1 id="rfc.section.5">
-<a href="#rfc.section.5">5.</a> <a href="#Writing" id="Writing">Writing Profiled Representations</a>
-</h1>
-<p id="rfc.section.5.p.1">A user agent that wants to submit a profiled representation to a server can use the reactive negotiation approach to determine the nature of a server's support with this regard.  </p>
-<p id="rfc.section.5.p.2">A server that allows user agents to submit profiled representations SHOULD follow the directions for reactive negotiation described in <a href="#reconneg" class="xref">Section 4.1.2</a>.  </p>
-<p id="rfc.section.5.p.3">A client that submits a representation that complies to a profile that was not advertised by the server by means of the reactive negotiation approach, SHOULD assume that the server is not able to process it.  </p>
-<p id="rfc.section.5.p.4">A server that fails a submission request due to receiving a payload with a profile that it does not support MUST respond with a "422 Unprocessable Entity" HTTP status code and SHOULD use the approach described in <a href="#reconneg" class="xref">Section 4.1.2</a> to convey profiles that are supported.  </p>
-<p id="rfc.section.5.p.5">Continuing from <a href="#Res_reconneg_2" class="xref">Figure 11</a>, <a href="#Req_write_1" class="xref">Figure 13</a> shows a user agent issuing a HTTP PATCH against resource &lt;http://example.org/bibrecord/1/DC&gt; in order to update it.  It uses the "Content-Encoding" header to convey the XML Patch media type of its message body and a link with a "profile" relation type in the "Link" header to indicate the profile to which it conforms. <a href="#Res_write_1" class="xref">Figure 14</a> shows the server's response, indicating that the patch was applied successfully; the server returns the updated representation as message body.  </p>
-<div id="rfc.figure.13"></div>
-<div id="Req_write_1"></div>
-<pre> 
+</pre>
+</div>
+<figcaption><a href="#figure-13" class="selfRef">Figure 13</a>:
+<a href="#name-abnf-for-the-accept-profile" class="selfRef">ABNF for the "Accept-Profile" HTTP header</a>
+          </figcaption></figure>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="Writing">
+<section id="section-5">
+      <h2 id="name-writing-profiled-representa">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-writing-profiled-representa" class="section-name selfRef">Writing Profiled Representations</a>
+      </h2>
+<p id="section-5-1">A user agent that wants to submit a profiled representation to a server can use the reactive negotiation approach 
+ to determine the nature of a server's support with this regard.<a href="#section-5-1" class="pilcrow">¶</a></p>
+<p id="section-5-2">A server that allows user agents to submit profiled representations SHOULD follow the directions 
+ for reactive negotiation described in <a href="#reconneg" class="auto internal xref">Section 4.1.2</a>.<a href="#section-5-2" class="pilcrow">¶</a></p>
+<p id="section-5-3">A client that submits a representation that conforms to a profile that was not advertised by the server 
+ by means of the reactive negotiation approach, SHOULD assume that the server is not able to process it.<a href="#section-5-3" class="pilcrow">¶</a></p>
+<p id="section-5-4">A server that fails a submission request due to receiving a payload with a profile that it does not support 
+ MUST respond with a "422 Unprocessable Entity" HTTP status code and
+ SHOULD use the approach described in <a href="#reconneg" class="auto internal xref">Section 4.1.2</a> to convey profiles that are supported.<a href="#section-5-4" class="pilcrow">¶</a></p>
+<p id="section-5-5">Continuing from <a href="#Res_reconneg_2" class="auto internal xref">Figure 12</a>, <a href="#Req_write_1" class="auto internal xref">Figure 14</a> 
+ shows a user agent issuing an HTTP PATCH against resource &lt;http://example.org/bibrecord/1/DC&gt; in order to update it. 
+ It uses the "Content-Encoding" header to convey the XML Patch media type of its message body and a link with a "profile" relation type 
+ in the "Link" header to indicate the profile to which it conforms. <a href="#Res_write_1" class="auto internal xref">Figure 15</a> shows the server's response, 
+ indicating that the patch was applied successfully; the server returns the updated representation as message body.<a href="#section-5-5" class="pilcrow">¶</a></p>
+<span id="name-client-submits-profiled-rep"></span><div id="Req_write_1">
+<figure id="figure-14">
+        <div class="alignLeft art-text artwork" id="section-5-6.1">
+<pre>
 PATCH /bibrecord/1/DC HTTP/1.1
 Host: example.org
-Content-Encoding: application/xml-patch+xml
-Link: &lt;http://purl.org/dc/terms/&gt; 
-      ; rel="profile" 
+Content-Type: application/xml-patch+xml
+Link: &lt;http://purl.org/dc/terms/&gt;
+      ; rel="profile"
 Accept: application/xml
 Content-Length: 321
 Connection: close
 
 ...
 
-				</pre>
-<p class="figure">Figure 13: Client submits profiled representation</p>
-<div id="rfc.figure.14"></div>
-<div id="Res_write_1"></div>
-<pre> 
+</pre>
+</div>
+<figcaption><a href="#figure-14" class="selfRef">Figure 14</a>:
+<a href="#name-client-submits-profiled-rep" class="selfRef">Client submits profiled representation</a>
+        </figcaption></figure>
+</div>
+<span id="name-server-indicates-successful"></span><div id="Res_write_1">
+<figure id="figure-15">
+        <div class="alignLeft art-text artwork" id="section-5-7.1">
+<pre>
 HTTP/1.1 200 OK
 Content-Type: application/xml
 Content-Location: http://example.org/bibrecord/1/DC
 Link: &lt;http://example.org/bibrecord/1/DC&gt;
       ; rel=profile" ,
-      &lt;http://example.org/bibrecord/1/BIBFRAME&gt; 
-      ; rel="alternate" 
+      &lt;http://example.org/bibrecord/1/BIBFRAME&gt;
+      ; rel="alternate"
       ; formats="http://id.loc.gov/ontologies/bibframe/"
       ; allow="HEAD,GET"
 Allow: HEAD, GET, PATCH
@@ -828,203 +1992,215 @@ Connection: close
 
 ...
 
-				</pre>
-<p class="figure">Figure 14: Server indicates successful submission of profiled representation by client</p>
-<p id="rfc.section.5.p.6">If, in <a href="#Req_write_1" class="xref">Figure 13</a>, the user agent would have issued an HTTP PATCH on resource &lt;http://example.org/bibrecord/1/DC&gt; indicating that the profile URI of the patch was &lt;http://id.loc.gov/ontologies/bibframe/&gt;, the response would have a 422 HTTP status code to express that the profile is not supported by the resource at hand.  Such a response is shown in <a href="#Res_write_2" class="xref">Figure 15</a>.</p>
-<div id="rfc.figure.15"></div>
-<div id="Res_write_2"></div>
-<pre> 
+</pre>
+</div>
+<figcaption><a href="#figure-15" class="selfRef">Figure 15</a>:
+<a href="#name-server-indicates-successful" class="selfRef">Server indicates successful submission of profiled representation by client</a>
+        </figcaption></figure>
+</div>
+<p id="section-5-8">If, in <a href="#Req_write_1" class="auto internal xref">Figure 14</a>, the user agent would have issued an HTTP PATCH 
+ on resource &lt;http://example.org/bibrecord/1/DC&gt; indicating that the profile URI of the 
+ patch was &lt;http://id.loc.gov/ontologies/bibframe/&gt;, the response would have a 422 HTTP status code 
+ to express that the profile is not supported by the resource at hand. 
+ Such a response is shown in 
+ <a href="#Res_write_2" class="auto internal xref">Figure 16</a>.<a href="#section-5-8" class="pilcrow">¶</a></p>
+<span id="name-server-indicates-unsuccessf"></span><div id="Res_write_2">
+<figure id="figure-16">
+        <div class="alignLeft art-text artwork" id="section-5-9.1">
+<pre>
 HTTP/1.1 422 Unprocessable Entity
 Content-Type: text/plain
-Link: &lt;http://example.org/bibrecord/1/DC&gt; 
-      ; rel="alternate" 
-      ; type="application/xml" 
+Link: &lt;http://example.org/bibrecord/1/DC&gt;
+      ; rel="alternate"
+      ; type="application/xml"
       ; formats="http://purl.org/dc/terms/"
-      ; allow="HEAD,GET,PATCH" 
+      ; allow="HEAD,GET,PATCH"
 Content-Length: 110
 Connection: close
 
 ...
 
-						</pre>
-<p class="figure">Figure 15: Server indicates unsuccessful submission of profiled representation by client</p>
-<h1 id="rfc.section.6">
-<a href="#rfc.section.6">6.</a> IANA Considerations</h1>
-<p id="rfc.section.6.p.1">This memo requires IANA to register the Accept-Profile HTTP header defined in <a href="#accept-profile" class="xref">Section 4.2</a> in the appropriate IANA registry: </p>
-<p></p>
-
-<ul>
-<li>Header Field Name: Accept-Profile</li>
-<li>Applicable Protocol: Hypertext Transfer Protocol (HTTP)</li>
-<li>Status: Informational</li>
-<li>Author/Change controller: IETF</li>
-<li>Specification document(s): this document</li>
-</ul>
-<h1 id="rfc.section.7">
-<a href="#rfc.section.7">7.</a> Security Considerations</h1>
-<h1 id="rfc.section.8">
-<a href="#rfc.section.8">8.</a> Acknowledgments</h1>
-<p id="rfc.section.8.p.1">Many thanks to our colleagues for feedback: Enno Meijers, Michael L. Nelson</p>
-<h1 id="rfc.references">
-<a href="#rfc.references">9.</a> References</h1>
-<h1 id="rfc.references.1">
-<a href="#rfc.references.1">9.1.</a> Normative References</h1>
-<table><tbody>
-<tr>
-<td class="reference"><b id="I-D.nottingham-link-hint">[I-D.nottingham-link-hint]</b></td>
-<td class="top">
-<a>Nottingham, M.</a>, "<a href="https://tools.ietf.org/html/draft-nottingham-link-hint-02">HTTP Link Hints</a>", Internet-Draft draft-nottingham-link-hint-02, March 2020.</td>
-</tr>
-<tr>
-<td class="reference"><b id="RFC2119">[RFC2119]</b></td>
-<td class="top">
-<a>Bradner, S.</a>, "<a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>", BCP 14, RFC 2119, DOI 10.17487/RFC2119, March 1997.</td>
-</tr>
-<tr>
-<td class="reference"><b id="RFC5234">[RFC5234]</b></td>
-<td class="top">
-<a>Crocker, D.</a> and <a>P. Overell</a>, "<a href="https://tools.ietf.org/html/rfc5234">Augmented BNF for Syntax Specifications: ABNF</a>", STD 68, RFC 5234, DOI 10.17487/RFC5234, January 2008.</td>
-</tr>
-<tr>
-<td class="reference"><b id="RFC6838">[RFC6838]</b></td>
-<td class="top">
-<a>Freed, N.</a>, <a>Klensin, J.</a> and <a>T. Hansen</a>, "<a href="https://tools.ietf.org/html/rfc6838">Media Type Specifications and Registration Procedures</a>", BCP 13, RFC 6838, DOI 10.17487/RFC6838, January 2013.</td>
-</tr>
-<tr>
-<td class="reference"><b id="RFC6906">[RFC6906]</b></td>
-<td class="top">
-<a>Wilde, E.</a>, "<a href="https://tools.ietf.org/html/rfc6906">The 'profile' Link Relation Type</a>", RFC 6906, DOI 10.17487/RFC6906, March 2013.</td>
-</tr>
-<tr>
-<td class="reference"><b id="RFC7230">[RFC7230]</b></td>
-<td class="top">
-<a>Fielding, R.</a> and <a>J. Reschke</a>, "<a href="https://tools.ietf.org/html/rfc7230">Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</a>", RFC 7230, DOI 10.17487/RFC7230, June 2014.</td>
-</tr>
-<tr>
-<td class="reference"><b id="RFC7231">[RFC7231]</b></td>
-<td class="top">
-<a>Fielding, R.</a> and <a>J. Reschke</a>, "<a href="https://tools.ietf.org/html/rfc7231">Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</a>", RFC 7231, DOI 10.17487/RFC7231, June 2014.</td>
-</tr>
-</tbody></table>
-<h1 id="rfc.references.2">
-<a href="#rfc.references.2">9.2.</a> Informative References</h1>
-<table><tbody>
-<tr>
-<td class="reference"><b id="HeeryAndPatel">[HeeryAndPatel]</b></td>
-<td class="top">
-<a title="UK Office for Library and Information networking (UKOLN), University of Bath">Heery, R.</a> and <a title="UK Office for Library and Information networking (UKOLN), University of Bath">M. Patel</a>, "<a href="http://www.ariadne.ac.uk/issue25/app-profiles">Application Profiles: Mixing and Matching Metadata Schemas</a>", 2000.</td>
-</tr>
-<tr>
-<td class="reference"><b id="RFC4452">[RFC4452]</b></td>
-<td class="top">
-<a>Van de Sompel, H.</a>, <a>Hammond, T.</a>, <a>Neylon, E.</a> and <a>S. Weibel</a>, "<a href="https://tools.ietf.org/html/rfc4452">The "info" URI Scheme for Information Assets with Identifiers in Public Namespaces</a>", RFC 4452, DOI 10.17487/RFC4452, April 2006.</td>
-</tr>
-<tr>
-<td class="reference"><b id="RFC5988">[RFC5988]</b></td>
-<td class="top">
-<a>Nottingham, M.</a>, "<a href="https://tools.ietf.org/html/rfc5988">Web Linking</a>", RFC 5988, DOI 10.17487/RFC5988, October 2010.</td>
-</tr>
-<tr>
-<td class="reference"><b id="RFC6839">[RFC6839]</b></td>
-<td class="top">
-<a>Hansen, T.</a> and <a>A. Melnikov</a>, "<a href="https://tools.ietf.org/html/rfc6839">Additional Media Type Structured Syntax Suffixes</a>", RFC 6839, DOI 10.17487/RFC6839, January 2013.</td>
-</tr>
-<tr>
-<td class="reference"><b id="RFC8141">[RFC8141]</b></td>
-<td class="top">
-<a>Saint-Andre, P.</a> and <a>J. Klensin</a>, "<a href="https://tools.ietf.org/html/rfc8141">Uniform Resource Names (URNs)</a>", RFC 8141, DOI 10.17487/RFC8141, April 2017.</td>
-</tr>
-<tr>
-<td class="reference"><b id="RFC8288">[RFC8288]</b></td>
-<td class="top">
-<a>Nottingham, M.</a>, "<a href="https://tools.ietf.org/html/rfc8288">Web Linking</a>", RFC 8288, DOI 10.17487/RFC8288, October 2017.</td>
-</tr>
-<tr>
-<td class="reference"><b id="W3C.REC-shacl-20170720">[W3C.REC-shacl-20170720]</b></td>
-<td class="top">
-<a>Knublauch, H.</a> and <a>D. Kontokostas</a>, "<a href="https://www.w3.org/TR/2017/REC-shacl-20170720">Shapes Constraint Language (SHACL)</a>", World Wide Web Consortium Recommendation REC-shacl-20170720, July 2017.</td>
-</tr>
-<tr>
-<td class="reference"><b id="W3C.REC-xmlschema11-1-20120405">[W3C.REC-xmlschema11-1-20120405]</b></td>
-<td class="top">
-<a>Gao, S.</a>, <a>Sperberg-McQueen, M.</a>, <a>Thompson, H.</a>, <a>Mendelsohn, N.</a>, <a>Beech, D.</a> and <a>M. Maloney</a>, "<a href="http://www.w3.org/TR/2012/REC-xmlschema11-1-20120405">W3C XML Schema Definition Language (XSD) 1.1 Part 1: Structures</a>", World Wide Web Consortium Recommendation REC-xmlschema11-1-20120405, April 2012.</td>
-</tr>
-</tbody></table>
-<h1 id="rfc.authors"><a href="#rfc.authors">Authors' Addresses</a></h1>
-<div class="avoidbreak">
-  <address class="vcard">
-	<span class="vcardline">
-	  <span class="fn">Lars G. Svensson</span> 
-	  <span class="n hidden">
-		<span class="family-name">Svensson</span>
-	  </span>
-	</span>
-	<span class="org vcardline"></span>
-	<span class="adr">
-	  
-	  <span class="vcardline">
-		<span class="locality"></span> 
-		<span class="region"></span>
-		<span class="code"></span>
-	  </span>
-	  <span class="country-name vcardline"></span>
-	</span>
-	<span class="vcardline">EMail: <a href="mailto:lars.svensson@web.de">lars.svensson@web.de</a></span>
-
-<span class="vcardline">URI: <a href="https://orcid.org/0000-0002-8714-9718">https://orcid.org/0000-0002-8714-9718</a></span>
-
-  </address>
-</div><div class="avoidbreak">
-  <address class="vcard">
-	<span class="vcardline">
-	  <span class="fn">Ruben Verborgh</span> 
-	  <span class="n hidden">
-		<span class="family-name">Verborgh</span>
-	  </span>
-	</span>
-	<span class="org vcardline">Ghent University &#8211; imec</span>
-	<span class="adr">
-	  <span class="vcardline">Sint-Pietersnieuwstraat 41</span>
-
-	  <span class="vcardline">
-		<span class="locality">Ghent</span>,  
-		<span class="region"></span>
-		<span class="code">9000</span>
-	  </span>
-	  <span class="country-name vcardline">Belgium</span>
-	</span>
-	<span class="vcardline">Phone: +32 9 331 49 10</span>
-
-<span class="vcardline">EMail: <a href="mailto:ruben.verborgh@ugent.be">ruben.verborgh@ugent.be</a></span>
-
-<span class="vcardline">URI: <a href="https://ruben.verborgh.org/">https://ruben.verborgh.org/</a></span>
-
-  </address>
-</div><div class="avoidbreak">
-  <address class="vcard">
-	<span class="vcardline">
-	  <span class="fn">Herbert Van de Sompel</span> 
-	  <span class="n hidden">
-		<span class="family-name">Van de Sompel</span>
-	  </span>
-	</span>
-	<span class="org vcardline">Data Archiving and Networked Services</span>
-	<span class="adr">
-	  <span class="vcardline">Anna van Saksenlaan 51</span>
-
-	  <span class="vcardline">
-		<span class="locality">The Hague</span>,  
-		<span class="region"></span>
-		<span class="code">2593 HW</span>
-	  </span>
-	  <span class="country-name vcardline">Netherlands</span>
-	</span>
-	<span class="vcardline">EMail: <a href="mailto:herbert.van.de.sompel@dans.knaw.nl">herbert.van.de.sompel@dans.knaw.nl</a></span>
-
-<span class="vcardline">URI: <a href="https://orcid.org/0000-0002-0715-6126">https://orcid.org/0000-0002-0715-6126</a></span>
-
-  </address>
+</pre>
 </div>
-
+<figcaption><a href="#figure-16" class="selfRef">Figure 16</a>:
+<a href="#name-server-indicates-unsuccessf" class="selfRef">Server indicates unsuccessful submission of profiled representation by client</a>
+        </figcaption></figure>
+</div>
+</section>
+</div>
+<section id="section-6">
+      <h2 id="name-iana-considerations">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<p id="section-6-1">
+ This memo requires IANA to register the Accept-Profile HTTP header defined in 
+ <a href="#accept-profile" class="auto internal xref">Section 4.2</a> in the appropriate IANA registry:<a href="#section-6-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6-2.1">Header Field Name: Accept-Profile<a href="#section-6-2.1" class="pilcrow">¶</a>
+</li>
+        <li class="normal" id="section-6-2.2">Applicable Protocol: Hypertext Transfer Protocol (HTTP)<a href="#section-6-2.2" class="pilcrow">¶</a>
+</li>
+        <li class="normal" id="section-6-2.3">Status: Informational<a href="#section-6-2.3" class="pilcrow">¶</a>
+</li>
+        <li class="normal" id="section-6-2.4">Author/Change controller: IETF<a href="#section-6-2.4" class="pilcrow">¶</a>
+</li>
+        <li class="normal" id="section-6-2.5">Specification document(s): this document<a href="#section-6-2.5" class="pilcrow">¶</a>
+</li>
+      </ul>
+</section>
+<section id="section-7">
+      <h2 id="name-security-considerations">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+    </h2>
+</section>
+<section id="section-8">
+      <h2 id="name-acknowledgments">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
+      </h2>
+<p id="section-8-1">Many thanks to our colleagues for feedback: Enno Meijers, Michael L. Nelson<a href="#section-8-1" class="pilcrow">¶</a></p>
+</section>
+<section id="section-9">
+      <h2 id="name-references">
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-references" class="section-name selfRef">References</a>
+      </h2>
+<section id="section-9.1">
+        <h3 id="name-normative-references">
+<a href="#section-9.1" class="section-number selfRef">9.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
+<dl class="references">
+<dt id="I-D.nottingham-link-hint">[I-D.nottingham-link-hint]</dt>
+        <dd>
+<span class="refAuthor">Nottingham, M.</span>, <span class="refTitle">"HTTP Link Hints"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-nottingham-link-hint-03</span>, <time datetime="2023-07-23" class="refDate">23 July 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-nottingham-link-hint-03">https://datatracker.ietf.org/doc/html/draft-nottingham-link-hint-03</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC2119">[RFC2119]</dt>
+        <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc2119">https://www.rfc-editor.org/info/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC5234">[RFC5234]</dt>
+        <dd>
+<span class="refAuthor">Crocker, D., Ed.</span> and <span class="refAuthor">P. Overell</span>, <span class="refTitle">"Augmented BNF for Syntax Specifications: ABNF"</span>, <span class="seriesInfo">STD 68</span>, <span class="seriesInfo">RFC 5234</span>, <span class="seriesInfo">DOI 10.17487/RFC5234</span>, <time datetime="2008-01" class="refDate">January 2008</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc5234">https://www.rfc-editor.org/info/rfc5234</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC6838">[RFC6838]</dt>
+        <dd>
+<span class="refAuthor">Freed, N.</span>, <span class="refAuthor">Klensin, J.</span>, and <span class="refAuthor">T. Hansen</span>, <span class="refTitle">"Media Type Specifications and Registration Procedures"</span>, <span class="seriesInfo">BCP 13</span>, <span class="seriesInfo">RFC 6838</span>, <span class="seriesInfo">DOI 10.17487/RFC6838</span>, <time datetime="2013-01" class="refDate">January 2013</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc6838">https://www.rfc-editor.org/info/rfc6838</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC6906">[RFC6906]</dt>
+        <dd>
+<span class="refAuthor">Wilde, E.</span>, <span class="refTitle">"The 'profile' Link Relation Type"</span>, <span class="seriesInfo">RFC 6906</span>, <span class="seriesInfo">DOI 10.17487/RFC6906</span>, <time datetime="2013-03" class="refDate">March 2013</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc6906">https://www.rfc-editor.org/info/rfc6906</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7231">[RFC7231]</dt>
+        <dd>
+<span class="refAuthor">Fielding, R., Ed.</span> and <span class="refAuthor">J. Reschke, Ed.</span>, <span class="refTitle">"Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content"</span>, <span class="seriesInfo">RFC 7231</span>, <span class="seriesInfo">DOI 10.17487/RFC7231</span>, <time datetime="2014-06" class="refDate">June 2014</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc7231">https://www.rfc-editor.org/info/rfc7231</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9110">[RFC9110]</dt>
+        <dd>
+<span class="refAuthor">Fielding, R., Ed.</span>, <span class="refAuthor">Nottingham, M., Ed.</span>, and <span class="refAuthor">J. Reschke, Ed.</span>, <span class="refTitle">"HTTP Semantics"</span>, <span class="seriesInfo">STD 97</span>, <span class="seriesInfo">RFC 9110</span>, <span class="seriesInfo">DOI 10.17487/RFC9110</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc9110">https://www.rfc-editor.org/info/rfc9110</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9112">[RFC9112]</dt>
+      <dd>
+<span class="refAuthor">Fielding, R., Ed.</span>, <span class="refAuthor">Nottingham, M., Ed.</span>, and <span class="refAuthor">J. Reschke, Ed.</span>, <span class="refTitle">"HTTP/1.1"</span>, <span class="seriesInfo">STD 99</span>, <span class="seriesInfo">RFC 9112</span>, <span class="seriesInfo">DOI 10.17487/RFC9112</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc9112">https://www.rfc-editor.org/info/rfc9112</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+<section id="section-9.2">
+        <h3 id="name-informative-references">
+<a href="#section-9.2" class="section-number selfRef">9.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="HeeryAndPatel">[HeeryAndPatel]</dt>
+        <dd>
+<span class="refAuthor">Heery, R.</span> and <span class="refAuthor">M. Patel</span>, <span class="refTitle">"Application Profiles: Mixing and Matching Metadata Schemas"</span>, <time datetime="2000" class="refDate">2000</time>, <span>&lt;<a href="https://www.ariadne.ac.uk/issue/25/app-profiles/">https://www.ariadne.ac.uk/issue/25/app-profiles/</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC4452">[RFC4452]</dt>
+        <dd>
+<span class="refAuthor">Van de Sompel, H.</span>, <span class="refAuthor">Hammond, T.</span>, <span class="refAuthor">Neylon, E.</span>, and <span class="refAuthor">S. Weibel</span>, <span class="refTitle">"The "info" URI Scheme for Information Assets with Identifiers in Public Namespaces"</span>, <span class="seriesInfo">RFC 4452</span>, <span class="seriesInfo">DOI 10.17487/RFC4452</span>, <time datetime="2006-04" class="refDate">April 2006</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc4452">https://www.rfc-editor.org/info/rfc4452</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC5988">[RFC5988]</dt>
+        <dd>
+<span class="refAuthor">Nottingham, M.</span>, <span class="refTitle">"Web Linking"</span>, <span class="seriesInfo">RFC 5988</span>, <span class="seriesInfo">DOI 10.17487/RFC5988</span>, <time datetime="2010-10" class="refDate">October 2010</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc5988">https://www.rfc-editor.org/info/rfc5988</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8141">[RFC8141]</dt>
+        <dd>
+<span class="refAuthor">Saint-Andre, P.</span> and <span class="refAuthor">J. Klensin</span>, <span class="refTitle">"Uniform Resource Names (URNs)"</span>, <span class="seriesInfo">RFC 8141</span>, <span class="seriesInfo">DOI 10.17487/RFC8141</span>, <time datetime="2017-04" class="refDate">April 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8141">https://www.rfc-editor.org/info/rfc8141</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8288">[RFC8288]</dt>
+        <dd>
+<span class="refAuthor">Nottingham, M.</span>, <span class="refTitle">"Web Linking"</span>, <span class="seriesInfo">RFC 8288</span>, <span class="seriesInfo">DOI 10.17487/RFC8288</span>, <time datetime="2017-10" class="refDate">October 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8288">https://www.rfc-editor.org/info/rfc8288</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="W3C.REC-shacl-20170720">[W3C.REC-shacl-20170720]</dt>
+        <dd>
+<span class="refAuthor">Kontokostas, D., Ed.</span> and <span class="refAuthor">H. Knublauch, Ed.</span>, <span class="refTitle">"Shapes Constraint Language (SHACL)"</span>, <span class="seriesInfo">W3C REC REC-shacl-20170720</span>, <span class="seriesInfo">W3C REC-shacl-20170720</span>, <time datetime="2017-07-20" class="refDate">20 July 2017</time>, <span>&lt;<a href="https://www.w3.org/TR/2017/REC-shacl-20170720/">https://www.w3.org/TR/2017/REC-shacl-20170720/</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="W3C.REC-xmlschema11-1-20120405">[W3C.REC-xmlschema11-1-20120405]</dt>
+      <dd>
+<span class="refAuthor">Beech, D., Ed.</span>, <span class="refAuthor">Thompson, H., Ed.</span>, <span class="refAuthor">Sperberg-McQueen, M., Ed.</span>, <span class="refAuthor">Maloney, M., Ed.</span>, <span class="refAuthor">Mendelsohn, N., Ed.</span>, and <span class="refAuthor">S. Gao, Ed.</span>, <span class="refTitle">"W3C XML Schema Definition Language (XSD) 1.1 Part 1: Structures"</span>, <span class="seriesInfo">W3C REC REC-xmlschema11-1-20120405</span>, <span class="seriesInfo">W3C REC-xmlschema11-1-20120405</span>, <time datetime="2012-04-05" class="refDate">5 April 2012</time>, <span>&lt;<a href="https://www.w3.org/TR/2012/REC-xmlschema11-1-20120405/">https://www.w3.org/TR/2012/REC-xmlschema11-1-20120405/</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</section>
+<div id="authors-addresses">
+<section id="appendix-A">
+      <h2 id="name-authors-addresses">
+<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Lars G. Svensson</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:lars.svensson@web.de" class="email">lars.svensson@web.de</a>
+</div>
+<div class="url">
+<span>URI:</span>
+<a href="https://orcid.org/0000-0002-8714-9718" class="url">https://orcid.org/0000-0002-8714-9718</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Ruben Verborgh</span></div>
+<div dir="auto" class="left"><span class="org">Ghent University – imec</span></div>
+<div dir="auto" class="left"><span class="street-address">Sint-Pietersnieuwstraat 41</span></div>
+<div dir="auto" class="left">
+<span class="postal-code">9000</span> <span class="locality">Ghent</span>
+</div>
+<div dir="auto" class="left"><span class="country-name">Belgium</span></div>
+<div class="tel">
+<span>Phone:</span>
+<a href="tel:+32%209%20331%2049%2010" class="tel">+32 9 331 49 10</a>
+</div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:ruben.verborgh@ugent.be" class="email">ruben.verborgh@ugent.be</a>
+</div>
+<div class="url">
+<span>URI:</span>
+<a href="https://ruben.verborgh.org/" class="url">https://ruben.verborgh.org/</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Herbert Van de Sompel</span></div>
+<div dir="auto" class="left"><span class="org">Data Archiving and Networked Services</span></div>
+<div dir="auto" class="left"><span class="street-address">Anna van Saksenlaan 51</span></div>
+<div dir="auto" class="left">
+<span class="postal-code">2593 HW</span> <span class="locality">The Hague</span>
+</div>
+<div dir="auto" class="left"><span class="country-name">Netherlands</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:herbert.van.de.sompel@dans.knaw.nl" class="email">herbert.van.de.sompel@dans.knaw.nl</a>
+</div>
+<div class="url">
+<span>URI:</span>
+<a href="https://orcid.org/0000-0002-0715-6126" class="url">https://orcid.org/0000-0002-0715-6126</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
 </body>
 </html>
