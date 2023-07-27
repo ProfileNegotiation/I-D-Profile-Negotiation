@@ -14,13 +14,13 @@
 <!ENTITY RFC5234 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.5234.xml">
 <!ENTITY RFC5988 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.5988.xml">
 <!ENTITY RFC6838 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6838.xml">
-<!ENTITY RFC6839 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6839.xml">
 <!ENTITY RFC6906 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6906.xml">
-<!ENTITY RFC7230 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7230.xml">
 <!ENTITY RFC7231 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7231.xml">
 <!ENTITY RFC7240 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7240.xml">
 <!ENTITY RFC8141 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8141.xml">
 <!ENTITY RFC8288 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8288.xml">
+<!ENTITY RFC9110 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.9110.xml">
+<!ENTITY RFC9112 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.9112.xml">
 <!ENTITY SHACL SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml-w3c/reference.W3C.REC-shacl-20170720.xml">
 <!ENTITY XSD SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml-w3c/reference.W3C.REC-xmlschema11-1-20120405.xml">
 <!ENTITY I-D.nottingham-link-hint SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.nottingham-link-hint.xml">
@@ -37,7 +37,7 @@
 <?rfc sortrefs="yes" ?>
 <?rfc symrefs="yes" ?>
 
-<rfc category="info" docName="draft-svensson-profiled-representations-00" ipr="trust200902">
+<rfc category="info" docName="draft-svensson-profiled-representations-01" ipr="trust200902">
 	<!-- ***** FRONT MATTER ***** -->
 
 	<front>
@@ -84,7 +84,7 @@
 			</address>
 		</author>
 
-		<date month="April" year="2020"/>
+		<date month="July" year="2023"/>
 
 		<!-- Meta-data Declarations -->
 
@@ -102,7 +102,7 @@
 		<abstract>
 			<t>This document details approaches for enriching HTTP interactions with information pertaining to 
 				the profiles to which resource representations conform. 
-				It surveys approaches that were recently introduced to indicate the profile of a resource representation, 
+				It surveys approaches that were introduced to indicate the profile of a resource representation, 
 				and to make representations that conform to a profile discoverable. 
 				It introduces a generally applicable approach to negotiate for a resource representation that conforms to a profile preferred 
 				by a user agent. That approach leverages the existing content negotiation mechanism but applies it to the profile dimension to which 
@@ -157,7 +157,7 @@
 					and a profile of it. Media types that illustrate this approach include "application/activity+json", "application/calendar+json", and "application/calendar+xml. 
 					This approach allows conveying all necessary profile information in HTTP interactions, e.g. using the "Accept" and "Content-Encoding" HTTP headers
 					and the "type" attribute for web links. As such it supports indicating, discovering, and  content negotiating (in the media type dimension) for profiled representations. 
-					This registraton-based approach may be feasible for 
+					This registration-based approach may be feasible for 
 				    profiles that are expected to be very widely used but is not practical in case support for many different profiles is required. 
 				    Also, the "calendar" examples illustrate 
 				    that the registration-based approach is not ideal when a profile applies to multiple media types. 
@@ -211,7 +211,7 @@
 					Although defined as IRIs, in common scenarios they are also URIs.</t>
 				
 				<t>In the examples provided in this document, links in the HTTP "Link" header are shown on separate lines in order to improve readability. 
-					Note, however, that as per Section 3.2 of <xref target="RFC7230"/>, line breaks are not allowed in values for HTTP headers; only whitespaces and 
+					Note, however, that as per Section 3.2 of <xref target="RFC9112"/>, line breaks are not allowed in values for HTTP headers; only whitespaces and 
 						tabs are supported as seperators.
 				</t>
 				
@@ -231,7 +231,7 @@
 					the response body (not shown).
 				</t>
 					<t><xref target="request_UI1"/> shows a client submitting a representation to a server, 
-				    using the same approach to express the profile to which that representation complies.
+				    using the same approach to express the profile to which that representation conforms.
 						<xref target="Writing"/> describes how a server can convey the profiles it supports 
 						for representations that are submitted by a user agent.
 					</t>
@@ -270,8 +270,33 @@ Connection: close
 ...
 						]]>
 					</artwork>
-				</figure>				
-	
+				</figure>
+			
+				<t>In some cases organisations use separate servers to perform content negotiation and to deliver resources,
+					e. g. when static content is served through content delivery networks.
+					The servers that perform the content negotiation interact with the client requesting the resource
+					and then typically refer to the correct representation using a 303 redirect.
+					In those cases the servers that deliver the representations are not profile aware
+					and thus cannot add the appropriate "Link" headers to the response.
+					Instead the server performing the negotiation will have to supply that information.
+					This is done by adding an "anchor" attribute pointing to the representation the link header refers to.
+					<xref target="response_RI1"/> shows the response to a <xref target="request_SI1"/>
+					where the server performing the negotiation redirects the client to the resource specified in the
+					"Location" header and by using the same URI in the "anchor" attribute of the "Link" header
+					indicates that the information in the "Link" header does not apply to this response
+					but to the resource redirected to.
+				</t>
+				<figure title="Server indicates the profile of the representation referred to in the 'Location' header" align="center" anchor="response_RI1">
+					<artwork align="left"><![CDATA[ 
+HTTP/1.1 303 See other
+Location: https://static.example.org/other/resource
+Link: <http://purl.org/dc/terms/>; rel="profile"
+        ; anchor="https://static.example.org/other/resource"
+
+...
+						]]>
+					</artwork>
+				</figure>
 			</section>
 			
 		<section title="Discovering Profiled Representations" anchor="Discovering">
@@ -326,7 +351,7 @@ Connection: close
 				<t>In order to allow a server to express its support for profile negotiation 
 					the "Vary" HTTP header is used, in this case, with the "Accept-Profile" value.</t>
 				<t>In order to allow a server to convey the profile of a representation delivered to a user agent, 
-					rather than the introducing a server-side counterpart to the client-side "Accept-Profile" header, 
+					rather than introducing a server-side counterpart to the client-side "Accept-Profile" header, 
 					the existing 
 				"profile" link approach introduced by <xref target="RFC6906"/> is used. If a representation conforms to multiple profiles, a distinct "profile" 
 				link is used per profile; the order in which these links are provided has no relevance.
@@ -519,7 +544,7 @@ Connection: close
 						<t>SHOULD use the "allow" link hint to convey the HTTP methods that are supported by the resource that is the link target.</t>
 					</list></t>
 					
-					<t><xref target="Req_reconneg_1"/> shows a user agent issuing a HTTP HEAD on a resource in order determine whether 
+					<t><xref target="Req_reconneg_1"/> shows a user agent issuing an HTTP HEAD on a resource in order to determine whether 
 						profiled representations are available for it. <xref target="Res_reconneg_1"/> shows the response of a server that 
 						supports reactive profile negotiation. By means of "alternate" links in the "Link" header, the server indicates support for 
 					    two profiled representations for the resource at hand, and, for each, indicates the URI at which they can be 
@@ -550,6 +575,7 @@ Link: <http://example.org/bibrecord/1/DC>
       ; allow="HEAD,GET,PATCH" ,
       <http://example.org/bibrecord/1/BIBFRAME> 
       ; rel="alternate" 
+      ; type="application/xml" 
       ; formats="http://id.loc.gov/ontologies/bibframe/"
       ; allow="HEAD,GET"
 Content-Length: 200
@@ -585,10 +611,9 @@ Connection: close
 				<t><xref target="abnf_accept_profile"/> describes the syntax 
 					of the "Accept-Profile" HTTP header,
 					using the grammar defined in <xref target="RFC5234">RFC 5234</xref> and the rules
-					defined in <xref target="RFC7230">Section 3.2 of RFC 7230</xref>.
+					defined in <xref target="RFC9110">Section 5.5 of RFC 9110</xref>.
 					The definitions of "URI-reference" and "weight" are imported from
-					<xref target="RFC7230">RFC 7230</xref> and <xref target="RFC7231">RFC 7231</xref>,
-					respectively.</t>
+					<xref target="RFC9110">RFC 9110</xref>.</t>
 				
 				<figure title="ABNF for the &quot;Accept-Profile&quot; HTTP header" anchor="abnf_accept_profile" align="left">
 					<artwork align="left" type="abnf"><![CDATA[
@@ -612,7 +637,7 @@ accept-value = "<" URI-reference ">" [weight] | accept-value-ext
 				for reactive negotiation described in <xref target="reconneg"/>.
 			</t>
 			
-			<t>A client that submits a representation that complies to a profile that was not advertised by the server 
+			<t>A client that submits a representation that conforms to a profile that was not advertised by the server 
 				by means of the reactive negotiation approach, SHOULD assume that the server is not able to process it. 
 			</t>
 			
@@ -622,7 +647,7 @@ accept-value = "<" URI-reference ">" [weight] | accept-value-ext
 			</t>
 			
 			<t>Continuing from <xref target="Res_reconneg_2"/>, <xref target="Req_write_1"/> 
-				shows a user agent issuing a HTTP PATCH against resource &lt;http://example.org/bibrecord/1/DC&gt; in order to update it. 
+				shows a user agent issuing an HTTP PATCH against resource &lt;http://example.org/bibrecord/1/DC&gt; in order to update it. 
 				It uses the "Content-Encoding" header to convey the XML Patch media type of its message body and a link with a "profile" relation type 
 				in the "Link" header to indicate the profile to which it conforms. <xref target="Res_write_1"/> shows the server's response, 
 				indicating that the patch was applied successfully; the server returns the updated representation as message body. 
@@ -632,7 +657,7 @@ accept-value = "<" URI-reference ">" [weight] | accept-value-ext
 				<artwork align="left"><![CDATA[ 
 PATCH /bibrecord/1/DC HTTP/1.1
 Host: example.org
-Content-Encoding: application/xml-patch+xml
+Content-Type: application/xml-patch+xml
 Link: <http://purl.org/dc/terms/> 
       ; rel="profile" 
 Accept: application/xml
@@ -727,16 +752,16 @@ Connection: close
 		<references title="Normative References">
 			&RFC2119;
 			&RFC5234;
-			&RFC7230;
 			&RFC6838;
 			&RFC7231;
 			&I-D.nottingham-link-hint;
 			&RFC6906;
+			&RFC9110;
+			&RFC9112;
 		</references>
 
 		<references title="Informative References">
 			&RFC4452;
-			&RFC6839;
 			&RFC8141;
 			&RFC8288;
 			&RFC5988;
@@ -754,7 +779,7 @@ Connection: close
 				</front>
 			</reference>
 			-->
-			<reference anchor="HeeryAndPatel" target="http://www.ariadne.ac.uk/issue25/app-profiles">
+			<reference anchor="HeeryAndPatel" target="https://www.ariadne.ac.uk/issue/25/app-profiles/">
 				<front>
 					<title>Application Profiles: Mixing and Matching Metadata Schemas</title>
 					<author initials="R." surname="Heery">
@@ -769,7 +794,3 @@ Connection: close
 		</references>
 	</back>
 </rfc>
-
-
-
-
