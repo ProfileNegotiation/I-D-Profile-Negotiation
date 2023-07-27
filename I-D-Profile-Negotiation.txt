@@ -2,26 +2,26 @@
 
 
 
-Internet Engineering Task Force                              L. Svensson
-Internet-Draft
+Internet Engineering Task Force                            L.G. Svensson
+Internet-Draft                                                          
 Intended status: Informational                               R. Verborgh
-Expires: October 3, 2020                         Ghent University - imec
+Expires: 28 January 2024                         Ghent University – imec
                                                         H. Van de Sompel
                                    Data Archiving and Networked Services
-                                                           April 1, 2020
+                                                               July 2023
 
 
        Indicating, Discovering, Negotiating, and Writing Profiled
                             Representations
-               draft-svensson-profiled-representations-00
+               draft-svensson-profiled-representations-01
 
 Abstract
 
    This document details approaches for enriching HTTP interactions with
    information pertaining to the profiles to which resource
-   representations conform.  It surveys approaches that were recently
-   introduced to indicate the profile of a resource representation, and
-   to make representations that conform to a profile discoverable.  It
+   representations conform.  It surveys approaches that were introduced
+   to indicate the profile of a resource representation, and to make
+   representations that conform to a profile discoverable.  It
    introduces a generally applicable approach to negotiate for a
    resource representation that conforms to a profile preferred by a
    user agent.  That approach leverages the existing content negotiation
@@ -45,7 +45,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on October 3, 2020.
+   This Internet-Draft will expire on 2 January 2024.
 
 
 
@@ -53,25 +53,24 @@ Status of This Memo
 
 
 
-Svensson, et al.         Expires October 3, 2020                [Page 1]
+Svensson, et al.         Expires 28 January 2024                [Page 1]
 
-Internet-Draft      Handling Profiled Representations         April 2020
+Internet-Draft      Handling Profiled Representations          July 2023
 
 
 Copyright Notice
 
-   Copyright (c) 2020 IETF Trust and the persons identified as the
+   Copyright (c) 2023 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
-   Provisions Relating to IETF Documents
-   (https://trustee.ietf.org/license-info) in effect on the date of
-   publication of this document.  Please review these documents
-   carefully, as they describe your rights and restrictions with respect
-   to this document.  Code Components extracted from this document must
-   include Simplified BSD License text as described in Section 4.e of
-   the Trust Legal Provisions and are provided without warranty as
-   described in the Simplified BSD License.
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
 
 Table of Contents
 
@@ -80,18 +79,18 @@ Table of Contents
      1.2.  Purpose . . . . . . . . . . . . . . . . . . . . . . . . .   3
      1.3.  Notational Conventions  . . . . . . . . . . . . . . . . .   5
    2.  Indicating Profiled Representations . . . . . . . . . . . . .   5
-   3.  Discovering Profiled Representations  . . . . . . . . . . . .   6
-   4.  Negotiating for Profiled Representations  . . . . . . . . . .   7
-     4.1.  Profile Negotiation Details . . . . . . . . . . . . . . .   8
-       4.1.1.  Proactive Profile Negotiation . . . . . . . . . . . .   8
+   3.  Discovering Profiled Representations  . . . . . . . . . . . .   7
+   4.  Negotiating for Profiled Representations  . . . . . . . . . .   8
+     4.1.  Profile Negotiation Details . . . . . . . . . . . . . . .   9
+       4.1.1.  Proactive Profile Negotiation . . . . . . . . . . . .   9
        4.1.2.  Reactive Profile Negotiation  . . . . . . . . . . . .  12
-     4.2.  Accept-Profile HTTP Header Syntax . . . . . . . . . . . .  13
+     4.2.  Accept-Profile HTTP Header Syntax . . . . . . . . . . . .  14
    5.  Writing Profiled Representations  . . . . . . . . . . . . . .  14
-   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  15
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  16
    7.  Security Considerations . . . . . . . . . . . . . . . . . . .  16
    8.  Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  16
-   9.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  16
-     9.1.  Normative References  . . . . . . . . . . . . . . . . . .  16
+   9.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  17
+     9.1.  Normative References  . . . . . . . . . . . . . . . . . .  17
      9.2.  Informative References  . . . . . . . . . . . . . . . . .  17
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  18
 
@@ -109,9 +108,10 @@ Table of Contents
 
 
 
-Svensson, et al.         Expires October 3, 2020                [Page 2]
+
+Svensson, et al.         Expires 28 January 2024                [Page 2]
 
-Internet-Draft      Handling Profiled Representations         April 2020
+Internet-Draft      Handling Profiled Representations          July 2023
 
 
    This dimension of variability regarding representations that goes
@@ -131,7 +131,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
    representations of resources that apply in addition to the
    constraints inherently indicated by their MIME type:
 
-   o  Profiles can be dependent on a media type.  For example, this is
+   *  Profiles can be dependent on a media type.  For example, this is
       the case for XML, with constraints being expressed using an XML
       Schema.  This is also the case for JSON that offers a wide range
       of options regarding the use of tree structure, keys, and value
@@ -139,7 +139,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
       by this document coincides with the use of the same term in
       [RFC6906].
 
-   o  Profiles can be independent of media type.  For example, this is
+   *  Profiles can be independent of media type.  For example, this is
       the case for RDF graphs that can be rendered according to various
       media types, while constraints can be expressed in a manner that
       is independent of media type, among others, using SHACL
@@ -160,16 +160,18 @@ Internet-Draft      Handling Profiled Representations         April 2020
    to a profile they can handle, or, optimally, an ability to explicitly
    request a rendering according to a preferred profile.
 
+
+
+
+
+
+Svensson, et al.         Expires 28 January 2024                [Page 3]
+
+Internet-Draft      Handling Profiled Representations          July 2023
+
+
    A common approach to handle profiles is to register them as a media
    type, dedicated to the combination of an actual media type and a
-
-
-
-Svensson, et al.         Expires October 3, 2020                [Page 3]
-
-Internet-Draft      Handling Profiled Representations         April 2020
-
-
    profile of it.  Media types that illustrate this approach include
    "application/activity+json", "application/calendar+json", and
    "application/calendar+xml.  This approach allows conveying all
@@ -177,8 +179,8 @@ Internet-Draft      Handling Profiled Representations         April 2020
    "Accept" and "Content-Encoding" HTTP headers and the "type" attribute
    for web links.  As such it supports indicating, discovering, and
    content negotiating (in the media type dimension) for profiled
-   representations.  This registraton-based approach may be feasible for
-   profiles that are expected to be very widely used but is not
+   representations.  This registration-based approach may be feasible
+   for profiles that are expected to be very widely used but is not
    practical in case support for many different profiles is required.
    Also, the "calendar" examples illustrate that the registration-based
    approach is not ideal when a profile applies to multiple media types.
@@ -213,20 +215,23 @@ Internet-Draft      Handling Profiled Representations         April 2020
    to introduce alternative approaches to express information about
    resource representation profiles in HTTP interactions:
 
-   o  [RFC6906] introduces the "profile" link relation type that is
+
+
+
+
+
+
+Svensson, et al.         Expires 28 January 2024                [Page 4]
+
+Internet-Draft      Handling Profiled Representations          July 2023
+
+
+   *  [RFC6906] introduces the "profile" link relation type that is
       generally applicable for indicating the profile of a resource
       representation that is sent by a client to a server or by a server
       to a client.
 
-
-
-
-Svensson, et al.         Expires October 3, 2020                [Page 4]
-
-Internet-Draft      Handling Profiled Representations         April 2020
-
-
-   o  [I-D.nottingham-link-hint] introduces a capability to make
+   *  [I-D.nottingham-link-hint] introduces a capability to make
       profiled representations discoverable via web links by using the
       "formats" attribute to express the profile of a linked resource.
 
@@ -251,7 +256,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
    In the examples provided in this document, links in the HTTP "Link"
    header are shown on separate lines in order to improve readability.
-   Note, however, that as per Section 3.2 of [RFC7230], line breaks are
+   Note, however, that as per Section 3.2 of [RFC9112], line breaks are
    not allowed in values for HTTP headers; only whitespaces and tabs are
    supported as seperators.
 
@@ -266,20 +271,22 @@ Internet-Draft      Handling Profiled Representations         April 2020
    <http://purl.org/dc/terms/> indicates the profile of the response
    body (not shown).
 
+
+
+
+
+
+
+Svensson, et al.         Expires 28 January 2024                [Page 5]
+
+Internet-Draft      Handling Profiled Representations          July 2023
+
+
    Figure 3 shows a client submitting a representation to a server,
    using the same approach to express the profile to which that
-   representation complies.  Section 5 describes how a server can convey
+   representation conforms.  Section 5 describes how a server can convey
    the profiles it supports for representations that are submitted by a
    user agent.
-
-
-
-
-
-
-Svensson, et al.         Expires October 3, 2020                [Page 5]
-
-Internet-Draft      Handling Profiled Representations         April 2020
 
 
    GET /some/resource HTTP/1.1
@@ -287,7 +294,8 @@ Internet-Draft      Handling Profiled Representations         April 2020
    Connection: close
 
 
-                Figure 1: Client requests a representation
+                 Figure 1: Client requests a representation
+
 
    HTTP/1.1 200 OK
    Content-Type: application/xml ; charset=utf-8
@@ -300,6 +308,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
 
    Figure 2: Server indicates the profile of the returned representation
 
+
    PUT /some/resource HTTP/1.1
    Host: example.org
    Content-Type: application/xml ; charset=utf-8
@@ -310,32 +319,56 @@ Internet-Draft      Handling Profiled Representations         April 2020
    ...
 
 
-   Figure 3: Client indicates the profile of a representation submitted
-                                to a server
+         Figure 3: Client indicates the profile of a representation
+                           submitted to a server
+
+   In some cases organisations use separate servers to perform content
+   negotiation and to deliver resources, e. g. when static content is
+   served through content delivery networks.  The servers that perform
+   the content negotiation interact with the client requesting the
+   resource and then typically refer to the correct representation using
+   a 303 redirect.  In those cases the servers that deliver the
+   representations are not profile aware and thus cannot add the
+   appropriate "Link" headers to the response.  Instead the server
+
+
+
+Svensson, et al.         Expires 28 January 2024                [Page 6]
+
+Internet-Draft      Handling Profiled Representations          July 2023
+
+
+   performing the negotiation will have to supply that information.
+   This is done by adding an "anchor" attribute pointing to the
+   representation the link header refers to.  Figure 4 shows the
+   response to a Figure 1 where the server performing the negotiation
+   redirects the client to the resource specified in the "Location"
+   header and by using the same URI in the "anchor" attribute of the
+   "Link" header indicates that the information in the "Link" header
+   does not apply to this response but to the resource redirected to.
+
+
+   HTTP/1.1 303 See other
+   Location: https://static.example.org/other/resource
+   Link: <http://purl.org/dc/terms/>; rel="profile"
+           ; anchor="https://static.example.org/other/resource"
+
+   ...
+
+
+        Figure 4: Server indicates the profile of the representation
+                    referred to in the 'Location' header
 
 3.  Discovering Profiled Representations
 
    The link hints capability introduced in [I-D.nottingham-link-hint],
    can be leveraged by a server to make profiled representations
    discoverable by including a "formats" attribute on web links.
-   Figure 4 shows a response to the client request of Figure 1 in which
+   Figure 5 shows a response to the client request of Figure 1 in which
    the server uses this technique.  The "Link" header indicates the
    profile of the returned representation but also points at two
    alternative representations, each of which conforms to another
    profile.
-
-
-
-
-
-
-
-
-
-
-Svensson, et al.         Expires October 3, 2020                [Page 6]
-
-Internet-Draft      Handling Profiled Representations         April 2020
 
 
    HTTP/1.1 200 OK
@@ -353,7 +386,15 @@ Internet-Draft      Handling Profiled Representations         April 2020
    ...
 
 
-       Figure 4: Server makes profiled representations discoverable
+
+
+
+Svensson, et al.         Expires 28 January 2024                [Page 7]
+
+Internet-Draft      Handling Profiled Representations          July 2023
+
+
+        Figure 5: Server makes profiled representations discoverable
 
 4.  Negotiating for Profiled Representations
 
@@ -370,44 +411,44 @@ Internet-Draft      Handling Profiled Representations         April 2020
    resource representations, irrespective of media type.  These are its
    core aspects:
 
-   o  In order to allow a user agent to inform a server about its
+   *  In order to allow a user agent to inform a server about its
       preferences regarding profiles for resource representations, the
       "Accept-Profile" HTTP header introduced here is used.  A user
       agent can specify several profiles and use quality indicators
       (q-values) to indicate preferences.
 
-   o  In order to allow a server to express its support for profile
+   *  In order to allow a server to express its support for profile
       negotiation the "Vary" HTTP header is used, in this case, with the
       "Accept-Profile" value.
 
-   o  In order to allow a server to convey the profile of a
-      representation delivered to a user agent, rather than the
-      introducing a server-side counterpart to the client-side "Accept-
-      Profile" header, the existing "profile" link approach introduced
-      by [RFC6906] is used.  If a representation conforms to multiple
-
-
-
-
-Svensson, et al.         Expires October 3, 2020                [Page 7]
-
-Internet-Draft      Handling Profiled Representations         April 2020
-
-
+   *  In order to allow a server to convey the profile of a
+      representation delivered to a user agent, rather than introducing
+      a server-side counterpart to the client-side "Accept-Profile"
+      header, the existing "profile" link approach introduced by
+      [RFC6906] is used.  If a representation conforms to multiple
       profiles, a distinct "profile" link is used per profile; the order
       in which these links are provided has no relevance.
 
-   o  In order to allow a server to convey the profiles it supports, web
+   *  In order to allow a server to convey the profiles it supports, web
       links with the "formats" link hint introduced in
       [I-D.nottingham-link-hint] are used to convey the profiles of the
       link target resources.  This approach uniformely applies to
       reponses to HTTP HEAD/GET/PUT/POST/PATCH.
 
-   o  Throughout the profile negotiation approach, a profile MUST be
+   *  Throughout the profile negotiation approach, a profile MUST be
       referred to by a URI.  This is the case for the content of the
       "Accept-Profile" HTTP header, for the target of web links with the
       "profile" link relation, and for the content of the "formats" link
       hint for web links.
+
+
+
+
+
+Svensson, et al.         Expires 28 January 2024                [Page 8]
+
+Internet-Draft      Handling Profiled Representations          July 2023
+
 
 4.1.  Profile Negotiation Details
 
@@ -441,39 +482,38 @@ Internet-Draft      Handling Profiled Representations         April 2020
    the duplicate mentioning of a same profile URI MUST NOT be
    interpreted as significant.
 
-
-
-
-
-Svensson, et al.         Expires October 3, 2020                [Page 8]
-
-Internet-Draft      Handling Profiled Representations         April 2020
-
-
    A server that supports proactive profile negotiation for the resource
    that a user agent interacts with:
 
-   o  MUST include a "Vary" HTTP header containing the value "accept-
+   *  MUST include a "Vary" HTTP header containing the value "accept-
       profile" in its response to the user agent.
 
-   o  MUST include a "Link" HTTP header containing a link with the
+   *  MUST include a "Link" HTTP header containing a link with the
       "profile" relation type that has as link target the profile URI of
       the resource representation returned to the user agent.  In case
       the representation conforms to additional profiles known to the
       server, such a "profile" link SHOULD be included for each.
 
-   o  SHOULD convey the availability of alternate profiled
+   *  SHOULD convey the availability of alternate profiled
       representations of the resource by using the link hint approach
       described in Section 4.1.2.
+
+
+
+
+Svensson, et al.         Expires 28 January 2024                [Page 9]
+
+Internet-Draft      Handling Profiled Representations          July 2023
+
 
    These requirements for servers that support proactive profile
    negotiation also apply when:
 
-   o  The user agent expressed a profile preference in its request by
+   *  The user agent expressed a profile preference in its request by
       using an "Accept-Profile" header but the server cannot return a
       representation that conforms to a preferred profile.
 
-   o  The user agent did not express a profile preference using an
+   *  The user agent did not express a profile preference using an
       "Accept-Profile" header in its request.
 
    A user agent SHOULD interpret the abscence of a "Vary" HTTP header
@@ -487,23 +527,12 @@ Internet-Draft      Handling Profiled Representations         April 2020
    preferences in the profile dimension SHOULD take precedence over
    honoring content negotiation in other dimensions.
 
-   In Figure 5 a user agent requests an RDF serialization from a server
+   In Figure 6 a user agent requests an RDF serialization from a server
    and expresses preference for two media types using the "Accept"
    header and two profiles using the "Accept-Profile" header.  It uses
    q-values to express a preference for the profile with profile URI
    <http://example.org/shapes/shape-1> over the one with profile URI
    <http://example.org/shapes/shape-2>.
-
-
-
-
-
-
-
-
-Svensson, et al.         Expires October 3, 2020                [Page 9]
-
-Internet-Draft      Handling Profiled Representations         April 2020
 
 
    GET /document HTTP/1.1
@@ -514,9 +543,9 @@ Internet-Draft      Handling Profiled Representations         April 2020
    Connection: close
 
 
-         Figure 5: Client expresses a preference for two profiles
+          Figure 6: Client expresses a preference for two profiles
 
-   Figure 6 shows the server's response to the request of Figure 5.  By
+   Figure 7 shows the server's response to the request of Figure 6.  By
    means of the "Vary" header, the server expresses support for
    negotiation in both the media type and profile dimensions.  The
    "profile" link with link target <http://example.org/shapes/shape-2>
@@ -525,11 +554,20 @@ Internet-Draft      Handling Profiled Representations         April 2020
    representation also conforms to a profile with profile URI
    <http://example.org/shapes/shape-3>.  Furthermore, using an
    "alternate" link, the server indicates support for another profile
+
+
+
+Svensson, et al.         Expires 28 January 2024               [Page 10]
+
+Internet-Draft      Handling Profiled Representations          July 2023
+
+
    with <http://example.org/shapes/shape-4> as profile URI.  Note that,
    even if the user agent does not express profile preferences using the
    "Accept-Profile" header and the server's "Vary" header would be the
    same, the "Link" header would still include a "profile" link to
    indicate the profile of the representation returned by the server.
+
 
    HTTP/1.1 200 OK
    Content-Type: text/turtle
@@ -548,20 +586,12 @@ Internet-Draft      Handling Profiled Representations         April 2020
    ...
 
 
-            Figure 6: Response honors a user agent's preference
+            Figure 7: Response honors a user agent's preference
 
-   Figure 7 shows the response to the request of Figure 5 in case the
+   Figure 8 shows the response to the request of Figure 6 in case the
    server supports profile negotiation for the resource at hand but can
    not return a representation that conforms to a profile preferred by
    the user agent.  The server has chosen to nevertheless return a
-
-
-
-Svensson, et al.         Expires October 3, 2020               [Page 10]
-
-Internet-Draft      Handling Profiled Representations         April 2020
-
-
    representation that conforms to profile <http://example.org/shapes/
    shape-4>, which is not among the ones preferred by the user agent.
    The server also reveals the existence of a representation that
@@ -571,6 +601,22 @@ Internet-Draft      Handling Profiled Representations         April 2020
    response body.  It would not provide any "profile" links but might
    use "alternate" links with a "formats" attribute to indicate the
    existence of supported profiles.
+
+
+
+
+
+
+
+
+
+
+
+
+Svensson, et al.         Expires 28 January 2024               [Page 11]
+
+Internet-Draft      Handling Profiled Representations          July 2023
+
 
    HTTP/1.1 200 OK
    Content-Type: text/turtle
@@ -587,15 +633,16 @@ Internet-Draft      Handling Profiled Representations         April 2020
    ...
 
 
-      Figure 7: Response does not honor a user agent's preference but
+      Figure 8: Response does not honor a user agent's preference but
                       includes default representation
 
-   Figure 8 shows the response to the request of Figure 5 in case the
+   Figure 9 shows the response to the request of Figure 6 in case the
    server does not support profile negotiation for the resource
    <http://example.org/document>.  It does support negotiation in the
    media type dimension and has honoured one of the user agent's
    preferences with that regard, as can be seen by the "Vary" and
    "Content-Type" headers.
+
 
    HTTP/1.1 200 OK
    Content-Type: text/turtle
@@ -606,17 +653,8 @@ Internet-Draft      Handling Profiled Representations         April 2020
    ...
 
 
-    Figure 8: Response indicates lack of support for proactive profile
-                                negotiation
-
-
-
-
-
-Svensson, et al.         Expires October 3, 2020               [Page 11]
-
-Internet-Draft      Handling Profiled Representations         April 2020
-
+         Figure 9: Response indicates lack of support for proactive
+                            profile negotiation
 
 4.1.2.  Reactive Profile Negotiation
 
@@ -627,17 +665,24 @@ Internet-Draft      Handling Profiled Representations         April 2020
    of supported profiled representation as a set of links in the "Link"
    header.  Each of these links:
 
-   o  SHOULD have the "alternate" relation type.
+   *  SHOULD have the "alternate" relation type.
 
-   o  MUST use the "formats" link hint to convey the profile URI of the
+
+
+Svensson, et al.         Expires 28 January 2024               [Page 12]
+
+Internet-Draft      Handling Profiled Representations          July 2023
+
+
+   *  MUST use the "formats" link hint to convey the profile URI of the
       profile to which the resource that is the link target conforms.
 
-   o  SHOULD use the "allow" link hint to convey the HTTP methods that
+   *  SHOULD use the "allow" link hint to convey the HTTP methods that
       are supported by the resource that is the link target.
 
-   Figure 9 shows a user agent issuing a HTTP HEAD on a resource in
-   order determine whether profiled representations are available for
-   it.  Figure 10 shows the response of a server that supports reactive
+   Figure 10 shows a user agent issuing an HTTP HEAD on a resource in
+   order to determine whether profiled representations are available for
+   it.  Figure 11 shows the response of a server that supports reactive
    profile negotiation.  By means of "alternate" links in the "Link"
    header, the server indicates support for two profiled representations
    for the resource at hand, and, for each, indicates the URI at which
@@ -645,9 +690,10 @@ Internet-Draft      Handling Profiled Representations         April 2020
    types, and supported HTTP methods.  On the basis of this response,
    the client can decide whether any of the linked resources conform to
    a preferred profile, and, if so, access the respective link target.
-   Figure 11 shows the response to an HTTP HEAD issued on the link
+   Figure 12 shows the response to an HTTP HEAD issued on the link
    target <http://example.org/bibrecord/1/DC> of the first "alternate"
    link.
+
 
    HEAD /bibrecord/1 HTTP/1.1
    Host: example.org
@@ -655,23 +701,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
    Connection: close
 
 
-             Figure 9: Client determines support for profiles
-
-
-
-
-
-
-
-
-
-
-
-
-
-Svensson, et al.         Expires October 3, 2020               [Page 12]
-
-Internet-Draft      Handling Profiled Representations         April 2020
+             Figure 10: Client determines support for profiles
 
 
    HTTP/1.1 200 OK
@@ -683,13 +713,22 @@ Internet-Draft      Handling Profiled Representations         April 2020
          ; allow="HEAD,GET,PATCH" ,
          <http://example.org/bibrecord/1/BIBFRAME>
          ; rel="alternate"
+         ; type="application/xml"
          ; formats="http://id.loc.gov/ontologies/bibframe/"
          ; allow="HEAD,GET"
    Content-Length: 200
    Connection: close
 
 
-                  Figure 10: Server supports two profiles
+                  Figure 11: Server supports two profiles
+
+
+
+
+Svensson, et al.         Expires 28 January 2024               [Page 13]
+
+Internet-Draft      Handling Profiled Representations          July 2023
+
 
    HTTP/1.1 200 OK
    Content-Type: application/xml
@@ -705,30 +744,21 @@ Internet-Draft      Handling Profiled Representations         April 2020
    Connection: close
 
 
-   Figure 11: Response to a client accessesing a profiled representation
+   Figure 12: Response to a client accessesing a profiled representation
 
 4.2.  Accept-Profile HTTP Header Syntax
 
-   Figure 12 describes the syntax of the "Accept-Profile" HTTP header,
+   Figure 13 describes the syntax of the "Accept-Profile" HTTP header,
    using the grammar defined in RFC 5234 [RFC5234] and the rules defined
-   in Section 3.2 of RFC 7230 [RFC7230].  The definitions of "URI-
-   reference" and "weight" are imported from RFC 7230 [RFC7230] and RFC
-   7231 [RFC7231], respectively.
+   in Section 5.5 of RFC 9110 [RFC9110].  The definitions of "URI-
+   reference" and "weight" are imported from RFC 9110 [RFC9110].
 
    Accept-Profile = "Accept-Profile" ":"
    OWS (accept-value) *(OWS "," OWS accept-value) OWS
    accept-value = "<" URI-reference ">" [weight] | accept-value-ext
 
 
-           Figure 12: ABNF for the "Accept-Profile" HTTP header
-
-
-
-
-Svensson, et al.         Expires October 3, 2020               [Page 13]
-
-Internet-Draft      Handling Profiled Representations         April 2020
-
+            Figure 13: ABNF for the "Accept-Profile" HTTP header
 
 5.  Writing Profiled Representations
 
@@ -740,28 +770,40 @@ Internet-Draft      Handling Profiled Representations         April 2020
    SHOULD follow the directions for reactive negotiation described in
    Section 4.1.2.
 
-   A client that submits a representation that complies to a profile
+   A client that submits a representation that conforms to a profile
    that was not advertised by the server by means of the reactive
    negotiation approach, SHOULD assume that the server is not able to
    process it.
+
+
+
+
+
+
+
+Svensson, et al.         Expires 28 January 2024               [Page 14]
+
+Internet-Draft      Handling Profiled Representations          July 2023
+
 
    A server that fails a submission request due to receiving a payload
    with a profile that it does not support MUST respond with a "422
    Unprocessable Entity" HTTP status code and SHOULD use the approach
    described in Section 4.1.2 to convey profiles that are supported.
 
-   Continuing from Figure 11, Figure 13 shows a user agent issuing a
+   Continuing from Figure 12, Figure 14 shows a user agent issuing an
    HTTP PATCH against resource <http://example.org/bibrecord/1/DC> in
    order to update it.  It uses the "Content-Encoding" header to convey
    the XML Patch media type of its message body and a link with a
    "profile" relation type in the "Link" header to indicate the profile
-   to which it conforms.  Figure 14 shows the server's response,
+   to which it conforms.  Figure 15 shows the server's response,
    indicating that the patch was applied successfully; the server
    returns the updated representation as message body.
 
+
    PATCH /bibrecord/1/DC HTTP/1.1
    Host: example.org
-   Content-Encoding: application/xml-patch+xml
+   Content-Type: application/xml-patch+xml
    Link: <http://purl.org/dc/terms/>
          ; rel="profile"
    Accept: application/xml
@@ -771,19 +813,7 @@ Internet-Draft      Handling Profiled Representations         April 2020
    ...
 
 
-             Figure 13: Client submits profiled representation
-
-
-
-
-
-
-
-
-
-Svensson, et al.         Expires October 3, 2020               [Page 14]
-
-Internet-Draft      Handling Profiled Representations         April 2020
+             Figure 14: Client submits profiled representation
 
 
    HTTP/1.1 200 OK
@@ -803,15 +833,25 @@ Internet-Draft      Handling Profiled Representations         April 2020
    ...
 
 
-       Figure 14: Server indicates successful submission of profiled
-                         representation by client
 
-   If, in Figure 13, the user agent would have issued an HTTP PATCH on
+
+
+
+Svensson, et al.         Expires 28 January 2024               [Page 15]
+
+Internet-Draft      Handling Profiled Representations          July 2023
+
+
+       Figure 15: Server indicates successful submission of profiled
+                          representation by client
+
+   If, in Figure 14, the user agent would have issued an HTTP PATCH on
    resource <http://example.org/bibrecord/1/DC> indicating that the
    profile URI of the patch was <http://id.loc.gov/ontologies/
    bibframe/>, the response would have a 422 HTTP status code to express
    that the profile is not supported by the resource at hand.  Such a
-   response is shown in Figure 15.
+   response is shown in Figure 16.
+
 
    HTTP/1.1 422 Unprocessable Entity
    Content-Type: text/plain
@@ -826,31 +866,23 @@ Internet-Draft      Handling Profiled Representations         April 2020
    ...
 
 
-      Figure 15: Server indicates unsuccessful submission of profiled
-                         representation by client
+      Figure 16: Server indicates unsuccessful submission of profiled
+                          representation by client
 
 6.  IANA Considerations
 
    This memo requires IANA to register the Accept-Profile HTTP header
    defined in Section 4.2 in the appropriate IANA registry:
 
+   *  Header Field Name: Accept-Profile
 
+   *  Applicable Protocol: Hypertext Transfer Protocol (HTTP)
 
+   *  Status: Informational
 
-Svensson, et al.         Expires October 3, 2020               [Page 15]
-
-Internet-Draft      Handling Profiled Representations         April 2020
+   *  Author/Change controller: IETF
 
-
-   o  Header Field Name: Accept-Profile
-
-   o  Applicable Protocol: Hypertext Transfer Protocol (HTTP)
-
-   o  Status: Informational
-
-   o  Author/Change controller: IETF
-
-   o  Specification document(s): this document
+   *  Specification document(s): this document
 
 7.  Security Considerations
 
@@ -859,13 +891,22 @@ Internet-Draft      Handling Profiled Representations         April 2020
    Many thanks to our colleagues for feedback: Enno Meijers, Michael L.
    Nelson
 
+
+
+Svensson, et al.         Expires 28 January 2024               [Page 16]
+
+Internet-Draft      Handling Profiled Representations          July 2023
+
+
 9.  References
 
 9.1.  Normative References
 
    [I-D.nottingham-link-hint]
-              Nottingham, M., "HTTP Link Hints", draft-nottingham-link-
-              hint-02 (work in progress), March 2020.
+              Nottingham, M., "HTTP Link Hints", Work in Progress,
+              Internet-Draft, draft-nottingham-link-hint-03, 23 July
+              2023, <https://datatracker.ietf.org/doc/html/draft-
+              nottingham-link-hint-03>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -886,29 +927,37 @@ Internet-Draft      Handling Profiled Representations         April 2020
               DOI 10.17487/RFC6906, March 2013,
               <https://www.rfc-editor.org/info/rfc6906>.
 
-   [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
-              Protocol (HTTP/1.1): Message Syntax and Routing",
-              RFC 7230, DOI 10.17487/RFC7230, June 2014,
-              <https://www.rfc-editor.org/info/rfc7230>.
-
-
-
-Svensson, et al.         Expires October 3, 2020               [Page 16]
-
-Internet-Draft      Handling Profiled Representations         April 2020
-
-
    [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
               DOI 10.17487/RFC7231, June 2014,
               <https://www.rfc-editor.org/info/rfc7231>.
 
+   [RFC9110]  Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
+              Ed., "HTTP Semantics", STD 97, RFC 9110,
+              DOI 10.17487/RFC9110, June 2022,
+              <https://www.rfc-editor.org/info/rfc9110>.
+
+   [RFC9112]  Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
+              Ed., "HTTP/1.1", STD 99, RFC 9112, DOI 10.17487/RFC9112,
+              June 2022, <https://www.rfc-editor.org/info/rfc9112>.
+
 9.2.  Informative References
+
+
+
+
+
+
+
+Svensson, et al.         Expires 28 January 2024               [Page 17]
+
+Internet-Draft      Handling Profiled Representations          July 2023
+
 
    [HeeryAndPatel]
               Heery, R. and M. Patel, "Application Profiles: Mixing and
               Matching Metadata Schemas", 2000,
-              <http://www.ariadne.ac.uk/issue25/app-profiles>.
+              <https://www.ariadne.ac.uk/issue/25/app-profiles/>.
 
    [RFC4452]  Van de Sompel, H., Hammond, T., Neylon, E., and S. Weibel,
               "The "info" URI Scheme for Information Assets with
@@ -920,11 +969,6 @@ Internet-Draft      Handling Profiled Representations         April 2020
               DOI 10.17487/RFC5988, October 2010,
               <https://www.rfc-editor.org/info/rfc5988>.
 
-   [RFC6839]  Hansen, T. and A. Melnikov, "Additional Media Type
-              Structured Syntax Suffixes", RFC 6839,
-              DOI 10.17487/RFC6839, January 2013,
-              <https://www.rfc-editor.org/info/rfc6839>.
-
    [RFC8141]  Saint-Andre, P. and J. Klensin, "Uniform Resource Names
               (URNs)", RFC 8141, DOI 10.17487/RFC8141, April 2017,
               <https://www.rfc-editor.org/info/rfc8141>.
@@ -934,40 +978,43 @@ Internet-Draft      Handling Profiled Representations         April 2020
               <https://www.rfc-editor.org/info/rfc8288>.
 
    [W3C.REC-shacl-20170720]
-              Knublauch, H. and D. Kontokostas, "Shapes Constraint
-              Language (SHACL)", World Wide Web Consortium
-              Recommendation REC-shacl-20170720, July 2017,
-              <https://www.w3.org/TR/2017/REC-shacl-20170720>.
+              Kontokostas, D., Ed. and H. Knublauch, Ed., "Shapes
+              Constraint Language (SHACL)", W3C REC REC-shacl-20170720,
+              W3C REC-shacl-20170720, 20 July 2017,
+              <https://www.w3.org/TR/2017/REC-shacl-20170720/>.
 
    [W3C.REC-xmlschema11-1-20120405]
-              Gao, S., Sperberg-McQueen, M., Thompson, H., Mendelsohn,
-              N., Beech, D., and M. Maloney, "W3C XML Schema Definition
-              Language (XSD) 1.1 Part 1: Structures", World Wide Web
-              Consortium Recommendation REC-xmlschema11-1-20120405,
-              April 2012,
-              <http://www.w3.org/TR/2012/REC-xmlschema11-1-20120405>.
-
-
-
-Svensson, et al.         Expires October 3, 2020               [Page 17]
-
-Internet-Draft      Handling Profiled Representations         April 2020
-
+              Beech, D., Ed., Thompson, H., Ed., Sperberg-McQueen, M.,
+              Ed., Maloney, M., Ed., Mendelsohn, N., Ed., and S. Gao,
+              Ed., "W3C XML Schema Definition Language (XSD) 1.1 Part 1:
+              Structures", W3C REC REC-xmlschema11-1-20120405, W3C REC-
+              xmlschema11-1-20120405, 5 April 2012,
+              <https://www.w3.org/TR/2012/REC-xmlschema11-1-20120405/>.
 
 Authors' Addresses
 
    Lars G. Svensson
-
    Email: lars.svensson@web.de
    URI:   https://orcid.org/0000-0002-8714-9718
 
 
-   Ruben Verborgh
-   Ghent University - imec
-   Sint-Pietersnieuwstraat 41
-   Ghent  9000
-   Belgium
 
+
+
+
+
+
+
+Svensson, et al.         Expires 28 January 2024               [Page 18]
+
+Internet-Draft      Handling Profiled Representations          July 2023
+
+
+   Ruben Verborgh
+   Ghent University – imec
+   Sint-Pietersnieuwstraat 41
+   9000 Ghent
+   Belgium
    Phone: +32 9 331 49 10
    Email: ruben.verborgh@ugent.be
    URI:   https://ruben.verborgh.org/
@@ -976,9 +1023,8 @@ Authors' Addresses
    Herbert Van de Sompel
    Data Archiving and Networked Services
    Anna van Saksenlaan 51
-   The Hague  2593 HW
+   2593 HW The Hague
    Netherlands
-
    Email: herbert.van.de.sompel@dans.knaw.nl
    URI:   https://orcid.org/0000-0002-0715-6126
 
@@ -1005,4 +1051,14 @@ Authors' Addresses
 
 
 
-Svensson, et al.         Expires October 3, 2020               [Page 18]
+
+
+
+
+
+
+
+
+
+
+Svensson, et al.         Expires 28 January 2024               [Page 19]
