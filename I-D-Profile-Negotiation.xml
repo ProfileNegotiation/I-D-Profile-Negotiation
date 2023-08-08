@@ -693,9 +693,12 @@ Connection: close
 					<t>If, in <xref target="Req_write_1"/>, the user agent would have issued an HTTP PATCH 
 						on resource &lt;http://example.org/bibrecord/1/DC&gt; indicating that the profile URI of the 
 						patch was &lt;http://id.loc.gov/ontologies/bibframe/&gt;, the response would have a 422 HTTP status code 
-						to express that the profile is not supported by the resource at hand. 
-						Such a response is shown in 
-						<xref target="Res_write_2"/>.</t>
+						to express that the profile is not supported by the resource at hand. Such a response is shown in 
+						<xref target="Res_write_2"/>.
+						As can be seen, the server includes a Link header indicating that the resource &lt;http://example.org/bibrecord/1/DC&gt; 
+						supports the profile &lt;http://purl.org/dc/terms/&gt; and the media type &quot;application/xml&quot;, 
+						allowing the client to send a request for a supported representation.
+						</t>
 					
 			<figure title="Server indicates unsuccessful submission of profiled representation by client" align="left" anchor="Res_write_2">
 						<artwork align="left"><![CDATA[ 
