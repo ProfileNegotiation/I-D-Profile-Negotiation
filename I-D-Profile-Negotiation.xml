@@ -155,7 +155,7 @@
 				
 				<t>A common approach to handle profiles is to register them as a media type, dedicated to the combination of an actual media type 
 					and a profile of it. Media types that illustrate this approach include "application/activity+json", "application/calendar+json", and "application/calendar+xml. 
-					This approach allows conveying all necessary profile information in HTTP interactions, e.g. using the "Accept" and "Content-Encoding" HTTP headers
+					This approach allows conveying all necessary profile information in HTTP interactions, e.g. using the "Accept" and "Content-Type" HTTP headers
 					and the "type" attribute for web links. As such it supports indicating, discovering, and  content negotiating (in the media type dimension) for profiled representations. 
 					This registration-based approach may be feasible for 
 				    profiles that are expected to be very widely used but is not practical in case support for many different profiles is required. 
@@ -648,7 +648,7 @@ accept-value = "<" URI-reference ">" [weight] | accept-value-ext
 			
 			<t>Continuing from <xref target="Res_reconneg_2"/>, <xref target="Req_write_1"/> 
 				shows a user agent issuing an HTTP PATCH against resource &lt;http://example.org/bibrecord/1/DC&gt; in order to update it. 
-				It uses the "Content-Encoding" header to convey the XML Patch media type of its message body and a link with a "profile" relation type 
+				It uses the "Content-Type" header to convey the XML Patch media type of its message body and a link with a "profile" relation type 
 				in the "Link" header to indicate the profile to which it conforms. <xref target="Res_write_1"/> shows the server's response, 
 				indicating that the patch was applied successfully; the server returns the updated representation as message body. 
 			</t>
@@ -756,6 +756,7 @@ Connection: close
 			&RFC7231;
 			&I-D.nottingham-link-hint;
 			&RFC6906;
+			&RFC8288;
 			&RFC9110;
 			&RFC9112;
 		</references>
@@ -763,7 +764,6 @@ Connection: close
 		<references title="Informative References">
 			&RFC4452;
 			&RFC8141;
-			&RFC8288;
 			&RFC5988;
 			&SHACL;
 			&XSD;
