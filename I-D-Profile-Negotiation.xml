@@ -553,8 +553,9 @@ Connection: close
 					the client can decide whether any of the linked resources conform to a preferred profile, and, if so, access 
 					the respective link target.  <xref target="Res_reconneg_2"/> shows the response to an HTTP HEAD issued on the link target 
 						&lt;http://example.org/bibrecord/1/DC&gt; of the first "alternate" link. Note that, in <xref target="Res_reconneg_1"/>, 
-						the server could also respond with a "200 OK" HTTP status code and include a &quot;Content-Length&quot; header in case 
-						it would deliver a default representation in response to an HTTP GET request on &lt;http://example.org//bibrecord/1&gt;.
+						in case the server would deliver a default representation in response to an HTTP GET request on &lt;http://example.org//bibrecord/1&gt;
+						it could also respond with a "200 OK" HTTP status code, include a &quot;Content-Length&quot; header, and provide only a single link 
+						pointing to the other available representation.
 					</t>
 
 					<figure title="Client determines support for profiles" align="left" anchor="Req_reconneg_1">
