@@ -546,12 +546,15 @@ Connection: close
 					
 					<t><xref target="Req_reconneg_1"/> shows a user agent issuing an HTTP HEAD on a resource in order to determine whether 
 						profiled representations are available for it. <xref target="Res_reconneg_1"/> shows the response of a server that 
-						supports reactive profile negotiation. By means of "alternate" links in the "Link" header, the server indicates support for 
-					    two profiled representations for the resource at hand, and, for each, indicates the URI at which they can be 
-					accessed, as well as their respective profile URIs, media types, and supported HTTP methods. On the basis of this response, 
+						supports reactive profile negotiation. The response has the &quot;300 Multiple Choices&quot; HTTP status code, and, by means 
+						of "alternate" links in the "Link" header, support for 
+					    two profiled representations for the resource at hand is indicated. For each, the URI at which they can be 
+					accessed is provided, as well as the respective profile URIs, media types, and supported HTTP methods. On the basis of this response, 
 					the client can decide whether any of the linked resources conform to a preferred profile, and, if so, access 
-					the respective link target. <xref target="Res_reconneg_2"/> shows the response to an HTTP HEAD issued on the link target 
-						&lt;http://example.org/bibrecord/1/DC&gt; of the first "alternate" link.
+					the respective link target.  <xref target="Res_reconneg_2"/> shows the response to an HTTP HEAD issued on the link target 
+						&lt;http://example.org/bibrecord/1/DC&gt; of the first "alternate" link. Note that, in <xref target="Res_reconneg_1"/>, 
+						the server could also respond with a "200 OK" HTTP status code and include a &quot;Content-Length&quot; header in case 
+						it would deliver a default representation in response to an HTTP GET request on &lt;http://example.org//bibrecord/1&gt;.
 					</t>
 
 					<figure title="Client determines support for profiles" align="left" anchor="Req_reconneg_1">
@@ -566,7 +569,7 @@ Connection: close
 
 					<figure title="Server supports two profiles" align="left" anchor="Res_reconneg_1">
 						<artwork align="left"><![CDATA[ 
-HTTP/1.1 200 OK
+HTTP/1.1 300 Multiple Choices
 Content-Type: text/plain
 Link: <http://example.org/bibrecord/1/DC> 
       ; rel="alternate" 
@@ -578,7 +581,6 @@ Link: <http://example.org/bibrecord/1/DC>
       ; type="application/xml" 
       ; formats="http://id.loc.gov/ontologies/bibframe/"
       ; allow="HEAD,GET"
-Content-Length: 200
 Connection: close
 ]]>
 						</artwork>
