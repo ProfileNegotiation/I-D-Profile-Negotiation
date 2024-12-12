@@ -441,8 +441,8 @@ Connection: close
 GET /document HTTP/1.1
 Host: example.org
 Accept: text/turtle, application/rdf+xml
-Accept-Profile: "http://example.org/shapes/shape-1" ; q=0.8 ,
-                "http://example.org/shapes/shape-2" ; q=0.5
+Accept-Profile: <http://example.org/shapes/shape-1> ; q=0.8 ,
+                <http://example.org/shapes/shape-2> ; q=0.5
 Connection: close
 ]]>
 						</artwork>
